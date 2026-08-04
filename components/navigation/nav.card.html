@@ -1,0 +1,30 @@
+<!-- @dsCard group="Components" viewport="700x400" name="Navigation" subtitle="Tool rail, deck list, tabs" -->
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Navigation</title><link rel="stylesheet" href="../../styles.css">
+<style>body{background:var(--surface-app);margin:0;padding:20px;font-family:var(--font-ui)}#root{display:flex;flex-direction:column;gap:14px}.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.lbl{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint)}.col{display:flex;flex-direction:column;gap:8px}</style>
+</head><body><div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script type="text/babel">
+const { Tabs, SidebarItem, RailTile, Icon, Badge } = window.LingoToolboxDesignSystem_898611;
+function Demo(){const [tab,setTab]=React.useState('due');const [range,setRange]=React.useState('Week');const [rail,setRail]=React.useState('home');
+ const TOOLS=[{id:'home',short:'Home',icon:'house'},{id:'review',short:'Cards',icon:'layers'},{id:'etymology',short:'Roots',icon:'git-branch'},{id:'conjugation',short:'Verbs',icon:'spell-check'}];
+ const DECKS=[{name:'Kitchen Spanish',due:'12',accent:'var(--violet-500)'},{name:'At the market',due:'4',accent:'var(--cyan-500)'},{name:'Idioms that lie',due:'',accent:'var(--coral-500)'},{name:'Irregular verbs',due:'26',accent:'var(--pink-500)'}];
+ return (<div style={{display:'grid',gridTemplateColumns:'62px 230px 1fr',gap:18,alignItems:'start'}}>
+  <div style={{display:'flex',flexDirection:'column',gap:10,background:'var(--surface-rail)',padding:'10px 8px',borderRadius:'var(--radius-lg)'}}>
+   {TOOLS.map(t=>(<RailTile key={t.id} label={t.short} icon={<Icon name={t.icon} size={18}/>} size={38} quiet showLabel color="var(--surface-raised)" active={rail===t.id} onClick={()=>setRail(t.id)}/>))}
+  </div>
+  <div style={{background:'var(--surface-sidebar)',padding:8,borderRadius:'var(--radius-lg)',display:'flex',flexDirection:'column',gap:2}}>
+   <span className="lbl" style={{padding:'2px 8px 6px'}}>Decks</span>
+   {DECKS.map((d,i)=>(<SidebarItem key={d.name} label={d.name} meta={d.due} muted={!d.due} active={i===0}
+     icon={<span style={{width:8,height:8,borderRadius:3,background:d.accent,display:'block'}}/>}
+     badge={i===1?<Badge tone="brand">New</Badge>:null}/>))}
+  </div>
+  <div className="col" style={{gap:18}}>
+   <Tabs items={[{value:'due',label:'Due',count:12},{value:'all',label:'All cards',count:420},{value:'new',label:'New'}]} value={tab} onChange={setTab}/>
+   <Tabs variant="pill" items={['Week','Month','All time']} value={range} onChange={setRange}/>
+  </div>
+ </div>);}
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo />);
+</script></body></html>

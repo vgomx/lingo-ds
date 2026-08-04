@@ -1,0 +1,24 @@
+<!-- @dsCard group="Components" viewport="700x250" name="Badges, tags, progress" subtitle="Badge, Tag, ProgressBar, StreakPill, Avatar" -->
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Badges, tags, progress</title><link rel="stylesheet" href="../../styles.css">
+<style>body{background:var(--surface-app);margin:0;padding:20px;font-family:var(--font-ui)}#root{display:flex;flex-direction:column;gap:14px}.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.lbl{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint)}.col{display:flex;flex-direction:column;gap:8px}</style>
+</head><body><div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script type="text/babel">
+const { Badge, Tag, ProgressBar, StreakPill, Avatar, Icon } = window.LingoToolboxDesignSystem_898611;
+function Demo(){return (<>
+ <div className="row"><Badge tone="brand">New</Badge><Badge tone="success" dot>Mastered</Badge><Badge tone="warning">Due soon</Badge><Badge tone="danger">Lapsed</Badge><Badge tone="info">Beta</Badge><Badge>24</Badge></div>
+ <div className="row"><Tag color="var(--tool-etymology)">noun</Tag><Tag color="var(--cyan-500)">food</Tag><Tag color="var(--mint-500)" variant="solid">A2</Tag><Tag color="var(--coral-500)" icon={<Icon name="hash" size={12}/>}>slang</Tag><Tag color="var(--violet-400)" onRemove={()=>{}}>removable</Tag></div>
+ <div className="row" style={{gap:24}}>
+  <div style={{width:250}}><ProgressBar label="Today's session" valueLabel="18 / 40" value={18} max={40}/></div>
+  <div style={{width:220}}><ProgressBar label="Mastery" valueLabel="60%" segments={[{weight:6,color:'var(--success)'},{weight:2,color:'var(--warning)'},{weight:2,color:'var(--surface-raised)'}]}/></div>
+ </div>
+ <div className="row" style={{gap:16}}>
+  <StreakPill days={26}/><StreakPill days={1} size="lg"/><StreakPill days={0} active={false}/>
+  <span style={{width:10}}/>
+  <Avatar name="Mara Okafor" status="online"/><Avatar name="Tomas Ruiz" size="lg" status="idle"/><Avatar flag="ES" size="lg"/><Avatar name="Jun Park" size="sm"/>
+ </div></>);}
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo />);
+</script></body></html>

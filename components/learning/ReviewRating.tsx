@@ -1,0 +1,47 @@
+import * as React from 'react';
+import { Button, type ButtonVariant } from '../actions/Button';
+
+export interface ReviewGrade { key: string; label: string; due?: string; variant?: ButtonVariant; shortcut?: string }
+
+const GRADES: ReviewGrade[] = [
+  { key: 'again', label: 'Again', due: '<1m', variant: 'danger', shortcut: '1' },
+  { key: 'hard', label: 'Hard', due: '6m', variant: 'secondary', shortcut: '2' },
+  { key: 'good', label: 'Good', due: '1d', variant: 'success', shortcut: '3' },
+  { key: 'easy', label: 'Easy', due: '4d', variant: 'primary', shortcut: '4' },
+];
+
+export interface ReviewRatingOwnProps {
+  /** Defaults to Again / Hard / Good / Easy with 1-4 shortcuts. */
+  grades?: ReviewGrade[];
+  onGrade?: (key: string) => void;
+  showDue?: boolean;
+  showShortcuts?: boolean;
+  style?: React.CSSProperties;
+}
+
+export interface ReviewRatingProps
+  extends ReviewRatingOwnProps,
+    Omit<React.ComponentPropsWithoutRef<'div'>, keyof ReviewRatingOwnProps> {}
+
+/** The four-grade spaced-repetition answer row shown once a card is flipped. */
+export function ReviewRating({ grades = GRADES, onGrade, showDue = true, showShortcuts = true, style, ...rest }: ReviewRatingProps) {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(' + grades.length + ',1fr)', gap: 'var(--space-4)', width: '100%', ...style }} {...rest}>
+      {grades.map((g) => (
+        <div key={g.key} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-3)' }}>
+          <Button variant={g.variant} size="lg" block onClick={() => onGrade && onGrade(g.key)}>
+            {g.label}
+            {showShortcuts && (
+              <kbd style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--fs-11)', opacity: 0.7, marginLeft: 2 }}>{g.shortcut}</kbd>
+            )}
+          </Button>
+          {showDue && (
+            <span style={{ fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-11)', fontWeight: 'var(--fw-bold)' as React.CSSProperties['fontWeight'], letterSpacing: 'var(--ls-wide)', color: 'var(--text-faint)' }}>{g.due}</span>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export { GRADES as DEFAULT_GRADES };

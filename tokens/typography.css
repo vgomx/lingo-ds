@@ -1,0 +1,44 @@
+:root{
+  /* Families */
+  --font-display:"Baloo 2","Baloo2",system-ui,sans-serif;      /* wordmark voice: headings, numbers, hero */
+  --font-ui:"Nunito Sans","Nunito",system-ui,-apple-system,"Segoe UI",sans-serif; /* everything else */
+  --font-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;       /* IPA, roots, code */
+
+  /* Weights */
+  --fw-regular:400; /* @kind font */
+  --fw-medium:500; /* @kind font */
+  --fw-semibold:600; /* @kind font */
+  --fw-bold:700; /* @kind font */
+  --fw-black:800; /* @kind font */
+
+  /* Size ramp (px, 4pt-derived) */
+  --fs-10:10px; --fs-11:11px; --fs-12:12px; --fs-13:13px; --fs-14:14px; --fs-15:15px; --fs-16:16px;
+  --fs-18:18px; --fs-20:20px; --fs-24:24px; --fs-28:28px; --fs-32:32px; --fs-40:40px;
+  --fs-48:48px; --fs-56:56px; --fs-72:72px;
+
+  /* Line heights */
+  --lh-tight:1.05; /* @kind font */
+  --lh-snug:1.2; /* @kind font */
+  --lh-normal:1.35; /* @kind font */
+  --lh-relaxed:1.5; /* @kind font */
+  --lh-loose:1.65; /* @kind font */
+
+  /* Tracking */
+  --ls-tight:-0.02em; /* @kind font */
+  --ls-normal:0; /* @kind font */
+  --ls-wide:0.02em; /* @kind font */
+  --ls-caps:0.08em; /* @kind font */
+
+  /* ---------- Semantic type roles ---------- */
+  --type-hero-font:var(--font-display); --type-hero-size:var(--fs-72); --type-hero-weight:var(--fw-black); --type-hero-lh:var(--lh-tight); --type-hero-ls:var(--ls-tight);
+  --type-display-font:var(--font-display); --type-display-size:var(--fs-48); --type-display-weight:var(--fw-black); --type-display-lh:var(--lh-tight);
+  --type-h1-font:var(--font-display); --type-h1-size:var(--fs-32); --type-h1-weight:var(--fw-bold); --type-h1-lh:var(--lh-snug);
+  --type-h2-font:var(--font-display); --type-h2-size:var(--fs-24); --type-h2-weight:var(--fw-bold); --type-h2-lh:var(--lh-snug);
+  --type-h3-font:var(--font-ui); --type-h3-size:var(--fs-18); --type-h3-weight:var(--fw-bold); --type-h3-lh:var(--lh-normal);
+  --type-body-font:var(--font-ui); --type-body-size:var(--fs-16); --type-body-weight:var(--fw-regular); --type-body-lh:var(--lh-relaxed);
+  --type-body-sm-font:var(--font-ui); --type-body-sm-size:var(--fs-14); --type-body-sm-weight:var(--fw-regular); --type-body-sm-lh:var(--lh-relaxed);
+  --type-label-font:var(--font-ui); --type-label-size:var(--fs-14); --type-label-weight:var(--fw-semibold); --type-label-lh:var(--lh-normal);
+  --type-meta-font:var(--font-ui); --type-meta-size:var(--fs-12); --type-meta-weight:var(--fw-semibold); --type-meta-lh:var(--lh-normal);
+  --type-eyebrow-font:var(--font-ui); --type-eyebrow-size:var(--fs-11); --type-eyebrow-weight:var(--fw-black); --type-eyebrow-lh:var(--lh-normal); --type-eyebrow-ls:var(--ls-caps);
+  --type-mono-font:var(--font-mono); --type-mono-size:var(--fs-13); --type-mono-weight:var(--fw-regular); --type-mono-lh:var(--lh-normal);
+}

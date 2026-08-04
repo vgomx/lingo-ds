@@ -1,0 +1,26 @@
+:root{
+  /* 4px base scale */
+  --space-0:0; --space-1:2px; --space-2:4px; --space-3:8px; --space-4:12px;
+  --space-5:16px; --space-6:20px; --space-7:24px; --space-8:32px; --space-9:40px;
+  --space-10:48px; --space-11:64px; --space-12:80px; --space-13:120px;
+
+  /* Fixed product chrome */
+  --rail-width:72px;
+  --sidebar-width:248px;
+  --topbar-height:48px;
+  --panel-width:320px;
+  --content-max:1120px;
+  --page-gutter:var(--space-8);
+
+  /* Component insets */
+  --pad-control-x:16px; --pad-control-y:8px;
+  --pad-card:20px;
+  --pad-dialog:24px;
+  --gap-inline:8px;
+  --gap-stack:12px;
+  --gap-section:32px;
+
+  /* Control heights */
+  --control-h-sm:28px; --control-h-md:36px; --control-h-lg:44px; --control-h-xl:52px;
+  --hit-min:44px;
+}

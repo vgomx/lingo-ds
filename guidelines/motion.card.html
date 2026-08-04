@@ -1,0 +1,10 @@
+<!-- @dsCard group="Motion" viewport="700x170" name="Durations & easing" subtitle="80 → 640ms · standard, out, spring" -->
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Durations & easing</title><link rel="stylesheet" href="../styles.css">
+<style>body{margin:0;padding:20px;background:var(--surface-app);font-family:var(--font-ui);color:var(--text-body)}
+.g{display:flex;gap:10px;flex-wrap:wrap}.sw{border-radius:var(--radius-md);height:64px;flex:1;min-width:60px;display:flex;flex-direction:column;justify-content:flex-end;padding:8px;gap:2px}
+.n{font-size:10px;font-weight:800;letter-spacing:.04em}.v{font-family:var(--font-mono);font-size:9px;opacity:.7}
+.lbl{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint)}
+</style></head><body><style>@keyframes slide{0%,10%{transform:translateX(0)}60%,100%{transform:translateX(180px)}}</style>
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:center;gap:12px"><span class="v" style="width:110px">standard 180ms</span><span style="width:22px;height:22px;border-radius:6px;background:var(--brand);animation:slide 2.4s cubic-bezier(.3,0,.2,1) infinite alternate;display:block"></span></div><div style="display:flex;align-items:center;gap:12px"><span class="v" style="width:110px">out 280ms</span><span style="width:22px;height:22px;border-radius:6px;background:var(--cyan-500);animation:slide 2.4s cubic-bezier(.16,1,.3,1) infinite alternate;display:block"></span></div><div style="display:flex;align-items:center;gap:12px"><span class="v" style="width:110px">spring 420ms</span><span style="width:22px;height:22px;border-radius:6px;background:var(--mint-500);animation:slide 2.4s cubic-bezier(.34,1.56,.64,1) infinite alternate;display:block"></span></div>
+<div class="lbl">fast 120 controls · base 180 surfaces · flip 420 flashcards · celebrate 640</div></div></body></html>

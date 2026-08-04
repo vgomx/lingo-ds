@@ -1,0 +1,18 @@
+/* Minimal element defaults so any page linking styles.css looks on-brand
+   before a single component mounts. No component classes live here. */
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--surface-app);color:var(--text-body);font-family:var(--type-body-font);font-size:var(--type-body-size);font-weight:var(--type-body-weight);line-height:var(--type-body-lh);-webkit-font-smoothing:antialiased;text-wrap:pretty}
+h1,h2,h3,h4{color:var(--text-strong);margin:0 0 var(--space-4);text-wrap:balance}
+h1{font-family:var(--type-h1-font);font-size:var(--type-h1-size);font-weight:var(--type-h1-weight);line-height:var(--type-h1-lh)}
+h2{font-family:var(--type-h2-font);font-size:var(--type-h2-size);font-weight:var(--type-h2-weight);line-height:var(--type-h2-lh)}
+h3{font-family:var(--type-h3-font);font-size:var(--type-h3-size);font-weight:var(--type-h3-weight);line-height:var(--type-h3-lh)}
+p{margin:0 0 var(--space-4)}
+a{color:var(--text-link);text-decoration:none;transition:color var(--dur-fast) var(--ease-standard)}
+a:hover{color:var(--text-strong);text-decoration:underline;text-underline-offset:2px}
+code,kbd,samp{font-family:var(--type-mono-font);font-size:var(--type-mono-size)}
+::selection{background:var(--brand-subtle);color:var(--text-strong)}
+:focus-visible{outline:none;box-shadow:var(--ring-focus)}
+*,*::before,*::after{box-sizing:border-box}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--ink-900);border-radius:var(--radius-pill);border:2px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-track{background:transparent}

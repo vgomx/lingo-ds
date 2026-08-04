@@ -1,0 +1,53 @@
+:root{
+  /* Outer shadows — dark UI keeps them tight and near-black, never soft grey blur. */
+  --shadow-xs:0 1px 0 rgba(0,0,0,.20);
+  --shadow-sm:0 1px 2px rgba(0,0,0,.28);
+  --shadow-md:0 4px 12px rgba(0,0,0,.32);
+  --shadow-lg:0 8px 24px rgba(0,0,0,.40);
+  --shadow-xl:0 16px 48px rgba(0,0,0,.48);
+
+  /* Chunky "toy" bottom edge — the brand's signature press affordance. */
+  --shadow-chunk:0 3px 0 var(--violet-700);
+  --shadow-chunk-neutral:0 3px 0 rgba(0,0,0,.35);
+  --shadow-chunk-pressed:0 1px 0 var(--violet-700);
+
+  /* Glows — used sparingly on streaks, correct answers, active tools. */
+  --glow-brand:0 0 0 4px var(--brand-ring);
+  --glow-success:0 0 24px rgba(46,211,160,.35);
+  --glow-warning:0 0 24px rgba(255,176,32,.30);
+
+  /* Rings */
+  --ring-focus:0 0 0 3px var(--brand-ring);
+  --ring-danger:0 0 0 3px rgba(240,78,94,.40);
+  --ring-inset:inset 0 0 0 1px var(--border);
+
+  /* Blur / glass */
+  --blur-overlay:blur(12px); /* @kind other */
+  --blur-scrim:blur(4px); /* @kind other */
+
+  /* Protection gradient for text over imagery */
+  --scrim-bottom:linear-gradient(to top,rgba(14,14,21,.92) 0%,rgba(14,14,21,.65) 45%,rgba(14,14,21,0) 100%); /* @kind color */
+}
+
+/* Light scope — the same elevation vocabulary, retuned. Near-black shadows read as
+   dirt on paper, so light surfaces use softer ink-tinted shadows and a 1px hairline. */
+[data-theme="light"]{
+  --shadow-xs:0 1px 0 rgba(20,20,28,.06);
+  --shadow-sm:0 1px 2px rgba(20,20,28,.08);
+  --shadow-md:0 4px 12px rgba(20,20,28,.10);
+  --shadow-lg:0 8px 24px rgba(20,20,28,.12);
+  --shadow-xl:0 16px 48px rgba(20,20,28,.16);
+  --shadow-chunk-neutral:0 3px 0 var(--paper-300);
+  --scrim-bottom:linear-gradient(to top,rgba(20,20,28,.85) 0%,rgba(20,20,28,.55) 45%,rgba(20,20,28,0) 100%); /* @kind color */
+}
+
+/* Dark scope — re-declares the defaults so a dark island can sit inside a light page. */
+[data-theme="dark"]{
+  --shadow-xs:0 1px 0 rgba(0,0,0,.20);
+  --shadow-sm:0 1px 2px rgba(0,0,0,.28);
+  --shadow-md:0 4px 12px rgba(0,0,0,.32);
+  --shadow-lg:0 8px 24px rgba(0,0,0,.40);
+  --shadow-xl:0 16px 48px rgba(0,0,0,.48);
+  --shadow-chunk-neutral:0 3px 0 rgba(0,0,0,.35);
+  --scrim-bottom:linear-gradient(to top,rgba(14,14,21,.92) 0%,rgba(14,14,21,.65) 45%,rgba(14,14,21,0) 100%); /* @kind color */
+}

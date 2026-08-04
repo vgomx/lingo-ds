@@ -1,0 +1,8 @@
+/* Lingo Toolbox webfonts.
+   SUBSTITUTIONS — no vendor font binaries were supplied with the brand pack:
+   - Baloo 2 stands in for the heavy rounded wordmark face used in the logo.
+   - Nunito Sans stands in for the product UI face.
+   - JetBrains Mono is the phonetics / code / data face.
+   Replace the @import below with self-hosted @font-face rules once real
+   binaries land in assets/fonts/. */
+@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito+Sans:ital,opsz,wght@0,6..12,400;0,6..12,500;0,6..12,600;0,6..12,700;0,6..12,800;1,6..12,400&family=JetBrains+Mono:wght@400;500;700&display=swap");

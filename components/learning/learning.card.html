@@ -1,0 +1,23 @@
+<!-- @dsCard group="Components" viewport="700x400" name="Learning primitives" subtitle="Flashcard, ReviewRating, EtymologyNode" -->
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Learning primitives</title><link rel="stylesheet" href="../../styles.css">
+<style>body{background:var(--surface-app);margin:0;padding:20px;font-family:var(--font-ui)}#root{display:flex;flex-direction:column;gap:14px}.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.lbl{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint)}.col{display:flex;flex-direction:column;gap:8px}</style>
+</head><body><div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script type="text/babel">
+const { Flashcard, ReviewRating, EtymologyNode, Tag } = window.LingoToolboxDesignSystem_898611;
+function Demo(){return (<div style={{display:'grid',gridTemplateColumns:'1.1fr 1fr',gap:20,alignItems:'start'}}>
+ <div className="col" style={{gap:14}}>
+  <Flashcard language="Spanish" front="sobremesa" phonetic="/so.bɾeˈme.sa/" back="the long talk after a meal" height={210} tags={<><Tag color="var(--cyan-300)">noun</Tag><Tag color="var(--mint-300)">B1</Tag></>}/>
+  <ReviewRating onGrade={()=>{}}/>
+ </div>
+ <div className="col" style={{gap:0,paddingTop:4}}>
+  <EtymologyNode word="sobremesa" language="Spanish" era="c. 1600" gloss="time spent at the table after eating" current/>
+  <EtymologyNode word="sobre + mesa" language="Old Spanish" era="c. 1300" gloss="over + table"/>
+  <EtymologyNode word="super mensam" language="Latin" era="classical" gloss="over the table" connector={false}/>
+ </div>
+</div>);}
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo />);
+</script></body></html>

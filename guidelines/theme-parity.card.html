@@ -1,0 +1,45 @@
+<!-- @dsCard group="Colors" viewport="900x420" name="Dark / light parity" subtitle="The same components under [data-theme] — dark is the product default, light is the same tokens retuned" -->
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Dark / light parity</title><link rel="stylesheet" href="../styles.css">
+<style>body{background:var(--ink-1000);margin:0;padding:20px;font-family:var(--font-ui)}#root{display:grid;grid-template-columns:1fr 1fr;gap:16px}.pane{background:var(--surface-app);border-radius:var(--radius-xl);padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow-lg)}.lbl{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint)}.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.h{font-family:var(--font-display);font-size:var(--fs-18);font-weight:900;color:var(--text-strong);margin:0}.p{font-size:var(--fs-13);color:var(--text-muted);margin:0;line-height:var(--lh-relaxed)}</style>
+</head><body><div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../_ds_bundle.js"></script>
+<script type="text/babel">
+const { Button, Card, Badge, Tag, Input, Switch, ProgressBar, StreakPill, Icon, SidebarItem } = window.LingoToolboxDesignSystem_898611;
+function Pane({ theme }){
+  const [on, setOn] = React.useState(true);
+  return (
+    <div className="pane" data-theme={theme}>
+      <span className="lbl">data-theme="{theme}"</span>
+      <Card padding="14px">
+        <div className="row" style={{justifyContent:'space-between'}}>
+          <h3 className="h">Sobremesa deck</h3>
+          <StreakPill days={26} />
+        </div>
+        <p className="p">18 of 40 cards seen today. Next review in four hours.</p>
+        <ProgressBar value={45} />
+        <div className="row">
+          <Tag color="var(--tool-flashcards)">Flashcards</Tag>
+          <Tag color="var(--tool-etymology)">Etymology</Tag>
+          <Badge tone="success">On track</Badge>
+          <Badge tone="danger">Lapsed</Badge>
+        </div>
+      </Card>
+      <div className="row">
+        <Button size="sm">Study</Button>
+        <Button size="sm" variant="secondary">Edit</Button>
+        <Button size="sm" variant="success">Got it</Button>
+        <Button size="sm" variant="ghost" iconLeft={<Icon name="settings" size={14} />}>Settings</Button>
+      </div>
+      <Input placeholder="Add a word…" />
+      <div className="row" style={{justifyContent:'space-between'}}>
+        <SidebarItem icon={<Icon name="book-open" size={16} />} label="All decks" active />
+        <Switch checked={on} onChange={setOn} />
+      </div>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<><Pane theme="dark" /><Pane theme="light" /></>);
+</script></body></html>

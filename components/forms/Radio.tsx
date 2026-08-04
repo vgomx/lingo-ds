@@ -1,0 +1,45 @@
+import * as React from 'react';
+
+export interface RadioOwnProps {
+  checked?: boolean;
+  label?: React.ReactNode;
+  hint?: string;
+  name?: string;
+  value?: string;
+  disabled?: boolean;
+  onChange?: (value?: string) => void;
+  style?: React.CSSProperties;
+}
+
+export interface RadioProps
+  extends RadioOwnProps,
+    Omit<React.ComponentPropsWithoutRef<'label'>, keyof RadioOwnProps> {}
+
+/** Single choice within a RadioGroup — also usable standalone. */
+export function Radio({ checked = false, label, hint, name, value, disabled = false, onChange, style, ...rest }: RadioProps) {
+  return (
+    <label
+      onClick={() => !disabled && onChange && onChange(value)}
+      style={{
+        display: 'inline-flex', alignItems: hint ? 'flex-start' : 'center', gap: 'var(--space-4)',
+        cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.45 : 1, ...style,
+      }}
+      data-name={name}
+      {...rest}
+    >
+      <span
+        style={{
+          width: 20, height: 20, flex: 'none', borderRadius: 'var(--radius-pill)',
+          display: 'grid', placeItems: 'center', marginTop: hint ? 2 : 0,
+          background: 'var(--surface-input)',
+          boxShadow: checked ? 'inset 0 0 0 6px var(--brand)' : 'inset 0 0 0 1.5px var(--border-strong)',
+          transition: 'var(--transition-control)',
+        }}
+      />
+      <span style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <span style={{ fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-14)', fontWeight: 'var(--fw-semibold)' as React.CSSProperties['fontWeight'], color: 'var(--text-strong)' }}>{label}</span>
+        {hint && <span style={{ fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-12)', color: 'var(--text-faint)' }}>{hint}</span>}
+      </span>
+    </label>
+  );
+}

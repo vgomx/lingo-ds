@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- @template name="Review session" description="Full-bleed flashcard review screen with progress, flip card and SRS grading row." -->
+<helmet>
+<script src="./ds-base.js"></script>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<style>body{margin:0;background:#23232F}</style>
+</helmet>
+<div style="min-height:100vh;background:#23232F;font-family:'Nunito Sans',system-ui,sans-serif;display:flex;flex-direction:column">
+  <header style="height:48px;flex:none;display:flex;align-items:center;gap:12px;padding:0 16px;box-shadow:0 1px 0 rgba(0,0,0,.2)">
+    <img src="../../assets/logo/mark-violet.svg" alt="Lingo Toolbox" style="height:28px">
+    <span style="font-size:15px;font-weight:800;color:#F4F4F8">Flashcards · Kitchen Spanish</span>
+    <span style="flex:1"></span>
+    <span style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#8A8DA3">Spanish · intermediate</span>
+  </header>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:24px;padding:32px 32px 40px">
+    <div style="width:100%;max-width:620px;display:flex;align-items:center;gap:16px">
+      <span style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#8A8DA3;flex:none">Session</span>
+      <span style="flex:1;height:6px;border-radius:999px;background:#14141C;display:block;overflow:hidden"><span style="display:block;width:45%;height:100%;border-radius:999px;background:#6A4CF0"></span></span>
+      <span style="font-family:'Baloo 2',system-ui,sans-serif;font-size:16px;font-weight:800;color:#F4F4F8;flex:none">18/40</span>
+    </div>
+    <div style="width:100%;max-width:620px">
+      <x-import component-from-global-scope="LingoToolboxDesignSystem_898611.Flashcard" language="Spanish" front="sobremesa" phonetic="/so.bɾeˈme.sa/" back="the long talk after a meal" dc-props="{{ cardProps }}" hint-size="100%,280px"></x-import>
+    </div>
+    <div style="width:100%;max-width:620px">
+      <x-import component-from-global-scope="LingoToolboxDesignSystem_898611.ReviewRating" hint-size="100%,78px"></x-import>
+    </div>
+    <div style="display:flex;gap:18px;font-size:12px;font-weight:600;color:#5E6079">
+      <span>Space flip</span><span>1–4 grade</span><span>P audio</span><span>Esc end session</span>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return { cardProps: { height: 280 } };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!-- @dsCard group="Components" viewport="700x210" name="Toast & Tooltip" subtitle="Transient confirmation and hover labels" -->
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Toast & Tooltip</title><link rel="stylesheet" href="../../styles.css">
+<style>body{background:var(--surface-app);margin:0;padding:20px;font-family:var(--font-ui)}#root{display:flex;flex-direction:column;gap:14px}.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.lbl{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint)}.col{display:flex;flex-direction:column;gap:8px}</style>
+</head><body><div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script type="text/babel">
+const { Toast, Tooltip, IconButton, Button, Icon } = window.LingoToolboxDesignSystem_898611;
+function Demo(){return (<div style={{display:'grid',gridTemplateColumns:'auto 1fr',gap:20,alignItems:'start'}}>
+ <div className="col">
+  <Toast tone="success" icon={<Icon name="circle-check" size={18}/>} title="Deck saved" description="12 new cards queued for tomorrow." onClose={()=>{}}/>
+  <Toast tone="danger" icon={<Icon name="circle-x" size={18}/>} title="Couldn't sync" description="We'll retry in the background." action={<Button size="sm" variant="ghost">Retry</Button>}/>
+ </div>
+ <div className="col" style={{gap:26,paddingTop:30,paddingLeft:10}}>
+  <div className="row" style={{gap:26}}>
+   <Tooltip label="Shuffle deck" shortcut="S"><IconButton label="Shuffle" variant="solid"><Icon name="shuffle" size={16}/></IconButton></Tooltip>
+   <Tooltip label="Play audio" shortcut="Space" side="right"><IconButton label="Play" variant="solid"><Icon name="volume-2" size={16}/></IconButton></Tooltip>
+  </div>
+  <span className="lbl">Tooltips appear on hover — hover the buttons above</span>
+ </div>
+</div>);}
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo />);
+</script></body></html>

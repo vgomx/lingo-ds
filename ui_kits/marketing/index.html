@@ -1,0 +1,52 @@
+<!-- @dsCard group="Marketing site" viewport="1280x900" name="Marketing home" subtitle="Light-theme landing page — hero, tools, open source, footer" -->
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="utf-8"><title>Lingo Toolbox — practise the words you nearly know</title>
+<link rel="stylesheet" href="../../styles.css">
+<style>body{background:var(--paper-0)}</style></head>
+<body><div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script type="text/babel" src="MarketingNav.jsx"></script>
+<script type="text/babel" src="MarketingHero.jsx"></script>
+<script type="text/babel" src="MarketingTools.jsx"></script>
+<script type="text/babel" src="MarketingOpenSource.jsx"></script>
+<script type="text/babel" src="MarketingFooter.jsx"></script>
+<script type="text/babel" data-presets="react">
+const { Dialog, Button, Input, Select, Icon, Toast } = window.LingoToolboxDesignSystem_898611;
+
+function Site() {
+  const [signup, setSignup] = React.useState(false);
+  const [toast, setToast] = React.useState(false);
+  const open = () => setSignup(true);
+  return (
+    <div style={{ position: 'relative', minHeight: '100vh' }}>
+      <MarketingNav onCta={open} />
+      <MarketingHero onCta={open} />
+      <MarketingTools />
+      <MarketingOpenSource onCta={open} />
+      <MarketingFooter />
+
+      <Dialog open={signup} title="Create your workspace" description="Free and open source — one workspace per language you practise."
+        onClose={() => setSignup(false)}
+        footer={<><Button variant="ghost" onClick={() => setSignup(false)}>Cancel</Button>
+          <Button onClick={() => { setSignup(false); setToast(true); window.setTimeout(() => setToast(false), 3200); }}>Create account</Button></>}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-5)', paddingBottom: 4 }}>
+          <Input label="Email" type="email" placeholder="you@email.com" />
+          <Select label="I want to practise" options={['Spanish', 'Japanese', 'Turkish', 'French', 'German']} />
+          <Select label="Roughly my level" options={['Just starting (A1)', 'Getting by (A2)', 'Comfortable (B1)', 'Fluent-ish (B2+)']} defaultValue="Getting by (A2)" />
+        </div>
+      </Dialog>
+
+      {toast && (
+        <div style={{ position: 'fixed', bottom: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 60 }}>
+          <Toast tone="success" title="Account created" description="Your first deck is waiting in the app."
+            icon={<Icon name="circle-check" size={18} />} onClose={() => setToast(false)} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<Site />);
+</script></body></html>

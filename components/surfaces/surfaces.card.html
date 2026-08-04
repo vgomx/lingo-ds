@@ -1,0 +1,26 @@
+<!-- @dsCard group="Components" viewport="700x330" name="Card & Dialog" subtitle="Raised container and modal" -->
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Card & Dialog</title><link rel="stylesheet" href="../../styles.css">
+<style>body{background:var(--surface-app);margin:0;padding:20px;font-family:var(--font-ui)}#root{display:flex;flex-direction:column;gap:14px}.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.lbl{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint)}.col{display:flex;flex-direction:column;gap:8px}</style>
+</head><body><div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script type="text/babel">
+const { Card, Dialog, Button, IconButton, Icon, ProgressBar, Tag } = window.LingoToolboxDesignSystem_898611;
+function Demo(){return (
+ <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,alignItems:'start'}}>
+  <div className="col">
+   <Card title="Kitchen Spanish" subtitle="42 cards · 12 due" accent="var(--tool-flashcards)" actions={<IconButton label="More"><Icon name="ellipsis" size={16}/></IconButton>} interactive>
+    <ProgressBar value={30} max={42} valueLabel="30 / 42"/>
+    <div className="row" style={{gap:6}}><Tag color="var(--cyan-500)">food</Tag><Tag color="var(--mint-500)">A2</Tag></div>
+   </Card>
+   <Card title="Selected deck" subtitle="Click state" selected><span style={{fontSize:13,color:'var(--text-muted)'}}>Violet inset ring, no glow.</span></Card>
+  </div>
+  <div style={{position:'relative',height:280,borderRadius:'var(--radius-lg)',overflow:'hidden',background:'var(--surface-sunken)'}}>
+   <Dialog title="Delete this deck?" description="42 cards and their review history go with it." width={330}
+     footer={<><Button variant="ghost">Keep it</Button><Button variant="danger">Delete deck</Button></>} onClose={()=>{}}/>
+  </div>
+ </div>);}
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo />);
+</script></body></html>

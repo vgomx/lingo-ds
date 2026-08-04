@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- @template name="Landing page" description="Light marketing page: sticky nav, split hero with a live flashcard, five-tool grid and closing CTA." -->
+<helmet>
+<script src="./ds-base.js"></script>
+<style>body{margin:0;background:#FFFFFF}</style>
+</helmet>
+<div data-theme="light" style="background:#FFFFFF;font-family:'Nunito Sans',system-ui,sans-serif;color:#3A3A4D">
+  <header style="position:sticky;top:0;z-index:20;background:rgba(255,255,255,.88);backdrop-filter:blur(12px);box-shadow:inset 0 -1px 0 #E5E5EF">
+    <div style="max-width:1120px;margin:0 auto;height:68px;display:flex;align-items:center;gap:32px;padding:0 24px">
+      <img src="../../assets/logo/logo-wordmark-violet.svg" alt="Lingo Toolbox" style="height:34px">
+      <nav style="display:flex;gap:24px;flex:1">
+        <a href="#tools" style="font-size:14px;font-weight:700;color:#3A3A4D;text-decoration:none">Tools</a>
+        <a href="#tools" style="font-size:14px;font-weight:700;color:#3A3A4D;text-decoration:none">How it works</a>
+        <a href="#tools" style="font-size:14px;font-weight:700;color:#3A3A4D;text-decoration:none">Languages</a>
+        <a href="#tools" style="font-size:14px;font-weight:700;color:#3A3A4D;text-decoration:none">Open source</a>
+      </nav>
+      <x-import component-from-global-scope="LingoToolboxDesignSystem_898611.Button" variant="ghost" hint-size="90px,36px">Log in</x-import>
+      <x-import component-from-global-scope="LingoToolboxDesignSystem_898611.Button" pill="{{ true }}" hint-size="120px,36px">Open the app</x-import>
+    </div>
+  </header>
+
+  <section style="max-width:1120px;margin:0 auto;padding:72px 24px 64px;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center">
+    <div>
+      <span style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#5A3BE0">Open source · five tools · 14 languages</span>
+      <h1 style="margin:12px 0 0;font-family:'Baloo 2',system-ui,sans-serif;font-size:72px;font-weight:800;line-height:1.02;letter-spacing:-.02em;color:#14141C">Practise the words you nearly know.</h1>
+      <p style="margin:20px 0 0;font-size:18px;line-height:1.5;color:#63637C;max-width:460px">Lingo Toolbox isn't another course. It's the set of tools you open after the lesson — flashcards that know when to ask, and an etymology explorer that makes a word stick for good.</p>
+      <div style="display:flex;gap:12px;margin-top:32px;flex-wrap:wrap">
+        <x-import component-from-global-scope="LingoToolboxDesignSystem_898611.Button" size="xl" pill="{{ true }}" hint-size="170px,52px">Open the app</x-import>
+        <x-import component-from-global-scope="LingoToolboxDesignSystem_898611.Button" size="xl" pill="{{ true }}" variant="outline" hint-size="230px,52px">See a review session</x-import>
+      </div>
+      <div style="display:flex;gap:32px;margin-top:40px">
+        <div><div style="font-family:'Baloo 2',system-ui,sans-serif;font-size:32px;font-weight:800;color:#14141C;line-height:1">1.2M</div><span style="font-size:13px;color:#8A8DA3">cards reviewed daily</span></div>
+        <div><div style="font-family:'Baloo 2',system-ui,sans-serif;font-size:32px;font-weight:800;color:#14141C;line-height:1">14</div><span style="font-size:13px;color:#8A8DA3">languages</span></div>
+        <div><div style="font-family:'Baloo 2',system-ui,sans-serif;font-size:32px;font-weight:800;color:#14141C;line-height:1">MIT</div><span style="font-size:13px;color:#8A8DA3">licensed, self-hostable</span></div>
+      </div>
+    </div>
+    <div style="background:#6A4CF0;border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <span style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.75)">Kitchen Spanish · 12 due</span>
+        <x-import component-from-global-scope="LingoToolboxDesignSystem_898611.StreakPill" days="{{ 26 }}" hint-size="96px,28px"></x-import>
+      </div>
+      <div data-theme="dark" style="background:#23232F;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:14px">
+        <x-import component-from-global-scope="LingoToolboxDesignSystem_898611.Flashcard" language="Spanish" front="sobremesa" phonetic="/so.bɾeˈme.sa/" back="the long talk after a meal" dc-props="{{ cardProps }}" hint-size="100%,210px"></x-import>
+        <x-import component-from-global-scope="LingoToolboxDesignSystem_898611.ReviewRating" showDue="{{ false }}" hint-size="100%,52px"></x-import>
+      </div>
+    </div>
+  </section>
+
+  <section id="tools" style="background:#F7F7FB;box-shadow:inset 0 1px 0 #E5E5EF,inset 0 -1px 0 #E5E5EF">
+    <div style="max-width:1120px;margin:0 auto;padding:72px 24px">
+      <span style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#8A8DA3">The toolbox</span>
+      <h2 style="margin:10px 0 40px;font-family:'Baloo 2',system-ui,sans-serif;font-size:48px;font-weight:800;line-height:1.05;letter-spacing:-.02em;color:#14141C">Five tools, one workspace.</h2>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+        <sc-for list="{{ tools }}" as="tool" hint-placeholder-count="5">
+          <div style="background:#FFFFFF;border-radius:12px;padding:20px;box-shadow:inset 0 0 0 1px #E5E5EF;display:flex;flex-direction:column;gap:10px">
+            <span style="width:42px;height:42px;border-radius:8px;display:grid;place-items:center;background:#F0F0F6">
+              <x-import component-from-global-scope="LingoToolboxDesignSystem_898611.Icon" name="{{ tool.icon }}" size="{{ 22 }}" hint-size="22px,22px"></x-import>
+            </span>
+            <span style="font-family:'Baloo 2',system-ui,sans-serif;font-size:20px;font-weight:700;color:#14141C">{{ tool.label }}</span>
+            <span style="font-size:14px;line-height:1.5;color:#63637C">{{ tool.copy }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <section style="max-width:1120px;margin:0 auto;padding:72px 24px">
+    <div style="background:#6A4CF0;border-radius:24px;padding:56px 40px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:20px">
+      <img src="../../assets/logo/logo-wordmark-white.svg" alt="Lingo Toolbox" style="height:72px">
+      <p style="margin:0;font-family:'Baloo 2',system-ui,sans-serif;font-size:32px;font-weight:800;color:#fff;line-height:1.1;max-width:520px">Twelve cards a day is enough. Start with one.</p>
+      <x-import component-from-global-scope="LingoToolboxDesignSystem_898611.Button" size="xl" pill="{{ true }}" variant="secondary" hint-size="170px,52px">Open the app</x-import>
+      <span style="font-size:13px;color:rgba(255,255,255,.75)">MIT licensed · 14 languages · self-host any time</span>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      cardProps: { height: 210 },
+      tools: [
+        { icon: 'layers', label: 'Flashcards', copy: 'Spaced repetition that schedules itself around the words you keep dropping.' },
+        { icon: 'git-branch', label: 'Etymology Explorer', copy: 'Follow a word back through every language it passed through.' },
+        { icon: 'spell-check', label: 'Conjugation Drill', copy: 'Forty forms in four minutes, weighted toward the ones you miss.' },
+        { icon: 'message-square-quote', label: 'Phrasebook', copy: 'Save whole phrases where they were said, not just the words.' },
+        { icon: 'scroll-text', label: 'Grammar Notes', copy: 'Short explanations you can pull up mid-review without losing your place.' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

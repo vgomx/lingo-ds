@@ -1,0 +1,179 @@
+:root{
+  /* ---------- Base palette: Violet (primary brand) ---------- */
+  --violet-50:#F1EDFE; --violet-100:#E1DAFD; --violet-200:#C4B5FB; --violet-300:#A48EF7;
+  --violet-400:#8768F4; --violet-500:#6A4CF0; --violet-600:#5A3BE0; --violet-700:#4A2FC2;
+  --violet-800:#3A2499; --violet-900:#241659;
+
+  /* ---------- Base palette: Ink (dark product surfaces) ---------- */
+  --ink-1000:#0E0E15; --ink-900:#14141C; --ink-800:#1B1B26; --ink-700:#23232F;
+  --ink-600:#2C2C3B; --ink-500:#363648; --ink-400:#45455B; --ink-300:#5E6079;
+  --ink-200:#8A8DA3; --ink-100:#B7B9CB; --ink-50:#F4F4F8;
+
+  /* ---------- Base palette: Paper (light surfaces / marketing) ---------- */
+  --paper-0:#FFFFFF; --paper-50:#F7F7FB; --paper-100:#F0F0F6; --paper-200:#E5E5EF; --paper-300:#D3D3E0;
+
+  /* ---------- Base palette: Accents (tool + language coding) ---------- */
+  --mint-300:#7BE7C4; --mint-500:#2ED3A0; --mint-700:#17A87C; --mint-800:#0A6349;
+  --amber-300:#FFD37A; --amber-500:#FFB020; --amber-700:#D18800; --amber-800:#82550A;
+  --coral-300:#FFA398; --coral-500:#FF6B5B; --coral-700:#D64434; --coral-800:#A2301F;
+  --cyan-300:#8ADEF7; --cyan-500:#33C4F0; --cyan-700:#0E93BC; --cyan-800:#0A5F7B;
+  --pink-300:#F8A6DB; --pink-500:#F062C0; --pink-700:#C0328F; --pink-800:#8E1E68;
+  --red-300:#FF9AA4; --red-500:#F04E5E; --red-700:#C42B3A;
+
+  /* ---------- Semantic: text ---------- */
+  --text-strong:var(--ink-50);
+  --text-body:var(--ink-100);
+  --text-muted:var(--ink-200);
+  --text-faint:var(--ink-300);
+  --text-on-brand:#FFFFFF;
+  --text-link:var(--cyan-300);
+  --text-inverse:var(--ink-900);
+
+  /* ---------- Semantic: surfaces (dark = product default) ---------- */
+  --surface-app:var(--ink-700);
+  --surface-rail:var(--ink-1000);
+  --surface-sidebar:var(--ink-800);
+  --surface-card:var(--ink-600);
+  --surface-raised:var(--ink-500);
+  --surface-sunken:var(--ink-900);
+  --surface-input:var(--ink-900);
+  --surface-overlay:rgba(6,6,10,.78);
+  --surface-hover:rgba(255,255,255,.04);
+  --surface-active:rgba(255,255,255,.08);
+  --surface-selected:rgba(106,76,240,.16);
+
+  /* ---------- Semantic: brand ---------- */
+  --brand:var(--violet-500);
+  --brand-hover:var(--violet-600);
+  --brand-active:var(--violet-700);
+  --brand-subtle:rgba(106,76,240,.16);
+  --brand-ring:rgba(106,76,240,.45);
+
+  /* ---------- Semantic: status ---------- */
+  --success:var(--mint-500); --success-subtle:rgba(46,211,160,.14);
+  --warning:var(--amber-500); --warning-subtle:rgba(255,176,32,.14);
+  --danger:var(--red-500); --danger-subtle:rgba(240,78,94,.14);
+  --info:var(--cyan-500); --info-subtle:rgba(51,196,240,.14);
+  --streak:var(--amber-500);
+
+  /* Label colour for text/icons sitting on a *-subtle tint. Pale on ink, deep on paper —
+     components must use these, never a raw --mint-300/--amber-300 step. */
+  --success-text:var(--mint-300);
+  --warning-text:var(--amber-300);
+  --danger-text:var(--red-300);
+  --info-text:var(--cyan-300);
+  --streak-text:var(--amber-300);
+
+  /* Label colour on a SOLID success/danger fill (the fill darkens on paper). */
+  --on-success:var(--ink-900);
+  --on-danger:#FFFFFF;
+
+  /* ---------- Semantic: borders + dividers ---------- */
+  --border-subtle:rgba(255,255,255,.06);
+  --border:rgba(255,255,255,.10);
+  --border-strong:var(--ink-400);
+  --divider:rgba(255,255,255,.06);
+  --focus-ring:var(--violet-300);
+
+  /* ---------- Tool accent map (one hue per Lingo tool) ---------- */
+  --tool-flashcards:var(--violet-500);
+  --tool-etymology:var(--amber-500);
+  --tool-conjugation:var(--cyan-500);
+  --tool-phrasebook:var(--coral-500);
+  --tool-grammar:var(--pink-500);
+}
+
+/* Dark scope — re-declares the defaults so a dark island can sit inside a light page
+   (e.g. a product screenshot embedded in a marketing section). */
+[data-theme="dark"]{
+  --text-strong:var(--ink-50);
+  --text-body:var(--ink-100);
+  --text-muted:var(--ink-200);
+  --text-faint:var(--ink-300);
+  --text-link:var(--cyan-300);
+  --text-inverse:var(--ink-900);
+
+  --surface-app:var(--ink-700);
+  --surface-rail:var(--ink-1000);
+  --surface-sidebar:var(--ink-800);
+  --surface-card:var(--ink-600);
+  --surface-raised:var(--ink-500);
+  --surface-sunken:var(--ink-900);
+  --surface-input:var(--ink-900);
+  --surface-overlay:rgba(6,6,10,.78);
+  --surface-hover:rgba(255,255,255,.04);
+  --surface-active:rgba(255,255,255,.08);
+  --surface-selected:rgba(106,76,240,.16);
+
+  --border-subtle:rgba(255,255,255,.06);
+  --border:rgba(255,255,255,.10);
+  --border-strong:var(--ink-400);
+  --divider:rgba(255,255,255,.06);
+
+  --success-text:var(--mint-300);
+  --warning-text:var(--amber-300);
+  --danger-text:var(--red-300);
+  --info-text:var(--cyan-300);
+  --streak-text:var(--amber-300);
+  --on-success:var(--ink-900);
+  --on-danger:#FFFFFF;
+}
+
+/* Light scope — marketing pages, print, light-mode product shell. */
+[data-theme="light"]{
+  --text-strong:var(--ink-900);
+  --text-body:#3A3A4D;
+  --text-muted:#63637C;
+  --text-faint:#8A8DA3;
+  --text-link:var(--violet-600);
+  --text-inverse:var(--ink-50);
+
+  --surface-app:var(--paper-0);
+  --surface-rail:var(--ink-900);
+  --surface-sidebar:var(--paper-50);
+  --surface-card:var(--paper-0);
+  --surface-raised:var(--paper-50);
+  --surface-sunken:var(--paper-100);
+  --surface-input:var(--paper-0);
+  --surface-overlay:rgba(20,20,28,.55);
+  --surface-hover:rgba(20,20,28,.04);
+  --surface-active:rgba(20,20,28,.07);
+  --surface-selected:rgba(106,76,240,.10);
+
+  --border-subtle:rgba(20,20,28,.06);
+  --border:var(--paper-200);
+  --border-strong:var(--paper-300);
+  --divider:var(--paper-200);
+
+  /* Violet-300 is too pale to read as a focus ring on paper. */
+  --focus-ring:var(--violet-600);
+  --brand-ring:rgba(106,76,240,.35);
+  --brand-subtle:rgba(106,76,240,.10);
+
+  /* Accent + status hues step darker on paper: the 500s are tuned for ink surfaces
+     and drop under 4.5:1 as text or a small fill on white. */
+  --success:var(--mint-800);
+  --warning:var(--amber-800);
+  --danger:var(--red-700);
+  --info:var(--cyan-800);
+  --streak:var(--amber-800);
+
+  --tool-flashcards:var(--violet-600);
+  --tool-etymology:var(--amber-800);
+  --tool-conjugation:var(--cyan-800);
+  --tool-phrasebook:var(--coral-800);
+  --tool-grammar:var(--pink-800);
+
+  --success-subtle:rgba(23,168,124,.12);
+  --warning-subtle:rgba(209,136,0,.14);
+  --danger-subtle:rgba(196,43,58,.10);
+  --info-subtle:rgba(14,147,188,.12);
+
+  --success-text:var(--mint-800);
+  --warning-text:var(--amber-800);
+  --danger-text:var(--red-700);
+  --info-text:var(--cyan-800);
+  --streak-text:var(--amber-800);
+  --on-success:#FFFFFF;
+  --on-danger:#FFFFFF;
+}

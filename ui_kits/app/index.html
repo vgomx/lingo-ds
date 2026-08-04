@@ -1,0 +1,97 @@
+<!-- @dsCard group="App" viewport="1440x900" name="Lingo Toolbox app" subtitle="Dark product shell — home, review, etymology, library, settings" -->
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Lingo Toolbox — app</title>
+<link rel="stylesheet" href="../../styles.css">
+<style>html,body{height:100%;margin:0;overflow:hidden}#root{height:100vh}</style></head>
+<body><div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script type="text/babel" src="AppShell.jsx"></script>
+<script type="text/babel" src="HomeScreen.jsx"></script>
+<script type="text/babel" src="ReviewScreen.jsx"></script>
+<script type="text/babel" src="EtymologyScreen.jsx"></script>
+<script type="text/babel" src="LibraryScreen.jsx"></script>
+<script type="text/babel" src="SettingsScreen.jsx"></script>
+<script type="text/babel" data-presets="react">
+const { Dialog, Toast, Button, Input, Select, Icon, IconButton, Tooltip, Tabs, Badge } = window.LingoToolboxDesignSystem_898611;
+
+const TITLES = {
+  home: ['Home', 'house'],
+  review: ['Flashcards · Kitchen Spanish', 'layers'],
+  etymology: ['Etymology Explorer', 'git-branch'],
+  library: ['Deck library', 'library-big'],
+  settings: ['Settings', 'settings'],
+  conjugation: ['Conjugation Drill', 'spell-check'],
+  phrasebook: ['Phrasebook', 'message-square-quote'],
+  grammar: ['Grammar Notes', 'scroll-text'],
+};
+
+function NotDesigned({ label }) {
+  return (
+    <div style={{ height: '100%', display: 'grid', placeItems: 'center', padding: 40 }}>
+      <div style={{ maxWidth: 420, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
+        <span style={{ color: 'var(--text-faint)' }}><Icon name="panel-left" size={34} /></span>
+        <span style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--fs-24)', fontWeight: 'var(--fw-black)', color: 'var(--text-strong)' }}>{label}</span>
+        <p style={{ margin: 0, fontSize: 'var(--fs-14)', color: 'var(--text-muted)', lineHeight: 'var(--lh-relaxed)' }}>
+          No source design was supplied for this tool, so the kit leaves it blank rather than inventing one. The shell, chrome and chart of tools around it are real.
+        </p>
+        <Badge>Intentionally unbuilt</Badge>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const [tool, setTool] = React.useState('home');
+  const [workspace, setWorkspace] = React.useState('ES');
+  const [dialog, setDialog] = React.useState(false);
+  const [toast, setToast] = React.useState(null);
+
+  const say = (t, d, tone) => { setToast({ title: t, description: d, tone: tone || 'success' }); window.clearTimeout(say._t); say._t = window.setTimeout(() => setToast(null), 3200); };
+
+  const [title, titleIcon] = TITLES[tool] || ['Lingo Toolbox', 'house'];
+
+  const topRight = tool === 'review'
+    ? <Tooltip label="Shuffle deck" shortcut="S"><IconButton label="Shuffle deck"><Icon name="shuffle" size={18} /></IconButton></Tooltip>
+    : tool === 'library'
+      ? <Button size="sm" iconLeft={<Icon name="plus" size={14} />} onClick={() => setDialog(true)}>New deck</Button>
+      : null;
+
+  let screen;
+  if (tool === 'home') screen = <HomeScreen onTool={setTool} onStart={() => setTool('review')} />;
+  else if (tool === 'review') screen = <ReviewScreen onDone={() => { setTool('home'); say('Session ended', '19 cards reviewed · 86% correct'); }} onGraded={(k) => k === 'again' && say('Back in the queue', "You'll see it again in under a minute", 'warning')} />;
+  else if (tool === 'etymology') screen = <EtymologyScreen />;
+  else if (tool === 'library') screen = <LibraryScreen onNewDeck={() => setDialog(true)} onOpen={() => setTool('review')} />;
+  else if (tool === 'settings') screen = <SettingsScreen onSaved={() => say('Settings saved', 'Your daily limit is now 40 cards')} />;
+  else screen = <NotDesigned label={title} />;
+
+  return (
+    <div style={{ height: '100%', position: 'relative' }}>
+      <AppShell workspace={workspace} onWorkspace={(w) => { setWorkspace(w); setTool('home'); }}
+        tool={tool} onTool={setTool} title={title} titleIcon={titleIcon} topRight={topRight}
+        onNewDeck={() => setDialog(true)}>
+        {screen}
+      </AppShell>
+
+      <Dialog open={dialog} title="New deck" description="Decks hold the cards you review together. You can move cards later."
+        onClose={() => setDialog(false)}
+        footer={<><Button variant="ghost" onClick={() => setDialog(false)}>Cancel</Button><Button onClick={() => { setDialog(false); say('Deck created', 'Empty deck added to Spanish'); }}>Create deck</Button></>}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-5)', paddingBottom: 4 }}>
+          <Input label="Deck name" placeholder="e.g. Trains & tickets" />
+          <Select label="Language" options={['Spanish', 'Japanese', 'Turkish']} />
+          <Select label="Level" options={['A1', 'A2', 'B1', 'B2', 'C1']} defaultValue="A2" />
+        </div>
+      </Dialog>
+
+      {toast && (
+        <div style={{ position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)', zIndex: 60 }}>
+          <Toast {...toast} icon={<Icon name={toast.tone === 'warning' ? 'triangle-alert' : 'circle-check'} size={18} />} onClose={() => setToast(null)} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script></body></html>
