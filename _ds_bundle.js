@@ -2167,6 +2167,35 @@ function Dialog({
 Object.assign(__ds_scope, { Dialog });
 })(); } catch (e) { __ds_ns.__errors.push({ path: "components/surfaces/Dialog.jsx", error: String((e && e.message) || e) }); }
 
+// --- exports hoisted above the ui_kits IIFEs: they read these off the namespace at
+// --- definition time, so registering after them left every reference undefined.
+__ds_ns.Button = __ds_scope.Button;
+__ds_ns.IconButton = __ds_scope.IconButton;
+__ds_ns.Logo = __ds_scope.Logo;
+__ds_ns.Avatar = __ds_scope.Avatar;
+__ds_ns.Badge = __ds_scope.Badge;
+__ds_ns.ProgressBar = __ds_scope.ProgressBar;
+__ds_ns.StreakPill = __ds_scope.StreakPill;
+__ds_ns.Tag = __ds_scope.Tag;
+__ds_ns.Toast = __ds_scope.Toast;
+__ds_ns.Tooltip = __ds_scope.Tooltip;
+__ds_ns.Checkbox = __ds_scope.Checkbox;
+__ds_ns.Input = __ds_scope.Input;
+__ds_ns.Radio = __ds_scope.Radio;
+__ds_ns.Select = __ds_scope.Select;
+__ds_ns.Switch = __ds_scope.Switch;
+__ds_ns.Icon = __ds_scope.Icon;
+__ds_ns.ICON_PATHS = __ds_scope.ICON_PATHS;
+__ds_ns.ICON_NAMES = __ds_scope.ICON_NAMES;
+__ds_ns.EtymologyNode = __ds_scope.EtymologyNode;
+__ds_ns.Flashcard = __ds_scope.Flashcard;
+__ds_ns.ReviewRating = __ds_scope.ReviewRating;
+__ds_ns.RailTile = __ds_scope.RailTile;
+__ds_ns.SidebarItem = __ds_scope.SidebarItem;
+__ds_ns.Tabs = __ds_scope.Tabs;
+__ds_ns.Card = __ds_scope.Card;
+__ds_ns.Dialog = __ds_scope.Dialog;
+
 // ui_kits/app/AppShell.jsx
 try { (() => {
 (function () {
@@ -5024,56 +5053,5 @@ try { (() => {
 })();
 })(); } catch (e) { __ds_ns.__errors.push({ path: "ui_kits/marketing/MarketingTools.jsx", error: String((e && e.message) || e) }); }
 
-__ds_ns.Button = __ds_scope.Button;
-
-__ds_ns.IconButton = __ds_scope.IconButton;
-
-__ds_ns.Logo = __ds_scope.Logo;
-
-__ds_ns.Avatar = __ds_scope.Avatar;
-
-__ds_ns.Badge = __ds_scope.Badge;
-
-__ds_ns.ProgressBar = __ds_scope.ProgressBar;
-
-__ds_ns.StreakPill = __ds_scope.StreakPill;
-
-__ds_ns.Tag = __ds_scope.Tag;
-
-__ds_ns.Toast = __ds_scope.Toast;
-
-__ds_ns.Tooltip = __ds_scope.Tooltip;
-
-__ds_ns.Checkbox = __ds_scope.Checkbox;
-
-__ds_ns.Input = __ds_scope.Input;
-
-__ds_ns.Radio = __ds_scope.Radio;
-
-__ds_ns.Select = __ds_scope.Select;
-
-__ds_ns.Switch = __ds_scope.Switch;
-
-__ds_ns.Icon = __ds_scope.Icon;
-
-__ds_ns.ICON_PATHS = __ds_scope.ICON_PATHS;
-
-__ds_ns.ICON_NAMES = __ds_scope.ICON_NAMES;
-
-__ds_ns.EtymologyNode = __ds_scope.EtymologyNode;
-
-__ds_ns.Flashcard = __ds_scope.Flashcard;
-
-__ds_ns.ReviewRating = __ds_scope.ReviewRating;
-
-__ds_ns.RailTile = __ds_scope.RailTile;
-
-__ds_ns.SidebarItem = __ds_scope.SidebarItem;
-
-__ds_ns.Tabs = __ds_scope.Tabs;
-
-__ds_ns.Card = __ds_scope.Card;
-
-__ds_ns.Dialog = __ds_scope.Dialog;
 
 })();
