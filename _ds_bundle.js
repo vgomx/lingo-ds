@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: d9f77a39a30da4c5
+// source-hash: 2fbe9369d4fda83f
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -49,13 +49,13 @@ var LingoToolboxDesignSystem_898611 = (() => {
   var require_react_global = __commonJS({
     "scripts/react-global.cjs"(exports, module) {
       "use strict";
-      var React13 = globalThis.React;
-      if (!React13) {
+      var React14 = globalThis.React;
+      if (!React14) {
         throw new Error(
           "lingo-ds browser bundle: window.React is missing. Load React before this script \u2014 the bundle deliberately does not carry its own copy."
         );
       }
-      module.exports = React13;
+      module.exports = React14;
     }
   });
 
@@ -63,17 +63,17 @@ var LingoToolboxDesignSystem_898611 = (() => {
   var require_react_jsx_runtime_global = __commonJS({
     "scripts/react-jsx-runtime-global.cjs"(exports, module) {
       "use strict";
-      var React13 = globalThis.React;
-      if (!React13) {
+      var React14 = globalThis.React;
+      if (!React14) {
         throw new Error(
           "lingo-ds browser bundle: window.React is missing. Load React before this script \u2014 the bundle deliberately does not carry its own copy."
         );
       }
       function jsx26(type, props, key) {
-        return React13.createElement(type, key === void 0 || key === null ? props : { ...props, key });
+        return React14.createElement(type, key === void 0 || key === null ? props : { ...props, key });
       }
       module.exports = {
-        Fragment: React13.Fragment,
+        Fragment: React14.Fragment,
         jsx: jsx26,
         jsxs: jsx26,
         jsxDEV: jsx26
@@ -85,6 +85,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
   var index_exports = {};
   __export(index_exports, {
     Avatar: () => Avatar,
+    BREAKPOINTS: () => BREAKPOINTS,
     Badge: () => Badge,
     Button: () => Button,
     Card: () => Card,
@@ -119,11 +120,54 @@ var LingoToolboxDesignSystem_898611 = (() => {
     setSoundEnabled: () => setSoundEnabled,
     setSoundVolume: () => setSoundVolume,
     unlockSound: () => unlockSound,
+    useBreakpoint: () => useBreakpoint,
+    useIsMobile: () => useIsMobile,
+    useIsTouch: () => useIsTouch,
     zzfx: () => zzfx
   });
 
   // components/actions/Button.tsx
+  var React2 = __toESM(require_react_global(), 1);
+
+  // hooks/useBreakpoint.ts
   var React = __toESM(require_react_global(), 1);
+  var BREAKPOINTS = { tablet: 768, desktop: 1024 };
+  var query = (bp) => bp === "desktop" ? `(min-width: ${BREAKPOINTS.desktop}px)` : `(min-width: ${BREAKPOINTS.tablet}px)`;
+  function read() {
+    if (typeof window === "undefined" || !window.matchMedia) return "desktop";
+    if (window.matchMedia(query("desktop")).matches) return "desktop";
+    if (window.matchMedia(query("tablet")).matches) return "tablet";
+    return "mobile";
+  }
+  function useBreakpoint() {
+    const [bp, setBp] = React.useState(read);
+    React.useEffect(() => {
+      if (typeof window === "undefined" || !window.matchMedia) return void 0;
+      const lists = [window.matchMedia(query("tablet")), window.matchMedia(query("desktop"))];
+      const onChange = () => setBp(read());
+      lists.forEach((l) => l.addEventListener("change", onChange));
+      onChange();
+      return () => lists.forEach((l) => l.removeEventListener("change", onChange));
+    }, []);
+    return bp;
+  }
+  function useIsMobile() {
+    return useBreakpoint() === "mobile";
+  }
+  function useIsTouch() {
+    const [touch, setTouch] = React.useState(() => typeof window !== "undefined" && !!window.matchMedia ? window.matchMedia("(pointer: coarse)").matches : false);
+    React.useEffect(() => {
+      if (typeof window === "undefined" || !window.matchMedia) return void 0;
+      const list = window.matchMedia("(pointer: coarse)");
+      const onChange = () => setTouch(list.matches);
+      list.addEventListener("change", onChange);
+      onChange();
+      return () => list.removeEventListener("change", onChange);
+    }, []);
+    return touch;
+  }
+
+  // components/actions/Button.tsx
   var import_jsx_runtime = __toESM(require_react_jsx_runtime_global(), 1);
   var SIZES = {
     sm: { height: "var(--control-h-sm)", padding: "0 12px", fontSize: "var(--fs-13)", gap: "6px", icon: 14 },
@@ -176,9 +220,11 @@ var LingoToolboxDesignSystem_898611 = (() => {
     style,
     ...rest
   }) {
-    const [hover, setHover] = React.useState(false);
-    const [press, setPress] = React.useState(false);
+    const [hover, setHover] = React2.useState(false);
+    const [press, setPress] = React2.useState(false);
     const s = SIZES[size] || SIZES.md;
+    const isTouch = useIsTouch();
+    const minHeight = isTouch && (size === "sm" || size === "md") ? "var(--control-h-lg)" : void 0;
     const v = VARIANTS[variant] || VARIANTS.primary;
     const isFlat = variant === "ghost" || variant === "link" || variant === "outline";
     const buttonStyle = {
@@ -188,6 +234,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
       justifyContent: "center",
       gap: s.gap,
       height: s.height,
+      minHeight,
       padding: s.padding,
       border: "none",
       borderRadius: pill ? "var(--radius-pill)" : "var(--radius-button)",
@@ -248,7 +295,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
   }
 
   // components/actions/IconButton.tsx
-  var React2 = __toESM(require_react_global(), 1);
+  var React3 = __toESM(require_react_global(), 1);
   var import_jsx_runtime2 = __toESM(require_react_jsx_runtime_global(), 1);
   var SIZES2 = { sm: 28, md: 36, lg: 44 };
   function IconButton({
@@ -263,9 +310,10 @@ var LingoToolboxDesignSystem_898611 = (() => {
     style,
     ...rest
   }) {
-    const [hover, setHover] = React2.useState(false);
-    const [press, setPress] = React2.useState(false);
-    const px = SIZES2[size] || SIZES2.md;
+    const [hover, setHover] = React3.useState(false);
+    const [press, setPress] = React3.useState(false);
+    const isTouch = useIsTouch();
+    const px = Math.max(SIZES2[size] || SIZES2.md, isTouch ? SIZES2.lg : 0);
     const variants = {
       ghost: { background: active ? "var(--surface-active)" : "transparent", color: active ? "var(--text-strong)" : "var(--text-muted)" },
       solid: { background: "var(--surface-raised)", color: "var(--text-strong)" },
@@ -296,6 +344,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
         style: {
           width: px,
           height: px,
+          flex: "none",
           display: "inline-flex",
           alignItems: "center",
           justifyContent: "center",
@@ -469,7 +518,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
   }
 
   // components/forms/Input.tsx
-  var React3 = __toESM(require_react_global(), 1);
+  var React4 = __toESM(require_react_global(), 1);
   var import_jsx_runtime5 = __toESM(require_react_jsx_runtime_global(), 1);
   var HEIGHTS = {
     sm: "var(--control-h-sm)",
@@ -493,7 +542,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
     style,
     ...rest
   }) {
-    const [focus, setFocus] = React3.useState(false);
+    const [focus, setFocus] = React4.useState(false);
     return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("label", { style: { display: block ? "flex" : "inline-flex", flexDirection: "column", gap: "var(--space-3)", width: block ? "100%" : void 0 }, children: [
       label && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { style: { fontFamily: "var(--font-ui)", fontSize: "var(--fs-12)", fontWeight: "var(--fw-black)", letterSpacing: "var(--ls-caps)", textTransform: "uppercase", color: "var(--text-muted)" }, children: label }),
       /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(
@@ -551,10 +600,10 @@ var LingoToolboxDesignSystem_898611 = (() => {
   }
 
   // components/forms/Select.tsx
-  var React4 = __toESM(require_react_global(), 1);
+  var React5 = __toESM(require_react_global(), 1);
   var import_jsx_runtime6 = __toESM(require_react_jsx_runtime_global(), 1);
   function Select({ value, defaultValue, options = [], label, size = "md", disabled = false, block = true, onChange, style, ...rest }) {
-    const [focus, setFocus] = React4.useState(false);
+    const [focus, setFocus] = React5.useState(false);
     const height = size === "sm" ? "var(--control-h-sm)" : size === "lg" ? "var(--control-h-lg)" : "var(--control-h-md)";
     return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("label", { style: { display: block ? "flex" : "inline-flex", flexDirection: "column", gap: "var(--space-3)", width: block ? "100%" : void 0 }, children: [
       label && /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { style: { fontFamily: "var(--font-ui)", fontSize: "var(--fs-12)", fontWeight: "var(--fw-black)", letterSpacing: "var(--ls-caps)", textTransform: "uppercase", color: "var(--text-muted)" }, children: label }),
@@ -627,10 +676,10 @@ var LingoToolboxDesignSystem_898611 = (() => {
   }
 
   // components/forms/Checkbox.tsx
-  var React5 = __toESM(require_react_global(), 1);
+  var React6 = __toESM(require_react_global(), 1);
   var import_jsx_runtime7 = __toESM(require_react_jsx_runtime_global(), 1);
   function Checkbox({ checked, defaultChecked, label, hint, disabled = false, onChange, style, ...rest }) {
-    const [inner, setInner] = React5.useState(!!defaultChecked);
+    const [inner, setInner] = React6.useState(!!defaultChecked);
     const isOn = checked === void 0 ? inner : checked;
     const toggle = (e) => {
       if (disabled) return;
@@ -743,10 +792,11 @@ var LingoToolboxDesignSystem_898611 = (() => {
   }
 
   // components/forms/Switch.tsx
-  var React6 = __toESM(require_react_global(), 1);
+  var React7 = __toESM(require_react_global(), 1);
   var import_jsx_runtime9 = __toESM(require_react_jsx_runtime_global(), 1);
   function Switch({ checked, defaultChecked, label, hint, size = "md", disabled = false, onChange, style, ...rest }) {
-    const [inner, setInner] = React6.useState(!!defaultChecked);
+    const isTouch = useIsTouch();
+    const [inner, setInner] = React7.useState(!!defaultChecked);
     const isOn = checked === void 0 ? inner : checked;
     const w = size === "sm" ? 34 : 44;
     const h = size === "sm" ? 20 : 26;
@@ -774,6 +824,9 @@ var LingoToolboxDesignSystem_898611 = (() => {
           border: "none",
           background: "transparent",
           textAlign: "left",
+          // A settings row is as touchable as a button; its height comes from the
+          // label and hint, which lands at 41px — just under the 44 floor.
+          minHeight: isTouch ? "var(--control-h-lg)" : void 0,
           font: "inherit",
           borderRadius: "var(--radius-sm)",
           cursor: disabled ? "not-allowed" : "pointer",
@@ -822,7 +875,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
   }
 
   // components/forms/IllustrationPicker.tsx
-  var React7 = __toESM(require_react_global(), 1);
+  var React8 = __toESM(require_react_global(), 1);
   var import_jsx_runtime10 = __toESM(require_react_jsx_runtime_global(), 1);
   function IllustrationPicker({
     items,
@@ -838,11 +891,11 @@ var LingoToolboxDesignSystem_898611 = (() => {
     style,
     ...rest
   }) {
-    const [query, setQuery] = React7.useState("");
-    const [focus, setFocus] = React7.useState(false);
-    const scroller = React7.useRef(null);
-    const q = query.trim().toLowerCase();
-    const matches = React7.useMemo(() => {
+    const [query2, setQuery] = React8.useState("");
+    const [focus, setFocus] = React8.useState(false);
+    const scroller = React8.useRef(null);
+    const q = query2.trim().toLowerCase();
+    const matches = React8.useMemo(() => {
       if (!q) return items;
       const terms = q.split(/\s+/);
       return items.filter((it) => {
@@ -850,7 +903,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
         return terms.every((t) => hay.includes(t));
       });
     }, [items, q]);
-    const sections = React7.useMemo(() => {
+    const sections = React8.useMemo(() => {
       if (!groups?.length) return [{ id: "", label: "", items: matches }];
       const byGroup = /* @__PURE__ */ new Map();
       for (const it of matches) {
@@ -864,7 +917,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
       if (loose.length) out.push({ id: "", label: "Other", items: loose.flatMap(([, v]) => v) });
       return out;
     }, [groups, matches]);
-    React7.useEffect(() => {
+    React8.useEffect(() => {
       if (scroller.current) scroller.current.scrollTop = 0;
     }, [q]);
     const cell = glyphSize + 12;
@@ -892,7 +945,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
               "input",
               {
                 type: "search",
-                value: query,
+                value: query2,
                 placeholder: searchPlaceholder,
                 onChange: (e) => setQuery(e.target.value),
                 onFocus: () => setFocus(true),
@@ -949,7 +1002,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
           },
           children: sections.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { style: { margin: 0, padding: "20px 12px", textAlign: "center", fontFamily: "var(--font-ui)", fontSize: "var(--fs-13)", color: "var(--text-muted)" }, children: [
             "Nothing matches \u201C",
-            query.trim(),
+            query2.trim(),
             "\u201D."
           ] }) : sections.map((section) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("section", { children: [
             section.label && /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
@@ -1025,7 +1078,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
   }
 
   // components/surfaces/Card.tsx
-  var React8 = __toESM(require_react_global(), 1);
+  var React9 = __toESM(require_react_global(), 1);
   var import_jsx_runtime11 = __toESM(require_react_jsx_runtime_global(), 1);
   function Card({
     children,
@@ -1040,7 +1093,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
     style,
     ...rest
   }) {
-    const [hover, setHover] = React8.useState(false);
+    const [hover, setHover] = React9.useState(false);
     return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(
       "div",
       {
@@ -1081,16 +1134,19 @@ var LingoToolboxDesignSystem_898611 = (() => {
   // components/surfaces/Dialog.tsx
   var import_jsx_runtime12 = __toESM(require_react_jsx_runtime_global(), 1);
   function Dialog({ open = true, title, description, children, footer, width = 440, onClose, style, ...rest }) {
+    const isMobile = useIsMobile();
     if (!open) return null;
     return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
       "div",
       {
         style: {
+          // --space-4 on a phone: 32px each side takes a sixth of a 375px screen
+          // away from a dialog that already caps at 100%.
           position: "absolute",
           inset: 0,
           display: "grid",
           placeItems: "center",
-          padding: "var(--space-8)",
+          padding: isMobile ? "var(--space-4)" : "var(--space-8)",
           background: "var(--surface-overlay)",
           backdropFilter: "var(--blur-scrim)",
           zIndex: 40,
@@ -1395,10 +1451,10 @@ var LingoToolboxDesignSystem_898611 = (() => {
   }
 
   // components/navigation/SidebarItem.tsx
-  var React9 = __toESM(require_react_global(), 1);
+  var React10 = __toESM(require_react_global(), 1);
   var import_jsx_runtime19 = __toESM(require_react_jsx_runtime_global(), 1);
   function SidebarItem({ icon, label, meta, active = false, muted = false, badge, onClick, style, ...rest }) {
-    const [hover, setHover] = React9.useState(false);
+    const [hover, setHover] = React10.useState(false);
     return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(
       "button",
       {
@@ -1438,10 +1494,10 @@ var LingoToolboxDesignSystem_898611 = (() => {
   }
 
   // components/navigation/RailTile.tsx
-  var React10 = __toESM(require_react_global(), 1);
+  var React11 = __toESM(require_react_global(), 1);
   var import_jsx_runtime20 = __toESM(require_react_jsx_runtime_global(), 1);
   function RailTile({ label, icon, flag, src, color = "var(--brand)", size = 46, quiet = false, active = false, unread = 0, showLabel = false, onClick, style, ...rest }) {
-    const [hover, setHover] = React10.useState(false);
+    const [hover, setHover] = React11.useState(false);
     const lit = active || hover;
     const isEmoji = flag && !/^[A-Za-z]{1,3}$/.test(flag);
     return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { style: { position: "relative", display: "flex", flexDirection: "column", alignItems: "center", gap: 4, width: "100%", ...style }, ...rest, children: [
@@ -1592,10 +1648,10 @@ var LingoToolboxDesignSystem_898611 = (() => {
   }
 
   // components/feedback/Tooltip.tsx
-  var React11 = __toESM(require_react_global(), 1);
+  var React12 = __toESM(require_react_global(), 1);
   var import_jsx_runtime22 = __toESM(require_react_jsx_runtime_global(), 1);
   function Tooltip({ children, label, side = "top", shortcut, style, ...rest }) {
-    const [open, setOpen] = React11.useState(false);
+    const [open, setOpen] = React12.useState(false);
     const pos = {
       top: { bottom: "100%", left: "50%", transform: "translate(-50%,-8px)" },
       bottom: { top: "100%", left: "50%", transform: "translate(-50%,8px)" },
@@ -1802,7 +1858,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
   }
 
   // components/learning/Flashcard.tsx
-  var React12 = __toESM(require_react_global(), 1);
+  var React13 = __toESM(require_react_global(), 1);
   var import_jsx_runtime23 = __toESM(require_react_jsx_runtime_global(), 1);
   function Flashcard({
     front,
@@ -1822,7 +1878,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
   }) {
     const onFront = !!illustration && illustrationSide !== "back";
     const onBack = !!illustration && illustrationSide !== "front";
-    const [inner, setInner] = React12.useState(defaultFlipped);
+    const [inner, setInner] = React13.useState(defaultFlipped);
     const isFlipped = flipped === void 0 ? inner : flipped;
     const flip = () => {
       if (flipped === void 0) setInner(!isFlipped);
@@ -1898,7 +1954,17 @@ var LingoToolboxDesignSystem_898611 = (() => {
     { key: "easy", label: "Easy", due: "4d", variant: "primary", shortcut: "4" }
   ];
   function ReviewRating({ grades = GRADES, onGrade, showDue = true, showShortcuts = true, style, ...rest }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: { display: "grid", gridTemplateColumns: "repeat(" + grades.length + ",1fr)", gap: "var(--space-4)", width: "100%", ...style }, ...rest, children: grades.map((g) => /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { style: { display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--space-3)" }, children: [
+    const isMobile = useIsMobile();
+    return /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("div", { style: {
+      display: "grid",
+      // minmax(0,1fr), not 1fr: a bare 1fr floors at the content width, so in a
+      // narrow container — the landing page's product island at 283px — the four
+      // buttons refused to shrink and overflowed instead.
+      gridTemplateColumns: isMobile ? "repeat(2,minmax(0,1fr))" : `repeat(${grades.length},minmax(0,1fr))`,
+      gap: "var(--space-4)",
+      width: "100%",
+      ...style
+    }, ...rest, children: grades.map((g) => /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { style: { display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--space-3)" }, children: [
       /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(Button, { variant: g.variant, size: "lg", block: true, onClick: () => onGrade && onGrade(g.key), children: [
         g.label,
         showShortcuts && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("kbd", { style: { fontFamily: "var(--font-mono)", fontSize: "var(--fs-11)", opacity: 0.7, marginLeft: 2 }, children: g.shortcut })

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useIsTouch } from '../../hooks/useBreakpoint';
 
 export type IconButtonSize = 'sm' | 'md' | 'lg';
 export type IconButtonVariant = 'ghost' | 'solid' | 'brand' | 'danger';
@@ -31,7 +32,10 @@ export function IconButton({
 }: IconButtonProps) {
   const [hover, setHover] = React.useState(false);
   const [press, setPress] = React.useState(false);
-  const px = SIZES[size] || SIZES.md;
+  // 44px is the guide's floor for anything touchable, and sm/md sit below it.
+  // The glyph keeps its size; only the box the finger has to hit grows.
+  const isTouch = useIsTouch();
+  const px = Math.max(SIZES[size] || SIZES.md, isTouch ? SIZES.lg : 0);
 
   const variants: Record<IconButtonVariant, React.CSSProperties> = {
     ghost: { background: active ? 'var(--surface-active)' : 'transparent', color: active ? 'var(--text-strong)' : 'var(--text-muted)' },
@@ -58,7 +62,7 @@ export function IconButton({
       onMouseDown={() => setPress(true)}
       onMouseUp={() => setPress(false)}
       style={{
-        width: px, height: px, display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+        width: px, height: px, flex: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
         border: 'none', padding: 0, cursor: disabled ? 'not-allowed' : 'pointer',
         borderRadius: shape === 'circle' ? 'var(--radius-pill)' : 'var(--radius-control)',
         transition: 'var(--transition-control)',

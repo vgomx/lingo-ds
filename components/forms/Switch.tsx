@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useIsTouch } from '../../hooks/useBreakpoint';
 
 export interface SwitchOwnProps {
   checked?: boolean;
@@ -24,6 +25,7 @@ export interface SwitchProps
  * entirely — a settings control that only a mouse could find.
  */
 export function Switch({ checked, defaultChecked, label, hint, size = 'md', disabled = false, onChange, style, ...rest }: SwitchProps) {
+  const isTouch = useIsTouch();
   const [inner, setInner] = React.useState(!!defaultChecked);
   const isOn = checked === undefined ? inner : checked;
   const w = size === 'sm' ? 34 : 44;
@@ -44,6 +46,9 @@ export function Switch({ checked, defaultChecked, label, hint, size = 'md', disa
       style={{
         display: 'flex', alignItems: 'center', gap: 'var(--space-5)', justifyContent: 'space-between',
         width: '100%', padding: 0, border: 'none', background: 'transparent', textAlign: 'left',
+        // A settings row is as touchable as a button; its height comes from the
+        // label and hint, which lands at 41px — just under the 44 floor.
+        minHeight: isTouch ? 'var(--control-h-lg)' : undefined,
         font: 'inherit', borderRadius: 'var(--radius-sm)',
         cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.45 : 1, ...style,
       }}

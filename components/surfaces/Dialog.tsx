@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useIsMobile } from '../../hooks/useBreakpoint';
 import { IconButton } from '../actions/IconButton';
 
 export interface DialogOwnProps {
@@ -19,11 +20,15 @@ export interface DialogProps
 
 /** Centred modal over a blurred scrim. Body scrolls; header and footer stay put. */
 export function Dialog({ open = true, title, description, children, footer, width = 440, onClose, style, ...rest }: DialogProps) {
+  const isMobile = useIsMobile();
   if (!open) return null;
   return (
     <div
       style={{
-        position: 'absolute', inset: 0, display: 'grid', placeItems: 'center', padding: 'var(--space-8)',
+        // --space-4 on a phone: 32px each side takes a sixth of a 375px screen
+        // away from a dialog that already caps at 100%.
+        position: 'absolute', inset: 0, display: 'grid', placeItems: 'center',
+        padding: isMobile ? 'var(--space-4)' : 'var(--space-8)',
         background: 'var(--surface-overlay)', backdropFilter: 'var(--blur-scrim)', zIndex: 40,
         animation: 'lt-fade var(--dur-base) var(--ease-out)',
       }}

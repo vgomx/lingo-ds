@@ -157,6 +157,16 @@ UI sound is **synthesised with ZzFX** (MIT) — no audio files, no network, no `
 - **The context unlocks on the first gesture.** Browsers keep an AudioContext suspended until a real click or keypress, so `unlockSound()` is wired to the first one; a sound played before that is silently swallowed.
 - There is no `prefers-reduced-sound` to honour the way motion has `prefers-reduced-motion`, so the control is an **explicit setting** — which the product surfaces in Settings, defaulting to on.
 
+### Responsive
+
+Two breakpoints — `--bp-tablet` 768px and `--bp-desktop` 1024px — because the system has one layout that changes shape and it changes twice. Everything else is fluid.
+
+- **Layout asks about width, target size asks about pointer.** `useBreakpoint`/`useIsMobile` decide what exists; `useIsTouch` (`pointer: coarse`) decides how big it has to be. Conflating them gets tablets wrong: a 768px iPad needs 44px targets and a 900px laptop window does not.
+- **44px is enforced, not remembered.** `Button`, `IconButton` and `Switch` grow to the floor on a coarse pointer and keep their type and padding, so a `size="sm"` button stays visually small on a desktop and stays hittable on a phone.
+- **A rail that becomes a drawer is a different tree, not a different width.** Hence a hook rather than CSS: `display: none` on a nav that still renders its contents and still traps Tab is not the same thing as not having one. The mobile rail sets `visibility: hidden` when closed for exactly that reason.
+- **`100dvh`, never `100vh`,** for anything full-height. On a phone the URL bar is counted into `vh`, so a `100vh` frame hangs below the visible viewport.
+- **`minmax(0,1fr)`, never a bare `1fr`,** in any grid whose children can be wider than their share. A bare `1fr` floors at the content width and overflows instead of shrinking.
+
 ### Interaction states
 - **Hover** — lighten by one ink step, or 4% white overlay on transparent controls. Brand buttons go to `--brand-hover`. Cards marked `interactive` lift 2px.
 - **Press** — filled buttons drop 1px and their bottom edge shrinks to 1px; flat controls scale to 0.97. No colour change beyond hover.
@@ -216,6 +226,7 @@ Illustration is **OpenMoji** colour SVG (CC BY-SA 4.0) — never bespoke drawing
 | `templates/` | `review-session/` (flashcard review screen) · `landing-page/` (marketing home) — copy-to-start artifacts for consuming projects |
 | `assets/illustrations/openmoji/` | OpenMoji sample set (CC BY-SA 4.0) — illustration source |
 | `sound/` | ZzFX synth (MIT) and the named sound palette |
+| `hooks/` | `useBreakpoint`, `useIsMobile`, `useIsTouch` |
 | `thumbnail.html` | Homepage tile |
 
 ### Components

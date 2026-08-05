@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useIsMobile } from '../../hooks/useBreakpoint';
 import { Button, type ButtonVariant } from '../actions/Button';
 
 export interface ReviewGrade { key: string; label: string; due?: string; variant?: ButtonVariant; shortcut?: string }
@@ -25,8 +26,12 @@ export interface ReviewRatingProps
 
 /** The four-grade spaced-repetition answer row shown once a card is flipped. */
 export function ReviewRating({ grades = GRADES, onGrade, showDue = true, showShortcuts = true, style, ...rest }: ReviewRatingProps) {
+  const isMobile = useIsMobile();
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(' + grades.length + ',1fr)', gap: 'var(--space-4)', width: '100%', ...style }} {...rest}>
+    <div style={{ display: 'grid', // minmax(0,1fr), not 1fr: a bare 1fr floors at the content width, so in a
+      // narrow container — the landing page's product island at 283px — the four
+      // buttons refused to shrink and overflowed instead.
+      gridTemplateColumns: isMobile ? 'repeat(2,minmax(0,1fr))' : `repeat(${grades.length},minmax(0,1fr))`, gap: 'var(--space-4)', width: '100%', ...style }} {...rest}>
       {grades.map((g) => (
         <div key={g.key} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-3)' }}>
           <Button variant={g.variant} size="lg" block onClick={() => onGrade && onGrade(g.key)}>
