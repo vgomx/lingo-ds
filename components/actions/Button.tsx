@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useIsTouch } from '../../hooks/useBreakpoint';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outline' | 'success' | 'danger' | 'link';
 export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';
@@ -71,6 +72,11 @@ export function Button({
   const [hover, setHover] = React.useState(false);
   const [press, setPress] = React.useState(false);
   const s = SIZES[size] || SIZES.md;
+  // "44px is the floor for anything touchable" — the guide's own rule. sm (28)
+  // and md (36) are below it, so on touch the control keeps its type and padding
+  // but grows to meet the floor rather than the layout having to remember.
+  const isTouch = useIsTouch();
+  const minHeight = isTouch && (size === 'sm' || size === 'md') ? 'var(--control-h-lg)' : undefined;
   const v = VARIANTS[variant] || VARIANTS.primary;
   const isFlat = variant === 'ghost' || variant === 'link' || variant === 'outline';
 
@@ -80,7 +86,7 @@ export function Button({
     alignItems: 'center',
     justifyContent: 'center',
     gap: s.gap,
-    height: s.height,
+    height: s.height, minHeight,
     padding: s.padding,
     border: 'none',
     borderRadius: pill ? 'var(--radius-pill)' : 'var(--radius-button)',

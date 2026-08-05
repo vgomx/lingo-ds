@@ -69,7 +69,7 @@ if (added.length || removed.length) {
 /** Reading order: foundations first, then components, then the two full recreations. */
 const GROUP_ORDER = [
   'Brand', 'Colors', 'Type', 'Spacing', 'Elevation', 'Motion',
-  'Illustration', 'Components', 'App', 'Marketing site',
+  'Illustration', 'Sound', 'Components', 'App', 'Marketing site',
 ];
 
 /** Content column in px. Anything wider than this is scaled down to fit. */

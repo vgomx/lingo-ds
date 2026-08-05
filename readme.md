@@ -37,7 +37,7 @@ import { Button, Flashcard, RailTile } from 'lingo-ds';
 
 ### Guards
 
-Three rules in this guide were previously enforced by nothing but attention, and
+Four rules in this guide were previously enforced by nothing but attention, and
 each had been broken in ways that were invisible until measured. They now fail
 the build:
 
@@ -45,6 +45,7 @@ the build:
 | --- | --- |
 | `check:theme` | A token one scope overrides and the other doesn't — which makes a nested dark island silently keep the outer light value |
 | `check:palette` | A component reaching for `--ink-*`/`--paper-*` instead of a semantic token, which pins a surface to one theme while its text follows the other |
+| `check:faint` | `--text-faint` used as a `color:` — it is below the contrast floor as text on every surface in both themes |
 | `check:bundle` | `_ds_bundle.js` being older than the components it was built from |
 
 ### `_ds_bundle.js`
@@ -125,6 +126,7 @@ Dark is the product default; `[data-theme="light"]` is a complete second scope, 
 Two rules keep it that way:
 
 - **Components never reach for a raw palette step** that only reads on one background. Use `--success` / `--warning` / `--danger` / `--info` for the fill and `--success-text` (…`-text`) for a label sitting on a `*-subtle` tint; use `--on-success` / `--on-danger` for a label on a solid one. The `-500` accents and `--tool-*` hues step down to dedicated `-800` values on paper (the `-500`s and even the `-700`s fall under 4.5:1 on white; the `-800`s measure 6.4–8.3:1, and white on them the same).
+- **The text ramp is three steps, not four.** `--text-strong` / `--text-body` / `--text-muted` are the legible ones. `--text-faint` is **not a text colour** — measured against the surfaces it actually sits on it runs 1.93–2.99 in dark and 3.06–3.27 in light, all under the 4.5:1 floor. It survives for non-text only: icon glyphs, dividers, decorative rules, which answer to 3:1 and which it clears. A genuine non-text use marks itself with a `faint-ok:` comment saying why. There is deliberately nothing quieter than `--text-muted` that a reader can still see, so a component wanting a fourth level of de-emphasis reaches for weight, not colour.
 - **Shadows are tokens, not literals.** Near-black shadows read as dirt on paper, so `--shadow-*` is retuned per scope. Never write `0 4px 12px rgba(0,0,0,…)` inline.
 
 ### Type
@@ -144,6 +146,26 @@ Near-black and tight (`0 4px 12px rgba(0,0,0,.32)` at md), reserved for things t
 
 ### Motion
 Fast and mechanical, with one bouncy exception. 120ms for control states, 180ms for surfaces, 280ms for entrances, **420ms `--ease-spring` for the flashcard flip and rail-tile radius change**, 640ms for celebration. Fades are for scrims and tooltips; everything else translates 8–12px or scales. Nothing loops, nothing parallaxes, nothing animates on scroll. `prefers-reduced-motion` zeroes all durations.
+
+### Sound
+
+UI sound is **synthesised with ZzFX** (MIT) — no audio files, no network, no `<audio>` tags. `sound/sounds.ts` is the palette; callers ask for a moment (`playSound('flip')`), never for a waveform, exactly as they ask for `--space-5` rather than 16px.
+
+- **Nothing scolds.** `gradeAgain` is the softest and lowest sound in the set. Forgetting a word is the normal case in spaced repetition — it is what the algorithm is *for* — and a failure noise four times a session teaches people to dread the button.
+- **Celebration is rationed.** Only `sessionComplete` rises, and it is the only sound allowed to outlast the interaction that caused it (580ms against 50–250 for everything else).
+- **Sound answers an interaction, never announces one.** Nothing plays on load, on arrival at a screen, or on a background event.
+- **The context unlocks on the first gesture.** Browsers keep an AudioContext suspended until a real click or keypress, so `unlockSound()` is wired to the first one; a sound played before that is silently swallowed.
+- There is no `prefers-reduced-sound` to honour the way motion has `prefers-reduced-motion`, so the control is an **explicit setting** — which the product surfaces in Settings, defaulting to on.
+
+### Responsive
+
+Two breakpoints — `--bp-tablet` 768px and `--bp-desktop` 1024px — because the system has one layout that changes shape and it changes twice. Everything else is fluid.
+
+- **Layout asks about width, target size asks about pointer.** `useBreakpoint`/`useIsMobile` decide what exists; `useIsTouch` (`pointer: coarse`) decides how big it has to be. Conflating them gets tablets wrong: a 768px iPad needs 44px targets and a 900px laptop window does not.
+- **44px is enforced, not remembered.** `Button`, `IconButton` and `Switch` grow to the floor on a coarse pointer and keep their type and padding, so a `size="sm"` button stays visually small on a desktop and stays hittable on a phone.
+- **A rail that becomes a drawer is a different tree, not a different width.** Hence a hook rather than CSS: `display: none` on a nav that still renders its contents and still traps Tab is not the same thing as not having one. The mobile rail sets `visibility: hidden` when closed for exactly that reason.
+- **`100dvh`, never `100vh`,** for anything full-height. On a phone the URL bar is counted into `vh`, so a `100vh` frame hangs below the visible viewport.
+- **`minmax(0,1fr)`, never a bare `1fr`,** in any grid whose children can be wider than their share. A bare `1fr` floors at the content width and overflows instead of shrinking.
 
 ### Interaction states
 - **Hover** — lighten by one ink step, or 4% white overlay on transparent controls. Brand buttons go to `--brand-hover`. Cards marked `interactive` lift 2px.
@@ -203,6 +225,8 @@ Illustration is **OpenMoji** colour SVG (CC BY-SA 4.0) — never bespoke drawing
 | `ui_kits/marketing/` | Marketing site recreation (light) |
 | `templates/` | `review-session/` (flashcard review screen) · `landing-page/` (marketing home) — copy-to-start artifacts for consuming projects |
 | `assets/illustrations/openmoji/` | OpenMoji sample set (CC BY-SA 4.0) — illustration source |
+| `sound/` | ZzFX synth (MIT) and the named sound palette |
+| `hooks/` | `useBreakpoint`, `useIsMobile`, `useIsTouch` |
 | `thumbnail.html` | Homepage tile |
 
 ### Components

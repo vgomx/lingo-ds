@@ -27,13 +27,14 @@
     "*.css"
   ],
   "scripts": {
-    "build": "npm run check:theme && npm run check:palette && tsup && node scripts/write-ds-bundle.mjs",
+    "build": "npm run check:theme && npm run check:palette && npm run check:faint && tsup && node scripts/write-ds-bundle.mjs",
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit",
     "check:theme": "node scripts/check-theme-parity.mjs",
     "check:palette": "node scripts/check-no-raw-palette.mjs",
     "check:bundle": "node scripts/check-bundle-fresh.mjs",
-    "check": "npm run check:theme && npm run check:palette && npm run check:bundle"
+    "check": "npm run check:theme && npm run check:palette && npm run check:faint && npm run check:bundle",
+    "check:faint": "node scripts/check-faint-not-text.mjs"
   },
   "peerDependencies": {
     "react": ">=18",

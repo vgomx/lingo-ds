@@ -83,7 +83,7 @@ export function Flashcard({
       >
         <div style={{ ...face, opacity: isFlipped ? 0 : 1, background: 'var(--surface-card)', boxShadow: 'var(--ring-inset), var(--shadow-md)' }}>
           {language && (
-            <span style={{ position: 'absolute', top: 20, left: 24, fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-11)', fontWeight: 'var(--fw-black)' as React.CSSProperties['fontWeight'], letterSpacing: 'var(--ls-caps)', textTransform: 'uppercase', color: 'var(--text-faint)' }}>
+            <span style={{ position: 'absolute', top: 20, left: 24, fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-11)', fontWeight: 'var(--fw-black)' as React.CSSProperties['fontWeight'], letterSpacing: 'var(--ls-caps)', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
               {language}
             </span>
           )}
@@ -95,10 +95,14 @@ export function Flashcard({
             <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--fs-16)', color: 'var(--text-muted)' }}>{phonetic}</span>
           )}
           {hint && (
-            <span style={{ position: 'absolute', bottom: 18, fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-12)', fontWeight: 'var(--fw-semibold)' as React.CSSProperties['fontWeight'], color: 'var(--text-faint)' }}>{hint}</span>
+            <span style={{ position: 'absolute', bottom: 18, fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-12)', fontWeight: 'var(--fw-semibold)' as React.CSSProperties['fontWeight'], color: 'var(--text-muted)' }}>{hint}</span>
           )}
         </div>
-        <div style={{ ...face, opacity: isFlipped ? 1 : 0, transform: 'rotateY(180deg)', background: 'var(--violet-800)', boxShadow: 'inset 0 0 0 1.5px var(--violet-600), var(--shadow-md)' }}>
+        {/* The back face is deep violet whatever the page theme, so it is declared
+            a dark island. Without this, a Tag on it took the light scope's
+            darkening and came out at 4.32 against a dark surface — the correction
+            applied backwards. */}
+        <div data-theme="dark" style={{ ...face, opacity: isFlipped ? 1 : 0, transform: 'rotateY(180deg)', background: 'var(--violet-800)', boxShadow: 'inset 0 0 0 1.5px var(--violet-600), var(--shadow-md)' }}>
           {onBack && <span style={{ display: 'grid', lineHeight: 0 }}>{illustration}</span>}
           <span style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--fs-32)', fontWeight: 'var(--fw-black)' as React.CSSProperties['fontWeight'], lineHeight: 1.1, color: '#fff' }}>{back}</span>
           {tags && <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'center' }}>{tags}</div>}

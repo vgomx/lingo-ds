@@ -50,7 +50,7 @@ export function Toast({ title, description, tone = 'success', icon, action, onCl
       </div>
       {action}
       {onClose && (
-        <button type="button" onClick={onClose} aria-label="Dismiss" style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--text-faint)', padding: 0, marginTop: 2 }}>
+        <button type="button" onClick={onClose} aria-label="Dismiss" style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--text-faint)' /* faint-ok: dismiss glyph, not text */, padding: 0, marginTop: 2 }}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><path d="M18 6 6 18M6 6l12 12" /></svg>
         </button>
       )}

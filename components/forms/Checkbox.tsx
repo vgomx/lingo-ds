@@ -13,9 +13,14 @@ export interface CheckboxOwnProps {
 
 export interface CheckboxProps
   extends CheckboxOwnProps,
-    Omit<React.ComponentPropsWithoutRef<'label'>, keyof CheckboxOwnProps> {}
+    Omit<React.ComponentPropsWithoutRef<'button'>, keyof CheckboxOwnProps | 'onChange'> {}
 
-/** Checkbox with a rounded 20px box and a spring-in tick. */
+/**
+ * Checkbox with a rounded 20px box and a spring-in tick.
+ *
+ * A `<button role="checkbox">` rather than a `<label>` with a click handler —
+ * the label form was unreachable by keyboard and invisible to screen readers.
+ */
 export function Checkbox({ checked, defaultChecked, label, hint, disabled = false, onChange, style, ...rest }: CheckboxProps) {
   const [inner, setInner] = React.useState(!!defaultChecked);
   const isOn = checked === undefined ? inner : checked;
@@ -25,10 +30,16 @@ export function Checkbox({ checked, defaultChecked, label, hint, disabled = fals
     onChange && onChange(e, !isOn);
   };
   return (
-    <label
+    <button
+      type="button"
+      role="checkbox"
+      aria-checked={isOn}
+      disabled={disabled}
       onClick={toggle}
       style={{
         display: 'inline-flex', alignItems: hint ? 'flex-start' : 'center', gap: 'var(--space-4)',
+        padding: 0, border: 'none', background: 'transparent', textAlign: 'left', font: 'inherit',
+        borderRadius: 'var(--radius-sm)',
         cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.45 : 1, ...style,
       }}
       {...rest}
@@ -50,8 +61,8 @@ export function Checkbox({ checked, defaultChecked, label, hint, disabled = fals
       </span>
       <span style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <span style={{ fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-14)', fontWeight: 'var(--fw-semibold)' as React.CSSProperties['fontWeight'], color: 'var(--text-strong)' }}>{label}</span>
-        {hint && <span style={{ fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-12)', color: 'var(--text-faint)' }}>{hint}</span>}
+        {hint && <span style={{ fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-12)', color: 'var(--text-muted)' }}>{hint}</span>}
       </span>
-    </label>
+    </button>
   );
 }

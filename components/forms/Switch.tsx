@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useIsTouch } from '../../hooks/useBreakpoint';
 
 export interface SwitchOwnProps {
   checked?: boolean;
@@ -14,10 +15,17 @@ export interface SwitchOwnProps {
 
 export interface SwitchProps
   extends SwitchOwnProps,
-    Omit<React.ComponentPropsWithoutRef<'label'>, keyof SwitchOwnProps> {}
+    Omit<React.ComponentPropsWithoutRef<'button'>, keyof SwitchOwnProps | 'onChange'> {}
 
-/** Pill toggle for settings rows. Track goes mint when on — never violet. */
+/**
+ * Pill toggle for settings rows. Track goes mint when on — never violet.
+ *
+ * A real `<button role="switch">`, not a `<label>` with a click handler. As a
+ * label it was unreachable by keyboard and absent from the accessibility tree
+ * entirely — a settings control that only a mouse could find.
+ */
 export function Switch({ checked, defaultChecked, label, hint, size = 'md', disabled = false, onChange, style, ...rest }: SwitchProps) {
+  const isTouch = useIsTouch();
   const [inner, setInner] = React.useState(!!defaultChecked);
   const isOn = checked === undefined ? inner : checked;
   const w = size === 'sm' ? 34 : 44;
@@ -29,10 +37,19 @@ export function Switch({ checked, defaultChecked, label, hint, size = 'md', disa
     onChange && onChange(!isOn);
   };
   return (
-    <label
+    <button
+      type="button"
+      role="switch"
+      aria-checked={isOn}
+      disabled={disabled}
       onClick={toggle}
       style={{
         display: 'flex', alignItems: 'center', gap: 'var(--space-5)', justifyContent: 'space-between',
+        width: '100%', padding: 0, border: 'none', background: 'transparent', textAlign: 'left',
+        // A settings row is as touchable as a button; its height comes from the
+        // label and hint, which lands at 41px — just under the 44 floor.
+        minHeight: isTouch ? 'var(--control-h-lg)' : undefined,
+        font: 'inherit', borderRadius: 'var(--radius-sm)',
         cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.45 : 1, ...style,
       }}
       {...rest}
@@ -40,7 +57,7 @@ export function Switch({ checked, defaultChecked, label, hint, size = 'md', disa
       {(label || hint) && (
         <span style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           {label && <span style={{ fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-14)', fontWeight: 'var(--fw-semibold)' as React.CSSProperties['fontWeight'], color: 'var(--text-strong)' }}>{label}</span>}
-          {hint && <span style={{ fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-12)', color: 'var(--text-faint)' }}>{hint}</span>}
+          {hint && <span style={{ fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-12)', color: 'var(--text-muted)' }}>{hint}</span>}
         </span>
       )}
       <span
@@ -58,6 +75,6 @@ export function Switch({ checked, defaultChecked, label, hint, size = 'md', disa
           }}
         />
       </span>
-    </label>
+    </button>
   );
 }

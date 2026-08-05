@@ -4,6 +4,14 @@
   --space-5:16px; --space-6:20px; --space-7:24px; --space-8:32px; --space-9:40px;
   --space-10:48px; --space-11:64px; --space-12:80px; --space-13:120px;
 
+  /* Breakpoints. Two, because the app shell changes shape twice: where the deck
+     sidebar stops fitting beside the content, and where the tool rail stops
+     being worth 72px of a phone. Mirrored in hooks/useBreakpoint.ts, which is
+     what actually reads them — a rail that becomes a drawer is a different tree,
+     not a different width. */
+  --bp-tablet:768px;
+  --bp-desktop:1024px;
+
   /* Fixed product chrome */
   --rail-width:72px;
   --sidebar-width:248px;

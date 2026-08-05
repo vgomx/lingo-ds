@@ -53,7 +53,7 @@ export function Tabs({ items = [], value, onChange, variant = 'underline', style
             {item.icon}
             {item.label}
             {item.count !== undefined && (
-              <span style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--fs-12)', fontWeight: 'var(--fw-black)' as React.CSSProperties['fontWeight'], padding: '1px 6px', borderRadius: 'var(--radius-pill)', background: on ? 'var(--brand-subtle)' : 'var(--surface-raised)', color: on ? 'var(--violet-200)' : 'var(--text-faint)' }}>
+              <span style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--fs-12)', fontWeight: 'var(--fw-black)' as React.CSSProperties['fontWeight'], padding: '1px 6px', borderRadius: 'var(--radius-pill)', background: on ? 'var(--brand-subtle)' : 'var(--surface-raised)', color: on ? 'var(--violet-200)' : 'var(--text-muted)' }}>
                 {item.count}
               </span>
             )}

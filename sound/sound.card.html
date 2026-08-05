@@ -1,0 +1,61 @@
+<!-- @dsCard group="Sound" viewport="820x420" name="Sound palette" subtitle="ZzFX-synthesised UI sound — click to audition" -->
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Sound palette</title><link rel="stylesheet" href="../styles.css">
+<style>
+body{background:var(--surface-app);margin:0;padding:22px;font-family:var(--font-ui);color:var(--text-body)}
+h1{font-family:var(--font-display);font-size:var(--fs-20);font-weight:var(--fw-black);color:var(--text-strong);margin:0}
+p.lede{margin:8px 0 0;font-size:var(--fs-13);color:var(--text-muted);line-height:var(--lh-relaxed);max-width:640px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
+.snd{display:flex;flex-direction:column;align-items:flex-start;gap:4px;background:var(--surface-card);border:none;border-radius:var(--radius-lg);box-shadow:var(--ring-inset);padding:12px 14px;cursor:pointer;text-align:left;transition:var(--transition-control)}
+.snd:hover{background:var(--surface-raised)}
+.snd:active{transform:translateY(1px)}
+.snd b{font-family:var(--font-display);font-size:var(--fs-14);font-weight:var(--fw-black);color:var(--text-strong)}
+.snd small{font-size:var(--fs-11);color:var(--text-muted);line-height:var(--lh-normal)}
+.bar{display:flex;align-items:center;gap:14px;margin-top:18px;padding-top:14px;box-shadow:inset 0 1px 0 var(--divider)}
+.bar label{font-size:var(--fs-12);color:var(--text-muted);display:flex;align-items:center;gap:6px}
+.note{margin-top:12px;font-size:var(--fs-11);color:var(--text-muted);font-family:var(--font-mono)}
+</style>
+</head><body><div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../_ds_bundle.js"></script>
+<script type="text/babel">
+const { playSound, SOUND_NAMES, setSoundEnabled, setSoundVolume, unlockSound } = window.LingoToolboxDesignSystem_898611;
+
+const WHEN = {
+  flip: 'Card turns over',
+  gradeAgain: 'Graded Again — softest thing here',
+  gradeHard: 'Graded Hard',
+  gradeGood: 'Graded Good',
+  gradeEasy: 'Graded Easy',
+  sessionComplete: 'Session finished — the only rise',
+  cardAdded: 'Card saved',
+  cardRemoved: 'Card deleted',
+  toggle: 'Panel or switch',
+};
+
+function Demo(){
+  const [on,setOn]=React.useState(true);
+  const [vol,setVol]=React.useState(0.3);
+  const [last,setLast]=React.useState(null);
+  const play=(n)=>{unlockSound();playSound(n);setLast(n);};
+  return (<>
+    <h1>Sound palette</h1>
+    <p className="lede">Synthesised with <b>ZzFX</b> — no audio files, no network. Sounds fire only on a real interaction, and stay under 140ms so a fast reviewer never hears two overlap. Nothing here scolds: <b>gradeAgain</b> is the quietest and lowest, because forgetting is what spaced repetition is for.</p>
+    <div className="grid">
+      {SOUND_NAMES.map(n=>(
+        <button key={n} className="snd" onClick={()=>play(n)}>
+          <b>{n}</b><small>{WHEN[n]}</small>
+        </button>
+      ))}
+    </div>
+    <div className="bar">
+      <label><input type="checkbox" checked={on} onChange={e=>{setOn(e.target.checked);setSoundEnabled(e.target.checked);}}/> Sound on</label>
+      <label>Volume <input type="range" min="0" max="1" step="0.05" value={vol} onChange={e=>{const v=+e.target.value;setVol(v);setSoundVolume(v);}}/> {vol.toFixed(2)}</label>
+      {last && <span style={{fontFamily:'var(--font-mono)',fontSize:'var(--fs-11)',color:'var(--text-muted)'}}>last: {last}</span>}
+    </div>
+    <p className="note">Sound has no prefers-reduced-motion equivalent — the control is an explicit setting, which the product surfaces in Settings.</p>
+  </>);
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo />);
+</script></body></html>
