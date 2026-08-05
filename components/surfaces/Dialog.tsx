@@ -36,7 +36,7 @@ export function Dialog({ open = true, title, description, children, footer, widt
         onClick={(e) => e.stopPropagation()}
         style={{
           width, maxWidth: '100%', maxHeight: '100%', display: 'flex', flexDirection: 'column',
-          background: 'var(--ink-700)', borderRadius: 'var(--radius-dialog)', boxShadow: 'var(--shadow-xl)',
+          background: 'var(--surface-app)', borderRadius: 'var(--radius-dialog)', boxShadow: 'var(--shadow-xl)',
           animation: 'lt-pop var(--dur-slow) var(--ease-spring)', overflow: 'hidden', ...style,
         }}
         {...rest}
@@ -54,7 +54,7 @@ export function Dialog({ open = true, title, description, children, footer, widt
         </div>
         {children && <div style={{ padding: '0 var(--pad-dialog)', overflowY: 'auto' }}>{children}</div>}
         {footer && (
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--gap-inline)', padding: 'var(--pad-dialog)', marginTop: 'var(--space-4)', background: 'var(--ink-800)' }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--gap-inline)', padding: 'var(--pad-dialog)', marginTop: 'var(--space-4)', background: 'var(--surface-sidebar)' }}>
             {footer}
           </div>
         )}

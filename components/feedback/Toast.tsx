@@ -32,7 +32,7 @@ export function Toast({ title, description, tone = 'success', icon, action, onCl
       role="status"
       style={{
         display: 'flex', alignItems: 'flex-start', gap: 'var(--space-4)', width: 340, maxWidth: '100%',
-        padding: '14px', background: 'var(--ink-800)', borderRadius: 'var(--radius-lg)',
+        padding: '14px', background: 'var(--surface-sidebar)', borderRadius: 'var(--radius-lg)',
         boxShadow: 'var(--shadow-lg), var(--ring-inset)',
         animation: 'lt-toast var(--dur-slow) var(--ease-spring)', ...style,
       }}

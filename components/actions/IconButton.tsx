@@ -41,7 +41,7 @@ export function IconButton({
   };
   const hovers: Record<IconButtonVariant, React.CSSProperties> = {
     ghost: { background: 'var(--surface-hover)', color: 'var(--text-strong)' },
-    solid: { background: 'var(--ink-400)' },
+    solid: { background: 'var(--surface-raised-hover)' },
     brand: { background: 'var(--brand-hover)' },
     danger: { background: 'var(--danger-subtle)' },
   };

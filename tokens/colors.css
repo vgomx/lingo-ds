@@ -35,6 +35,7 @@
   --surface-sidebar:var(--ink-800);
   --surface-card:var(--ink-600);
   --surface-raised:var(--ink-500);
+  --surface-raised-hover:var(--ink-400);
   --surface-sunken:var(--ink-900);
   --surface-input:var(--ink-900);
   --surface-overlay:rgba(6,6,10,.78);
@@ -98,6 +99,7 @@
   --surface-sidebar:var(--ink-800);
   --surface-card:var(--ink-600);
   --surface-raised:var(--ink-500);
+  --surface-raised-hover:var(--ink-400);
   --surface-sunken:var(--ink-900);
   --surface-input:var(--ink-900);
   --surface-overlay:rgba(6,6,10,.78);
@@ -157,6 +159,7 @@
   --surface-sidebar:var(--paper-50);
   --surface-card:var(--paper-0);
   --surface-raised:var(--paper-50);
+  --surface-raised-hover:var(--paper-100);
   --surface-sunken:var(--paper-100);
   --surface-input:var(--paper-0);
   --surface-overlay:rgba(20,20,28,.55);

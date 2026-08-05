@@ -59,7 +59,7 @@ const VARIANTS = {
       boxShadow: 'var(--shadow-chunk-neutral)'
     },
     hover: {
-      background: 'var(--ink-400)'
+      background: 'var(--surface-raised-hover)'
     }
   },
   ghost: {
@@ -254,7 +254,7 @@ function IconButton({
       color: 'var(--text-strong)'
     },
     solid: {
-      background: 'var(--ink-400)'
+      background: 'var(--surface-raised-hover)'
     },
     brand: {
       background: 'var(--brand-hover)'
@@ -358,7 +358,7 @@ const SIZES = {
 const RING = {
   online: 'var(--success)',
   idle: 'var(--warning)',
-  offline: 'var(--ink-400)'
+  offline: 'var(--border-strong)'
 };
 
 /** Round member/language avatar. Initials fallback uses a deterministic accent hue. */
@@ -669,7 +669,7 @@ function Toast({
       width: 340,
       maxWidth: '100%',
       padding: '14px',
-      background: 'var(--ink-800)',
+      background: 'var(--surface-sidebar)',
       borderRadius: 'var(--radius-lg)',
       boxShadow: 'var(--shadow-lg), var(--ring-inset)',
       animation: 'lt-toast var(--dur-slow) var(--ease-spring)',
@@ -789,7 +789,7 @@ function Tooltip({
       alignItems: 'center',
       gap: 8,
       padding: '6px 10px',
-      background: 'var(--ink-1000)',
+      background: 'var(--surface-rail)',
       color: 'var(--text-strong)',
       borderRadius: 'var(--radius-sm)',
       boxShadow: 'var(--shadow-md)',
@@ -1207,7 +1207,7 @@ function Switch({
       flex: 'none',
       borderRadius: 'var(--radius-pill)',
       position: 'relative',
-      background: isOn ? 'var(--success)' : 'var(--ink-400)',
+      background: isOn ? 'var(--success)' : 'var(--border-strong)',
       transition: 'background-color var(--dur-base) var(--ease-standard)'
     }
   }, /*#__PURE__*/React.createElement("span", {
@@ -2096,7 +2096,7 @@ function Dialog({
       maxHeight: '100%',
       display: 'flex',
       flexDirection: 'column',
-      background: 'var(--ink-700)',
+      background: 'var(--surface-app)',
       borderRadius: 'var(--radius-dialog)',
       boxShadow: 'var(--shadow-xl)',
       animation: 'lt-pop var(--dur-slow) var(--ease-spring)',
@@ -2160,7 +2160,7 @@ function Dialog({
       gap: 'var(--gap-inline)',
       padding: 'var(--pad-dialog)',
       marginTop: 'var(--space-4)',
-      background: 'var(--ink-800)'
+      background: 'var(--surface-sidebar)'
     }
   }, footer)));
 }

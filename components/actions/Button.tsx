@@ -17,7 +17,7 @@ const VARIANTS: Record<ButtonVariant, { rest: React.CSSProperties; hover: React.
   },
   secondary: {
     rest: { background: 'var(--surface-raised)', color: 'var(--text-strong)', boxShadow: 'var(--shadow-chunk-neutral)' },
-    hover: { background: 'var(--ink-400)' },
+    hover: { background: 'var(--surface-raised-hover)' },
   },
   ghost: {
     rest: { background: 'transparent', color: 'var(--text-body)' },
