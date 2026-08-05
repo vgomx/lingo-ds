@@ -17,10 +17,10 @@ const FILES: Record<LogoVariant, string> = {
   'mark-light': 'mark-light.svg',
   'mark-violet': 'mark-violet.svg',
   // The reduced mark with TOOLBOX beneath it, for square-ish space where the
-  // horizontal wordmark would have to be set too small to read: a splash, a
-  // share card, an about screen. `stack-brand` takes its fill from
-  // currentColor. Do not use below 96px tall — the wordmark's own minimum is
-  // 96px wide, and TOOLBOX here is narrower than that at the same height.
+  // horizontal wordmark would have to be set too small to read: a splash, an
+  // about screen, or the app's own tool rail. `stack-brand` takes its fill from
+  // currentColor. Comfortable from 96px tall; 60px is the floor, below which the
+  // lettering closes up and only the mark still reads. Under that, use mark-*.
   'stack-dark': 'stack-dark.svg',
   'stack-light': 'stack-light.svg',
   'stack-violet': 'stack-violet.svg',
