@@ -17,8 +17,17 @@ import { readPaths, bbox, viewBox, round } from './svg-geom.mjs';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const logo = (name) => join(root, 'assets', 'logo', name);
 
-/** Space between the mark and the plate, as a fraction of the lockup width. */
-const GAP_RATIO = 0.08;
+/** Space between the mark and the lettering, as a fraction of the lockup width. */
+const GAP_RATIO = 0.11;
+
+/**
+ * How wide the lettering sits relative to the lockup.
+ *
+ * Taken from the wordmark, where TOOLBOX fills this share of its plate's width.
+ * Keeping the ratio means the lettering reads at the same optical size here as
+ * it does there, rather than being stretched to the mark's full width.
+ */
+const LETTER_WIDTH_RATIO = 0.915;
 
 /** Colourways, mirroring the existing mark-*.svg set. */
 const VARIANTS = {
@@ -44,8 +53,40 @@ if (plateIndex === 0 && wmPaths.length > 1 && wmBoxes[1].y > plateBox.y) {
   throw new Error('plate detection picked the wrong path');
 }
 
+/**
+ * Only the lettering, not the rounded plate behind it.
+ *
+ * In the wordmark those are one compound path: the plate is the outer shape and
+ * the letters are holes knocked through it. The plate also carries a notch where
+ * the "g" descender of "lingo" cuts into its top edge — which reads as a bite
+ * out of nowhere once it is lifted away from the wordmark that explains it.
+ *
+ * Dropping the plate leaves the letters as solid shapes, and takes the notch
+ * with it. The plate is found by area rather than position: it is an order of
+ * magnitude larger than any glyph, so this holds even if the export reorders.
+ */
+const subpaths = plate.d.split(/(?=M)/).filter((s) => s.trim());
+const withArea = subpaths.map((d) => {
+  const b = bbox(d, plate.matrix);
+  return { d, b, area: b.w * b.h };
+});
+const plateSub = withArea.reduce((a, b) => (b.area > a.area ? b : a));
+const letters = withArea.filter((s) => s !== plateSub);
+
+if (letters.length !== subpaths.length - 1) throw new Error('failed to isolate the plate');
+if (plateSub.area < Math.max(...letters.map((l) => l.area)) * 4) {
+  throw new Error('largest subpath is not clearly the plate — check the source wordmark');
+}
+
+const letterBox = {
+  x: Math.min(...letters.map((l) => l.b.x)),
+  y: Math.min(...letters.map((l) => l.b.y)),
+};
+letterBox.w = Math.max(...letters.map((l) => l.b.x + l.b.w)) - letterBox.x;
+letterBox.h = Math.max(...letters.map((l) => l.b.y + l.b.h)) - letterBox.y;
+
 const m = plate.matrix.map((n) => round(n)).join(',');
-const plateEl = `<path d="${plate.d}" transform="matrix(${m})"/>`;
+const lettersEl = `<path d="${letters.map((l) => l.d.trim()).join('')}" transform="matrix(${m})"/>`;
 
 // ── Compose ─────────────────────────────────────────────────────────
 function build(variantName) {
@@ -56,8 +97,10 @@ function build(variantName) {
 
   const W = mw;
   const gap = round(W * GAP_RATIO);
-  const plateH = round(W * (plateBox.h / plateBox.w));
-  const H = round(mh + gap + plateH);
+  const letterW = round(W * LETTER_WIDTH_RATIO);
+  const letterH = round(letterW * (letterBox.h / letterBox.w));
+  const letterX = round((W - letterW) / 2);
+  const H = round(mh + gap + letterH);
 
   const { fill } = VARIANTS[variantName];
 
@@ -66,8 +109,8 @@ function build(variantName) {
   <svg x="0" y="0" width="${round(W)}" height="${round(mh)}" viewBox="${mx} ${my} ${mw} ${mh}">
 ${markInner}
   </svg>
-  <svg x="0" y="${round(mh + gap)}" width="${round(W)}" height="${plateH}" viewBox="${round(plateBox.x)} ${round(plateBox.y)} ${round(plateBox.w)} ${round(plateBox.h)}">
-    ${plateEl}
+  <svg x="${letterX}" y="${round(mh + gap)}" width="${letterW}" height="${letterH}" viewBox="${round(letterBox.x)} ${round(letterBox.y)} ${round(letterBox.w)} ${round(letterBox.h)}">
+    ${lettersEl}
   </svg>
 </svg>
 `;
