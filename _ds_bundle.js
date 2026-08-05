@@ -1788,7 +1788,7 @@ function RailTile({
       placeItems: 'center',
       overflow: 'hidden',
       borderRadius: lit ? 'var(--radius-lg)' : 'var(--radius-xl)',
-      background: active ? color : hover ? 'var(--surface-card)' : quiet ? 'transparent' : 'var(--surface-card)',
+      backgroundColor: active ? color : hover ? 'var(--surface-card)' : quiet ? 'transparent' : 'var(--surface-card)',
       color: active ? '#fff' : hover ? 'var(--text-strong)' : 'var(--text-muted)',
       boxShadow: active && hover ? '0 0 0 3px color-mix(in oklab, ' + color + ' 28%, transparent)' : 'none',
       fontFamily: isEmoji ? 'inherit' : 'var(--font-display)',

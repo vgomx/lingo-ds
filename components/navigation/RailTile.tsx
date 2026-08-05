@@ -54,7 +54,11 @@ export function RailTile({ label, icon, flag, src, color = 'var(--brand)', size 
           width: size, height: size, border: 'none', cursor: 'pointer', padding: 0,
           display: 'grid', placeItems: 'center', overflow: 'hidden',
           borderRadius: lit ? 'var(--radius-lg)' : 'var(--radius-xl)',
-          background: active ? color : hover ? 'var(--surface-card)' : quiet ? 'transparent' : 'var(--surface-card)',
+          // backgroundColor, not the `background` shorthand: the longhands below
+          // set the tile's image, and a shorthand re-rendering alongside them
+          // resets those (React warns about the mix, and a tile with `src` loses
+          // its image on hover).
+          backgroundColor: active ? color : hover ? 'var(--surface-card)' : quiet ? 'transparent' : 'var(--surface-card)',
           color: active ? '#fff' : hover ? 'var(--text-strong)' : 'var(--text-muted)',
           boxShadow: active && hover ? '0 0 0 3px color-mix(in oklab, ' + color + ' 28%, transparent)' : 'none',
           fontFamily: isEmoji ? 'inherit' : 'var(--font-display)',
