@@ -27,9 +27,10 @@
     "*.css"
   ],
   "scripts": {
-    "build": "tsup",
+    "build": "npm run check:theme && tsup",
     "dev": "tsup --watch",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "check:theme": "node scripts/check-theme-parity.mjs"
   },
   "peerDependencies": {
     "react": ">=18",

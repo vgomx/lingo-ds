@@ -66,7 +66,7 @@
 
   /* Label colour on a SOLID success/danger fill (the fill darkens on paper). */
   --on-success:var(--ink-900);
-  --on-danger:#FFFFFF;
+  --on-danger:var(--ink-900);
 
   /* ---------- Semantic: borders + dividers ---------- */
   --border-subtle:rgba(255,255,255,.06);
@@ -116,7 +116,31 @@
   --info-text:var(--cyan-300);
   --streak-text:var(--amber-300);
   --on-success:var(--ink-900);
-  --on-danger:#FFFFFF;
+  --on-danger:var(--ink-900);
+
+  /* Every token [data-theme="light"] overrides has to be restored here too, or a
+     dark island nested in a light page keeps the light values for whatever this
+     scope forgets. That is not hypothetical: the marketing hero is a dark island,
+     and it was pairing the light --success fill with the dark --on-success label
+     at 2.5:1. Values mirror :root, which is the dark default.
+     scripts/check-theme-parity.mjs fails the build if the two drift again. */
+  --focus-ring:var(--violet-300);
+  --brand-ring:rgba(106,76,240,.45);
+  --brand-subtle:rgba(106,76,240,.16);
+  --success:var(--mint-500);
+  --warning:var(--amber-500);
+  --danger:var(--red-500);
+  --info:var(--cyan-500);
+  --streak:var(--amber-500);
+  --tool-flashcards:var(--violet-500);
+  --tool-etymology:var(--amber-500);
+  --tool-conjugation:var(--cyan-500);
+  --tool-phrasebook:var(--coral-500);
+  --tool-grammar:var(--pink-500);
+  --success-subtle:rgba(46,211,160,.14);
+  --warning-subtle:rgba(255,176,32,.14);
+  --danger-subtle:rgba(240,78,94,.14);
+  --info-subtle:rgba(51,196,240,.14);
 }
 
 /* Light scope — marketing pages, print, light-mode product shell. */

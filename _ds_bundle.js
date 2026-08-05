@@ -96,7 +96,7 @@ const VARIANTS = {
   danger: {
     rest: {
       background: 'var(--danger)',
-      color: '#fff',
+      color: 'var(--on-danger)',
       boxShadow: '0 3px 0 var(--red-700)'
     },
     hover: {
@@ -1827,7 +1827,7 @@ function RailTile({
       placeItems: 'center',
       borderRadius: 'var(--radius-pill)',
       background: 'var(--danger)',
-      color: '#fff',
+      color: 'var(--on-danger)',
       boxShadow: '0 0 0 3px var(--surface-rail)',
       fontFamily: 'var(--font-display)',
       fontSize: 'var(--fs-11)',

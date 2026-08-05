@@ -93,7 +93,7 @@ export function RailTile({ label, icon, flag, src, color = 'var(--brand)', size 
           style={{
             position: 'absolute', right: 4, top: size - 12, minWidth: 18, height: 18, padding: '0 5px',
             display: 'grid', placeItems: 'center', borderRadius: 'var(--radius-pill)',
-            background: 'var(--danger)', color: '#fff', boxShadow: '0 0 0 3px var(--surface-rail)',
+            background: 'var(--danger)', color: 'var(--on-danger)', boxShadow: '0 0 0 3px var(--surface-rail)',
             fontFamily: 'var(--font-display)', fontSize: 'var(--fs-11)', fontWeight: 'var(--fw-black)' as React.CSSProperties['fontWeight'],
           }}
         >
