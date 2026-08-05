@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: c95c1f066dd05b1b
+// source-hash: 19d50f0999e6dcfd
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -1197,7 +1197,8 @@ var LingoToolboxDesignSystem_898611 = (() => {
           style: {
             position: "absolute",
             left: 0,
-            top: size * 0.26,
+            top: size / 2,
+            transform: "translateY(-50%)",
             width: 4,
             height: active ? size * 0.48 : 0,
             borderRadius: "0 4px 4px 0",

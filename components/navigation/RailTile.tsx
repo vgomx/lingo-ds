@@ -39,11 +39,16 @@ export function RailTile({ label, icon, flag, src, color = 'var(--brand)', size 
       {/* The active pip is sized against the glyph inside the tile rather than the
           tile itself — at 0.48 it comes out level with an 18px icon in the default
           38px tile, so the two read as one mark. Spanning most of the tile height,
-          as it used to, made it the loudest thing in the rail. Centred, so it stays
-          level whatever `size` is set to. */}
+          as it used to, made it the loudest thing in the rail.
+          Anchored by its centre rather than its top edge: `height` is what animates,
+          so pinning `top` grew the pip downward from a fixed top and left it riding
+          high above the icon for the whole transition — visible on every navigation.
+          translateY(-50%) keeps the midpoint fixed, so it opens symmetrically and is
+          level with the icon at every frame, whatever `size` is set to. */}
       <span
         style={{
-          position: 'absolute', left: 0, top: size * 0.26, width: 4, height: active ? size * 0.48 : 0,
+          position: 'absolute', left: 0, top: size / 2, transform: 'translateY(-50%)',
+          width: 4, height: active ? size * 0.48 : 0,
           borderRadius: '0 4px 4px 0', background: 'var(--text-strong)',
           transition: 'height var(--dur-base) var(--ease-spring)',
         }}
