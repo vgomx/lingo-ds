@@ -147,6 +147,16 @@ Near-black and tight (`0 4px 12px rgba(0,0,0,.32)` at md), reserved for things t
 ### Motion
 Fast and mechanical, with one bouncy exception. 120ms for control states, 180ms for surfaces, 280ms for entrances, **420ms `--ease-spring` for the flashcard flip and rail-tile radius change**, 640ms for celebration. Fades are for scrims and tooltips; everything else translates 8–12px or scales. Nothing loops, nothing parallaxes, nothing animates on scroll. `prefers-reduced-motion` zeroes all durations.
 
+### Sound
+
+UI sound is **synthesised with ZzFX** (MIT) — no audio files, no network, no `<audio>` tags. `sound/sounds.ts` is the palette; callers ask for a moment (`playSound('flip')`), never for a waveform, exactly as they ask for `--space-5` rather than 16px.
+
+- **Nothing scolds.** `gradeAgain` is the softest and lowest sound in the set. Forgetting a word is the normal case in spaced repetition — it is what the algorithm is *for* — and a failure noise four times a session teaches people to dread the button.
+- **Celebration is rationed.** Only `sessionComplete` rises, and it is the only sound allowed to outlast the interaction that caused it (580ms against 50–250 for everything else).
+- **Sound answers an interaction, never announces one.** Nothing plays on load, on arrival at a screen, or on a background event.
+- **The context unlocks on the first gesture.** Browsers keep an AudioContext suspended until a real click or keypress, so `unlockSound()` is wired to the first one; a sound played before that is silently swallowed.
+- There is no `prefers-reduced-sound` to honour the way motion has `prefers-reduced-motion`, so the control is an **explicit setting** — which the product surfaces in Settings, defaulting to on.
+
 ### Interaction states
 - **Hover** — lighten by one ink step, or 4% white overlay on transparent controls. Brand buttons go to `--brand-hover`. Cards marked `interactive` lift 2px.
 - **Press** — filled buttons drop 1px and their bottom edge shrinks to 1px; flat controls scale to 0.97. No colour change beyond hover.
@@ -205,6 +215,7 @@ Illustration is **OpenMoji** colour SVG (CC BY-SA 4.0) — never bespoke drawing
 | `ui_kits/marketing/` | Marketing site recreation (light) |
 | `templates/` | `review-session/` (flashcard review screen) · `landing-page/` (marketing home) — copy-to-start artifacts for consuming projects |
 | `assets/illustrations/openmoji/` | OpenMoji sample set (CC BY-SA 4.0) — illustration source |
+| `sound/` | ZzFX synth (MIT) and the named sound palette |
 | `thumbnail.html` | Homepage tile |
 
 ### Components

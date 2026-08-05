@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: 693a921efd87b004
+// source-hash: ac112a18a80dff41
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -104,6 +104,8 @@ var LingoToolboxDesignSystem_898611 = (() => {
     Radio: () => Radio,
     RailTile: () => RailTile,
     ReviewRating: () => ReviewRating,
+    SOUNDS: () => SOUNDS,
+    SOUND_NAMES: () => SOUND_NAMES,
     Select: () => Select,
     SidebarItem: () => SidebarItem,
     StreakPill: () => StreakPill,
@@ -111,7 +113,13 @@ var LingoToolboxDesignSystem_898611 = (() => {
     Tabs: () => Tabs,
     Tag: () => Tag,
     Toast: () => Toast,
-    Tooltip: () => Tooltip
+    Tooltip: () => Tooltip,
+    isSoundEnabled: () => isSoundEnabled,
+    playSound: () => playSound,
+    setSoundEnabled: () => setSoundEnabled,
+    setSoundVolume: () => setSoundVolume,
+    unlockSound: () => unlockSound,
+    zzfx: () => zzfx
   });
 
   // components/actions/Button.tsx
@@ -1606,6 +1614,160 @@ var LingoToolboxDesignSystem_898611 = (() => {
         ]
       }
     );
+  }
+
+  // sound/zzfx.ts
+  var ctx = null;
+  var master = null;
+  var enabled = true;
+  var volume = 0.3;
+  function audio() {
+    if (ctx) return ctx;
+    if (typeof window === "undefined") return null;
+    const Ctx = window.AudioContext ?? window.webkitAudioContext;
+    if (!Ctx) return null;
+    ctx = new Ctx();
+    master = ctx.createGain();
+    master.gain.value = volume;
+    master.connect(ctx.destination);
+    return ctx;
+  }
+  function setSoundEnabled(next) {
+    enabled = next;
+  }
+  function isSoundEnabled() {
+    return enabled;
+  }
+  function setSoundVolume(next) {
+    volume = Math.max(0, Math.min(1, next));
+    if (master) master.gain.value = volume;
+  }
+  function unlockSound() {
+    const c = audio();
+    if (c && c.state === "suspended") void c.resume();
+  }
+  function zzfx(...params) {
+    if (!enabled) return null;
+    const c = audio();
+    if (!c || !master) return null;
+    if (c.state === "suspended") void c.resume();
+    const [
+      pVolume = 1,
+      randomness = 0.05,
+      pFrequency = 220,
+      pAttack = 0,
+      pSustain = 0,
+      pRelease = 0.1,
+      shape = 0,
+      shapeCurve = 1,
+      pSlide = 0,
+      pDeltaSlide = 0,
+      pPitchJump = 0,
+      pPitchJumpTime = 0,
+      pRepeatTime = 0,
+      noise = 0,
+      pModulation = 0,
+      bitCrush = 0,
+      pDelay = 0,
+      sustainVolume = 1,
+      pDecay = 0,
+      tremolo = 0,
+      filter = 0
+    ] = params;
+    const sampleRate = 44100;
+    const PI2 = Math.PI * 2;
+    const abs = Math.abs;
+    const sign = (v) => v < 0 ? -1 : 1;
+    let slide = pSlide * 500 * PI2 / sampleRate / sampleRate;
+    const startSlide = slide;
+    let frequency = pFrequency * (1 + randomness * 2 * Math.random() - randomness) * PI2 / sampleRate;
+    let startFrequency = frequency;
+    let modOffset = 0;
+    let repeat = 0;
+    let crush = 0;
+    let jump = 1;
+    const b = [];
+    let t = 0;
+    let i = 0;
+    let s = 0;
+    let f;
+    const quality = 2;
+    const w = PI2 * abs(filter) * 2 / sampleRate;
+    const cos = Math.cos(w);
+    const alpha = Math.sin(w) / 2 / quality;
+    const a0 = 1 + alpha;
+    const a1 = -2 * cos / a0;
+    const a2 = (1 - alpha) / a0;
+    const b0 = (1 + sign(filter) * cos) / 2 / a0;
+    const b1 = -(sign(filter) + cos) / a0;
+    const b2 = b0;
+    let x2 = 0;
+    let x1 = 0;
+    let y2 = 0;
+    let y1 = 0;
+    const minAttack = 9;
+    const attack = pAttack * sampleRate || minAttack;
+    const decay = pDecay * sampleRate;
+    const sustain = pSustain * sampleRate;
+    const release = pRelease * sampleRate;
+    const delay = pDelay * sampleRate;
+    const deltaSlide = pDeltaSlide * 500 * PI2 / sampleRate ** 3;
+    const modulation = pModulation * PI2 / sampleRate;
+    const pitchJump = pPitchJump * PI2 / sampleRate;
+    const pitchJumpTime = pPitchJumpTime * sampleRate;
+    const repeatTime = pRepeatTime * sampleRate | 0;
+    const vol = pVolume;
+    const length = attack + decay + sustain + release + delay | 0;
+    for (; i < length; b[i++] = s * vol) {
+      if (!(++crush % (bitCrush * 100 | 0))) {
+        s = shape ? shape > 1 ? shape > 2 ? shape > 3 ? shape > 4 ? (t / PI2 % 1 < shapeCurve / 2) * 2 - 1 : Math.sin(t ** 3) : Math.max(Math.min(Math.tan(t), 1), -1) : 1 - (2 * t / PI2 % 2 + 2) % 2 : 1 - 4 * abs(Math.round(t / PI2) - t / PI2) : Math.sin(t);
+        s = (repeatTime ? 1 - tremolo + tremolo * Math.sin(PI2 * i / repeatTime) : 1) * (shape > 4 ? s : sign(s) * abs(s) ** shapeCurve) * (i < attack ? i / attack : i < attack + decay ? 1 - (i - attack) / decay * (1 - sustainVolume) : i < attack + decay + sustain ? sustainVolume : i < length - delay ? (length - i - delay) / release * sustainVolume : 0);
+        s = delay ? s / 2 + (delay > i ? 0 : (i < length - delay ? 1 : (length - i) / delay) * b[i - delay | 0] / 2 / vol) : s;
+        if (filter) s = y1 = b2 * x2 + b1 * (x2 = x1) + b0 * (x1 = s) - a2 * y2 - a1 * (y2 = y1);
+      }
+      f = (frequency += slide += deltaSlide) * Math.cos(modulation * modOffset++);
+      t += f + f * noise * Math.sin(i ** 5);
+      if (jump && ++jump > pitchJumpTime) {
+        frequency += pitchJump;
+        startFrequency += pitchJump;
+        jump = 0;
+      }
+      if (repeatTime && !(++repeat % repeatTime)) {
+        frequency = startFrequency;
+        slide = startSlide;
+        jump || (jump = 1);
+      }
+    }
+    const buffer = c.createBuffer(1, b.length, sampleRate);
+    buffer.getChannelData(0).set(b);
+    const source = c.createBufferSource();
+    source.buffer = buffer;
+    source.connect(master);
+    source.start();
+    return source;
+  }
+
+  // sound/sounds.ts
+  var SOUNDS = {
+    /** The card turning over. Papery and dry, no pitch — it is a movement, not an event. */
+    flip: [0.6, 0.08, 420, 0.01, 0.02, 0.08, 4, 2.2, -18, 0, 0, 0, 0, 1.2, 0, 0, 0, 0.5, 0.03],
+    /** Grades, low to high. The interval carries the meaning; only `easy` sparkles. */
+    gradeAgain: [0.5, 0.05, 220, 0.01, 0.05, 0.14, 0, 1, -3, 0, 0, 0, 0, 0, 0, 0, 0, 0.7, 0.05],
+    gradeHard: [0.5, 0.05, 300, 0.01, 0.05, 0.12, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.7, 0.04],
+    gradeGood: [0.5, 0.05, 440, 0.01, 0.04, 0.12, 1, 1.4, 0, 0, 180, 0.04, 0, 0, 0, 0, 0, 0.8, 0.03],
+    gradeEasy: [0.5, 0.05, 587, 0.01, 0.04, 0.14, 1, 1.5, 0, 0, 300, 0.05, 0, 0, 0, 0, 0, 0.8, 0.03],
+    /** The one celebration. Longer than everything else because it happens once. */
+    sessionComplete: [0.6, 0.05, 523, 0.02, 0.12, 0.3, 1, 1.6, 0, 0, 262, 0.08, 0.1, 0, 0, 0, 0.08, 0.7, 0.06],
+    /** Card written and card gone — the same gesture, up and down. */
+    cardAdded: [0.4, 0.05, 800, 0.01, 0.02, 0.06, 1, 1.2, 0, 0, 220, 0.02],
+    cardRemoved: [0.4, 0.05, 520, 0.01, 0.02, 0.07, 1, 1.2, -12],
+    /** Generic chrome: a panel opening, a switch. Quietest thing in the set. */
+    toggle: [0.35, 0.02, 700, 0, 0.01, 0.03, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.6, 0.01]
+  };
+  var SOUND_NAMES = Object.keys(SOUNDS);
+  function playSound(name) {
+    const params = SOUNDS[name];
+    if (params) zzfx(...params);
   }
 
   // components/learning/Flashcard.tsx

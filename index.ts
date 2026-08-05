@@ -53,6 +53,11 @@ export type { ToastProps, ToastOwnProps, ToastTone } from './components/feedback
 export { Tooltip } from './components/feedback/Tooltip';
 export type { TooltipProps, TooltipOwnProps, TooltipSide } from './components/feedback/Tooltip';
 
+export { playSound, SOUNDS, SOUND_NAMES } from './sound/sounds';
+export type { SoundName } from './sound/sounds';
+export { setSoundEnabled, isSoundEnabled, setSoundVolume, unlockSound, zzfx } from './sound/zzfx';
+export type { ZzfxParams } from './sound/zzfx';
+
 export { Flashcard } from './components/learning/Flashcard';
 export type {
   FlashcardProps, FlashcardOwnProps, FlashcardIllustrationSide,
