@@ -30,9 +30,38 @@ import { Button, Flashcard, RailTile } from 'lingo-ds';
 
 | Script | Does |
 | --- | --- |
-| `npm run build` | Bundles `index.ts` to ESM + CJS + `.d.ts` via tsup |
-| `npm run dev` | Same, in watch mode |
+| `npm run build` | Runs the checks, bundles `index.ts` to ESM + CJS + `.d.ts` via tsup, and regenerates `_ds_bundle.js` |
+| `npm run dev` | tsup in watch mode |
 | `npm run typecheck` | `tsc --noEmit` over `index.ts` and `components/` |
+| `npm run check` | All three guards below, without building |
+
+### Guards
+
+Three rules in this guide were previously enforced by nothing but attention, and
+each had been broken in ways that were invisible until measured. They now fail
+the build:
+
+| Script | Catches |
+| --- | --- |
+| `check:theme` | A token one scope overrides and the other doesn't — which makes a nested dark island silently keep the outer light value |
+| `check:palette` | A component reaching for `--ink-*`/`--paper-*` instead of a semantic token, which pins a surface to one theme while its text follows the other |
+| `check:bundle` | `_ds_bundle.js` being older than the components it was built from |
+
+### `_ds_bundle.js`
+
+The browser bundle the specimen cards and UI kits run on. It is **generated from
+`index.ts`** by `npm run build` — do not edit it. It carries no React of its own
+and expects the page's global, so the cards and the bundle share one React
+instance.
+
+It stays committed because GitHub Pages serves this repo's files directly, with
+no build step: the showcase renders whatever is in git. `check:bundle` compares a
+hash of the sources against one embedded in the file, so a component change
+committed without a rebuild fails rather than quietly republishing the old
+specimens.
+
+The UI-kit screens are **not** in it — those two pages load their own `.jsx`
+alongside it.
 
 ### What changed from the design bundle
 
