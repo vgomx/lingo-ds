@@ -14,9 +14,15 @@ export interface SwitchOwnProps {
 
 export interface SwitchProps
   extends SwitchOwnProps,
-    Omit<React.ComponentPropsWithoutRef<'label'>, keyof SwitchOwnProps> {}
+    Omit<React.ComponentPropsWithoutRef<'button'>, keyof SwitchOwnProps | 'onChange'> {}
 
-/** Pill toggle for settings rows. Track goes mint when on — never violet. */
+/**
+ * Pill toggle for settings rows. Track goes mint when on — never violet.
+ *
+ * A real `<button role="switch">`, not a `<label>` with a click handler. As a
+ * label it was unreachable by keyboard and absent from the accessibility tree
+ * entirely — a settings control that only a mouse could find.
+ */
 export function Switch({ checked, defaultChecked, label, hint, size = 'md', disabled = false, onChange, style, ...rest }: SwitchProps) {
   const [inner, setInner] = React.useState(!!defaultChecked);
   const isOn = checked === undefined ? inner : checked;
@@ -29,10 +35,16 @@ export function Switch({ checked, defaultChecked, label, hint, size = 'md', disa
     onChange && onChange(!isOn);
   };
   return (
-    <label
+    <button
+      type="button"
+      role="switch"
+      aria-checked={isOn}
+      disabled={disabled}
       onClick={toggle}
       style={{
         display: 'flex', alignItems: 'center', gap: 'var(--space-5)', justifyContent: 'space-between',
+        width: '100%', padding: 0, border: 'none', background: 'transparent', textAlign: 'left',
+        font: 'inherit', borderRadius: 'var(--radius-sm)',
         cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.45 : 1, ...style,
       }}
       {...rest}
@@ -58,6 +70,6 @@ export function Switch({ checked, defaultChecked, label, hint, size = 'md', disa
           }}
         />
       </span>
-    </label>
+    </button>
   );
 }

@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: ac112a18a80dff41
+// source-hash: d9f77a39a30da4c5
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -638,13 +638,23 @@ var LingoToolboxDesignSystem_898611 = (() => {
       onChange && onChange(e, !isOn);
     };
     return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(
-      "label",
+      "button",
       {
+        type: "button",
+        role: "checkbox",
+        "aria-checked": isOn,
+        disabled,
         onClick: toggle,
         style: {
           display: "inline-flex",
           alignItems: hint ? "flex-start" : "center",
           gap: "var(--space-4)",
+          padding: 0,
+          border: "none",
+          background: "transparent",
+          textAlign: "left",
+          font: "inherit",
+          borderRadius: "var(--radius-sm)",
           cursor: disabled ? "not-allowed" : "pointer",
           opacity: disabled ? 0.45 : 1,
           ...style
@@ -682,13 +692,23 @@ var LingoToolboxDesignSystem_898611 = (() => {
   var import_jsx_runtime8 = __toESM(require_react_jsx_runtime_global(), 1);
   function Radio({ checked = false, label, hint, name, value, disabled = false, onChange, style, ...rest }) {
     return /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)(
-      "label",
+      "button",
       {
+        type: "button",
+        role: "radio",
+        "aria-checked": checked,
+        disabled,
         onClick: () => !disabled && onChange && onChange(value),
         style: {
           display: "inline-flex",
           alignItems: hint ? "flex-start" : "center",
           gap: "var(--space-4)",
+          padding: 0,
+          border: "none",
+          background: "transparent",
+          textAlign: "left",
+          font: "inherit",
+          borderRadius: "var(--radius-sm)",
           cursor: disabled ? "not-allowed" : "pointer",
           opacity: disabled ? 0.45 : 1,
           ...style
@@ -737,14 +757,25 @@ var LingoToolboxDesignSystem_898611 = (() => {
       onChange && onChange(!isOn);
     };
     return /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)(
-      "label",
+      "button",
       {
+        type: "button",
+        role: "switch",
+        "aria-checked": isOn,
+        disabled,
         onClick: toggle,
         style: {
           display: "flex",
           alignItems: "center",
           gap: "var(--space-5)",
           justifyContent: "space-between",
+          width: "100%",
+          padding: 0,
+          border: "none",
+          background: "transparent",
+          textAlign: "left",
+          font: "inherit",
+          borderRadius: "var(--radius-sm)",
           cursor: disabled ? "not-allowed" : "pointer",
           opacity: disabled ? 0.45 : 1,
           ...style
