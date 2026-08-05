@@ -46,7 +46,7 @@ export function Switch({ checked, defaultChecked, label, hint, size = 'md', disa
       <span
         style={{
           width: w, height: h, flex: 'none', borderRadius: 'var(--radius-pill)', position: 'relative',
-          background: isOn ? 'var(--success)' : 'var(--ink-400)',
+          background: isOn ? 'var(--success)' : 'var(--border-strong)',
           transition: 'background-color var(--dur-base) var(--ease-standard)',
         }}
       >

@@ -1,0 +1,227 @@
+import * as React from 'react';
+import { Icon } from '../icon/Icon';
+
+export interface IllustrationItem {
+  /** Stable identity — this is what `value` and `onChange` speak in. */
+  id: string;
+  /** Resolved URL of the glyph. */
+  src: string;
+  /** Written out in full: the alt text, the tooltip, and half the search index. */
+  name: string;
+  group?: string;
+  /** Extra search terms beyond the words already in `name`. */
+  keywords?: string[];
+}
+
+export interface IllustrationPickerGroup {
+  id: string;
+  label: string;
+}
+
+export interface IllustrationPickerOwnProps {
+  items: IllustrationItem[];
+  /** Section headings, in order. Items whose `group` matches are filed under one. */
+  groups?: IllustrationPickerGroup[];
+  /** Selected item id, or null for none. */
+  value?: string | null;
+  onChange?: (id: string | null) => void;
+  /** Uppercase micro-label above the field, as on Input. */
+  label?: string;
+  hint?: string;
+  /** Height of the scrolling grid. The search field and clear row sit outside it. */
+  height?: number;
+  /** Glyph edge length in px; the cell is sized around it. */
+  glyphSize?: number;
+  searchPlaceholder?: string;
+  /** Wording for the choice that clears the selection. */
+  clearLabel?: string;
+  style?: React.CSSProperties;
+}
+
+export interface IllustrationPickerProps
+  extends IllustrationPickerOwnProps,
+    Omit<React.ComponentPropsWithoutRef<'div'>, keyof IllustrationPickerOwnProps | 'onChange'> {}
+
+/**
+ * Grid picker for a set of illustrations, with search and section headings.
+ *
+ * Deliberately knows nothing about where the glyphs come from — it takes
+ * `items` with resolved `src` URLs. The design system holds only a sample set as
+ * an example of the treatment; the full set is vendored in the product repo, and
+ * a picker that reached for it would drag those assets back in here.
+ *
+ * The grid is the sanctioned exception to "one illustration per surface": these
+ * are a grid of equals being chosen between, not decoration.
+ */
+export function IllustrationPicker({
+  items, groups, value = null, onChange, label, hint, height = 236, glyphSize = 34,
+  searchPlaceholder = 'Search illustrations', clearLabel = 'No illustration', style, ...rest
+}: IllustrationPickerProps) {
+  const [query, setQuery] = React.useState('');
+  const [focus, setFocus] = React.useState(false);
+  const scroller = React.useRef<HTMLDivElement>(null);
+
+  const q = query.trim().toLowerCase();
+  const matches = React.useMemo(() => {
+    if (!q) return items;
+    // Every space-separated term has to hit something, so "red car" narrows
+    // rather than widening to everything red plus every car.
+    const terms = q.split(/\s+/);
+    return items.filter((it) => {
+      const hay = `${it.name} ${(it.keywords || []).join(' ')}`.toLowerCase();
+      return terms.every((t) => hay.includes(t));
+    });
+  }, [items, q]);
+
+  /** Sections in `groups` order; anything unfiled lands in a trailing catch-all. */
+  const sections = React.useMemo(() => {
+    if (!groups?.length) return [{ id: '', label: '', items: matches }];
+    const byGroup = new Map<string, IllustrationItem[]>();
+    for (const it of matches) {
+      const key = it.group ?? '';
+      const list = byGroup.get(key);
+      if (list) list.push(it); else byGroup.set(key, [it]);
+    }
+    const out = groups
+      .map((g) => ({ id: g.id, label: g.label, items: byGroup.get(g.id) ?? [] }))
+      .filter((s) => s.items.length > 0);
+    const loose = [...byGroup.entries()].filter(([k]) => !groups.some((g) => g.id === k));
+    if (loose.length) out.push({ id: '', label: 'Other', items: loose.flatMap(([, v]) => v) });
+    return out;
+  }, [groups, matches]);
+
+  // A new search should be read from the top; without this the scroll position
+  // survives and a one-row result set can land off-screen.
+  React.useEffect(() => { if (scroller.current) scroller.current.scrollTop = 0; }, [q]);
+
+  const cell = glyphSize + 12;
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)', ...style }} {...rest}>
+      {label && (
+        <span style={{ fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-12)', fontWeight: 'var(--fw-black)' as React.CSSProperties['fontWeight'], letterSpacing: 'var(--ls-caps)', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
+          {label}
+        </span>
+      )}
+
+      <span
+        style={{
+          display: 'flex', alignItems: 'center', gap: 'var(--space-3)',
+          height: 'var(--control-h-sm)', padding: '0 10px',
+          background: 'var(--surface-input)', borderRadius: 'var(--radius-control)',
+          boxShadow: focus ? 'inset 0 0 0 1.5px var(--brand), var(--ring-focus)' : 'inset 0 0 0 1px var(--border)',
+          color: 'var(--text-faint)', transition: 'var(--transition-control)',
+        }}
+      >
+        <Icon name="search" size={15} />
+        <input
+          type="search"
+          value={query}
+          placeholder={searchPlaceholder}
+          onChange={(e) => setQuery(e.target.value)}
+          onFocus={() => setFocus(true)}
+          onBlur={() => setFocus(false)}
+          style={{
+            flex: 1, minWidth: 0, border: 'none', outline: 'none', background: 'transparent',
+            fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-13)',
+            fontWeight: 'var(--fw-medium)' as React.CSSProperties['fontWeight'], color: 'var(--text-strong)',
+          }}
+        />
+        {value && (
+          <button
+            type="button"
+            onClick={() => onChange && onChange(null)}
+            title={clearLabel}
+            aria-label={clearLabel}
+            style={{
+              display: 'grid', placeItems: 'center', width: 22, height: 22, flex: 'none',
+              border: 'none', borderRadius: 'var(--radius-pill)', cursor: 'pointer',
+              background: 'var(--surface-raised)', color: 'var(--text-muted)',
+            }}
+          >
+            <Icon name="x" size={13} />
+          </button>
+        )}
+      </span>
+
+      <div
+        ref={scroller}
+        style={{
+          height, overflowY: 'auto', padding: '4px 4px 8px',
+          background: 'var(--surface-input)', borderRadius: 'var(--radius-control)',
+          boxShadow: 'inset 0 0 0 1px var(--border)',
+        }}
+      >
+        {sections.length === 0 ? (
+          <p style={{ margin: 0, padding: '20px 12px', textAlign: 'center', fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-13)', color: 'var(--text-faint)' }}>
+            Nothing matches “{query.trim()}”.
+          </p>
+        ) : sections.map((section) => (
+          <section key={section.id || section.label}>
+            {section.label && (
+              <h4
+                style={{
+                  // Sticky so the heading is still there once a long section is
+                  // scrolled into — otherwise everything below the fold is
+                  // unlabelled and the grid reads as one undifferentiated mass.
+                  position: 'sticky', top: 0, zIndex: 1, margin: 0,
+                  padding: '8px 8px 5px', background: 'var(--surface-input)',
+                  fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-10)',
+                  fontWeight: 'var(--fw-black)' as React.CSSProperties['fontWeight'],
+                  letterSpacing: 'var(--ls-caps)', textTransform: 'uppercase',
+                  // --text-muted, not --text-faint: at --fs-10 this is small text
+                  // needing 4.5:1, and faint on the input well measures 3.27 in
+                  // light and 2.99 in dark. Muted clears it in both.
+                  color: 'var(--text-muted)',
+                }}
+              >
+                {section.label}
+              </h4>
+            )}
+            <div style={{ display: 'grid', gridTemplateColumns: `repeat(auto-fill, minmax(${cell}px, 1fr))`, gap: 2 }}>
+              {section.items.map((it) => {
+                const selected = it.id === value;
+                return (
+                  <button
+                    key={it.id}
+                    type="button"
+                    title={it.name}
+                    aria-label={it.name}
+                    aria-pressed={selected}
+                    onClick={() => onChange && onChange(selected ? null : it.id)}
+                    style={{
+                      display: 'grid', placeItems: 'center', height: cell, padding: 0,
+                      border: 'none', cursor: 'pointer', borderRadius: 'var(--radius-sm)',
+                      background: selected ? 'var(--brand)' : 'transparent',
+                      boxShadow: selected ? 'var(--ring-focus)' : 'none',
+                      transition: 'background var(--dur-fast) var(--ease-standard)',
+                    }}
+                  >
+                    <img
+                      src={it.src}
+                      alt=""
+                      // The set runs to hundreds; without this every glyph in
+                      // every section is fetched the moment the picker opens.
+                      loading="lazy"
+                      decoding="async"
+                      draggable={false}
+                      style={{ width: glyphSize, height: glyphSize, display: 'block' }}
+                    />
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        ))}
+      </div>
+
+      {hint && (
+        // Deliberately --text-muted where Input's hint still uses --text-faint:
+        // faint measures 3.27 in light and 2.53 in dark against these surfaces,
+        // and a hint is small text that has to clear 4.5:1. Input and the other
+        // form controls have the same defect and want the same fix.
+        <span style={{ fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-12)', color: 'var(--text-muted)' }}>{hint}</span>
+      )}
+    </div>
+  );
+}

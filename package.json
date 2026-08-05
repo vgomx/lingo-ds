@@ -27,9 +27,13 @@
     "*.css"
   ],
   "scripts": {
-    "build": "tsup",
+    "build": "npm run check:theme && npm run check:palette && tsup && node scripts/write-ds-bundle.mjs",
     "dev": "tsup --watch",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "check:theme": "node scripts/check-theme-parity.mjs",
+    "check:palette": "node scripts/check-no-raw-palette.mjs",
+    "check:bundle": "node scripts/check-bundle-fresh.mjs",
+    "check": "npm run check:theme && npm run check:palette && npm run check:bundle"
   },
   "peerDependencies": {
     "react": ">=18",

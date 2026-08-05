@@ -1,5 +1,10 @@
-// Lingo Toolbox icon set — Lucide 0.x (ISC), copied from lucide-icons/lucide@main.
+// Lingo Toolbox icon set — Lucide 0.x, copied from lucide-icons/lucide@main.
 // Inner markup only; stroke/fill inherit currentColor from the <svg> wrapper written by <Icon>.
+//
+// Licence: ISC (Lucide Icons and Contributors). 22 of these 76 glyphs are derived
+// from Feather and additionally carry the MIT licence of Cole Bemis. Both notices
+// must travel with any copy — the full text is vendored at assets/icons/LICENSE.txt,
+// and consuming apps are expected to surface it (lingotoolbox does so in Settings).
 export const ICON_PATHS: Record<string, string> = {
   "arrow-left": "<path d=\"m12 19-7-7 7-7\"></path>  <path d=\"M19 12H5\"></path>",
   "arrow-right": "<path d=\"M5 12h14\"></path>  <path d=\"m12 5 7 7-7 7\"></path>",

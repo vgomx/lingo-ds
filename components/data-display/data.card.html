@@ -1,4 +1,4 @@
-<!-- @dsCard group="Components" viewport="700x250" name="Badges, tags, progress" subtitle="Badge, Tag, ProgressBar, StreakPill, Avatar" -->
+<!-- @dsCard group="Components" viewport="700x270" name="Badges, tags, progress" subtitle="Badge, Tag, ProgressBar, StreakPill, Avatar" -->
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Badges, tags, progress</title><link rel="stylesheet" href="../../styles.css">
 <style>body{background:var(--surface-app);margin:0;padding:20px;font-family:var(--font-ui)}#root{display:flex;flex-direction:column;gap:14px}.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.lbl{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint)}.col{display:flex;flex-direction:column;gap:8px}</style>
 </head><body><div id="root"></div>
@@ -16,7 +16,7 @@ function Demo(){return (<>
   <div style={{width:220}}><ProgressBar label="Mastery" valueLabel="60%" segments={[{weight:6,color:'var(--success)'},{weight:2,color:'var(--warning)'},{weight:2,color:'var(--surface-raised)'}]}/></div>
  </div>
  <div className="row" style={{gap:16}}>
-  <StreakPill days={26}/><StreakPill days={1} size="lg"/><StreakPill days={0} active={false}/>
+  <StreakPill days={26} size="sm"/><StreakPill days={26}/><StreakPill days={1} size="lg"/><StreakPill days={26} size="xl"/><StreakPill days={0} active={false} size="sm"/>
   <span style={{width:10}}/>
   <Avatar name="Mara Okafor" status="online"/><Avatar name="Tomas Ruiz" size="lg" status="idle"/><Avatar flag="ES" size="lg"/><Avatar name="Jun Park" size="sm"/>
  </div></>);}

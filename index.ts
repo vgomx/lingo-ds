@@ -20,6 +20,10 @@ export { Radio } from './components/forms/Radio';
 export type { RadioProps, RadioOwnProps } from './components/forms/Radio';
 export { Switch } from './components/forms/Switch';
 export type { SwitchProps, SwitchOwnProps } from './components/forms/Switch';
+export { IllustrationPicker } from './components/forms/IllustrationPicker';
+export type {
+  IllustrationPickerProps, IllustrationPickerOwnProps, IllustrationPickerGroup, IllustrationItem,
+} from './components/forms/IllustrationPicker';
 
 export { Card } from './components/surfaces/Card';
 export type { CardProps, CardOwnProps } from './components/surfaces/Card';
@@ -50,7 +54,9 @@ export { Tooltip } from './components/feedback/Tooltip';
 export type { TooltipProps, TooltipOwnProps, TooltipSide } from './components/feedback/Tooltip';
 
 export { Flashcard } from './components/learning/Flashcard';
-export type { FlashcardProps, FlashcardOwnProps } from './components/learning/Flashcard';
+export type {
+  FlashcardProps, FlashcardOwnProps, FlashcardIllustrationSide,
+} from './components/learning/Flashcard';
 export { ReviewRating, DEFAULT_GRADES } from './components/learning/ReviewRating';
 export type { ReviewRatingProps, ReviewRatingOwnProps, ReviewGrade } from './components/learning/ReviewRating';
 export { EtymologyNode } from './components/learning/EtymologyNode';

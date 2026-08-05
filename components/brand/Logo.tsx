@@ -3,7 +3,8 @@ import * as React from 'react';
 export type LogoVariant =
   | 'wordmark-white' | 'wordmark-black' | 'wordmark-violet'
   | 'icon-dark' | 'icon-light' | 'icon-violet'
-  | 'mark-dark' | 'mark-light' | 'mark-violet';
+  | 'mark-dark' | 'mark-light' | 'mark-violet'
+  | 'stack-dark' | 'stack-light' | 'stack-violet' | 'stack-brand';
 
 const FILES: Record<LogoVariant, string> = {
   'wordmark-white': 'logo-wordmark-white.svg',
@@ -15,6 +16,15 @@ const FILES: Record<LogoVariant, string> = {
   'mark-dark': 'mark-dark.svg',
   'mark-light': 'mark-light.svg',
   'mark-violet': 'mark-violet.svg',
+  // The reduced mark with TOOLBOX beneath it, for square-ish space where the
+  // horizontal wordmark would have to be set too small to read: a splash, an
+  // about screen, or the app's own tool rail. `stack-brand` takes its fill from
+  // currentColor. Comfortable from 96px tall; 60px is the floor, below which the
+  // lettering closes up and only the mark still reads. Under that, use mark-*.
+  'stack-dark': 'stack-dark.svg',
+  'stack-light': 'stack-light.svg',
+  'stack-violet': 'stack-violet.svg',
+  'stack-brand': 'stack-brand.svg',
 };
 
 export interface LogoOwnProps {

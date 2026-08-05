@@ -17,7 +17,7 @@ const VARIANTS: Record<ButtonVariant, { rest: React.CSSProperties; hover: React.
   },
   secondary: {
     rest: { background: 'var(--surface-raised)', color: 'var(--text-strong)', boxShadow: 'var(--shadow-chunk-neutral)' },
-    hover: { background: 'var(--ink-400)' },
+    hover: { background: 'var(--surface-raised-hover)' },
   },
   ghost: {
     rest: { background: 'transparent', color: 'var(--text-body)' },
@@ -32,7 +32,7 @@ const VARIANTS: Record<ButtonVariant, { rest: React.CSSProperties; hover: React.
     hover: { background: 'color-mix(in oklab, var(--success) 82%, #fff)' },
   },
   danger: {
-    rest: { background: 'var(--danger)', color: '#fff', boxShadow: '0 3px 0 var(--red-700)' },
+    rest: { background: 'var(--danger)', color: 'var(--on-danger)', boxShadow: '0 3px 0 var(--red-700)' },
     hover: { background: 'color-mix(in oklab, var(--danger) 82%, #fff)' },
   },
   link: {

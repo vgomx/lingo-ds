@@ -30,9 +30,38 @@ import { Button, Flashcard, RailTile } from 'lingo-ds';
 
 | Script | Does |
 | --- | --- |
-| `npm run build` | Bundles `index.ts` to ESM + CJS + `.d.ts` via tsup |
-| `npm run dev` | Same, in watch mode |
+| `npm run build` | Runs the checks, bundles `index.ts` to ESM + CJS + `.d.ts` via tsup, and regenerates `_ds_bundle.js` |
+| `npm run dev` | tsup in watch mode |
 | `npm run typecheck` | `tsc --noEmit` over `index.ts` and `components/` |
+| `npm run check` | All three guards below, without building |
+
+### Guards
+
+Three rules in this guide were previously enforced by nothing but attention, and
+each had been broken in ways that were invisible until measured. They now fail
+the build:
+
+| Script | Catches |
+| --- | --- |
+| `check:theme` | A token one scope overrides and the other doesn't — which makes a nested dark island silently keep the outer light value |
+| `check:palette` | A component reaching for `--ink-*`/`--paper-*` instead of a semantic token, which pins a surface to one theme while its text follows the other |
+| `check:bundle` | `_ds_bundle.js` being older than the components it was built from |
+
+### `_ds_bundle.js`
+
+The browser bundle the specimen cards and UI kits run on. It is **generated from
+`index.ts`** by `npm run build` — do not edit it. It carries no React of its own
+and expects the page's global, so the cards and the bundle share one React
+instance.
+
+It stays committed because GitHub Pages serves this repo's files directly, with
+no build step: the showcase renders whatever is in git. `check:bundle` compares a
+hash of the sources against one embedded in the file, so a component change
+committed without a rebuild fails rather than quietly republishing the old
+specimens.
+
+The UI-kit screens are **not** in it — those two pages load their own `.jsx`
+alongside it.
 
 ### What changed from the design bundle
 
@@ -141,6 +170,8 @@ Cool-toned and high-contrast when it exists; ink backgrounds mean images should 
 - **Tool mapping:** Flashcards `layers` · Etymology Explorer `git-branch` · Conjugation Drill `spell-check` · Phrasebook `message-square-quote` · Grammar Notes `scroll-text` · Streak `flame` · Mastery `trophy`.
 - **Flags are not icons.** Country-flag emoji appear only in the language picker at the top right of the content pane (and in its menu rows), always beside the language name. Never use a flag to stand for a language in body copy or a tag.
 - **Logo is not an icon.** Use `assets/logo/mark-*.svg` for the app tile; never substitute a Lucide glyph for the brand mark, and never redraw the wordmark in a live font.
+- **Picking a lockup by the space you have.** `mark-*` is the reduced symbol — it is what works at app-icon and favicon sizes, and the only thing that survives below about 24px. `logo-wordmark-*` is the horizontal lockup, minimum 96px wide. `stack-*` sits between them: the reduced mark with TOOLBOX beneath, for square-ish space where the horizontal wordmark would have to be set too small to read — a splash, an about screen, the product's own tool rail. Comfortable from 96px tall. **60px is the floor**: at 63px, where the app rail sets it, TOOLBOX is about 8px and still reads on a dark ground, but it is closing up; by 56px it is texture rather than a word. Below that use `mark-*`, which is what survives at favicon and app-icon sizes.
+- **`stack-*` was composed, not redrawn.** Its TOOLBOX is the wordmark's own outlines, lifted from `logo-wordmark-white.svg` by `scripts/build-stack-lockup.mjs`, so it is the same flattened Dangrek lettering rather than a re-setting of it. Only the lettering is taken — the rounded plate stays behind in the wordmark, along with the notch its top edge carries for the `g` descender of `lingo`, which would read as a bite out of nowhere once separated from it. Re-run that script rather than editing the four `stack-*.svg` files by hand.
 
 ### Illustration
 
@@ -151,6 +182,8 @@ Illustration is **OpenMoji** colour SVG (CC BY-SA 4.0) — never bespoke drawing
 - **Sizes:** 44–56px on a card, 56–72px in an empty state. Never inline in a sentence, never in place of a UI icon, never on top of a saturated fill.
 - One illustration per surface. If two would appear side by side, they belong in a grid of equals (deck, tool or empty-state cards), not scattered.
 - **Attribution is required** where the app credits third-party work; `LICENSE.txt` ships beside the assets.
+- **Choosing one** is `IllustrationPicker`, which takes resolved `src` URLs and never reaches for an asset folder — that is what keeps the full set in the product repo. Its grid is the sanctioned exception to one-per-surface, and its 34px cells are the exception to the 44px floor: a picker cell is a control, not an illustration on a surface.
+- **On a flashcard**, the glyph belongs on the **answer** face. A picture of the answer sitting on the prompt turns a recall test into a reading test. `Flashcard`'s `illustrationSide` defaults to `back` for that reason; `front` is for picture-prompt decks, where naming the picture is the exercise.
 
 ---
 
@@ -162,7 +195,7 @@ Illustration is **OpenMoji** colour SVG (CC BY-SA 4.0) — never bespoke drawing
 | `SKILL.md` | Agent-skill entry point |
 | `styles.css` | Global entry — `@import` list only |
 | `tokens/` | `colors.css` · `typography.css` · `spacing.css` · `radii.css` · `elevation.css` · `motion.css` · `fonts.css` · `base.css` |
-| `assets/logo/` | 12 lockups + the original master sheet |
+| `assets/logo/` | 16 lockups + the original master sheet |
 | `assets/icons/` | 76 Lucide SVGs |
 | `guidelines/` | 20 foundation specimen cards (Colors, Type, Spacing, Elevation, Motion, Brand) |
 | `components/` | React primitives, grouped by concern |
@@ -178,7 +211,7 @@ Grouped by concern; each directory holds `<Name>.jsx`, `<Name>.d.ts`, `<Name>.pr
 
 - **`components/actions/`** — `Button`, `IconButton`
 - **`components/icon/`** — `Icon`
-- **`components/forms/`** — `Input`, `Select`, `Checkbox`, `Radio`, `Switch`
+- **`components/forms/`** — `Input`, `Select`, `Checkbox`, `Radio`, `Switch`, `IllustrationPicker`
 - **`components/surfaces/`** — `Card`, `Dialog`
 - **`components/data-display/`** — `Badge`, `Tag`, `ProgressBar`, `StreakPill`, `Avatar`
 - **`components/navigation/`** — `Tabs`, `SidebarItem`, `RailTile`

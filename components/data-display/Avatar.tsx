@@ -4,7 +4,7 @@ export type AvatarSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type AvatarStatus = 'online' | 'idle' | 'offline';
 
 const SIZES: Record<AvatarSize, number> = { xs: 20, sm: 28, md: 36, lg: 48, xl: 72 };
-const RING: Record<AvatarStatus, string> = { online: 'var(--success)', idle: 'var(--warning)', offline: 'var(--ink-400)' };
+const RING: Record<AvatarStatus, string> = { online: 'var(--success)', idle: 'var(--warning)', offline: 'var(--border-strong)' };
 
 export interface AvatarOwnProps {
   /** Used for initials and to pick the deterministic fallback hue. */

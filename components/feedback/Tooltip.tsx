@@ -35,10 +35,15 @@ export function Tooltip({ children, label, side = 'top', shortcut, style, ...res
       {open && (
         <span
           role="tooltip"
+          // A tooltip stays dark on a light page — that is the convention, and the
+          // rail does the same. Declaring it a dark island is what makes that safe:
+          // the surface and the label then resolve against each other instead of
+          // pairing an ink background with the light scope's dark text.
+          data-theme="dark"
           style={{
             position: 'absolute', ...pos, zIndex: 50, whiteSpace: 'nowrap', pointerEvents: 'none',
             display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 10px',
-            background: 'var(--ink-1000)', color: 'var(--text-strong)', borderRadius: 'var(--radius-sm)',
+            background: 'var(--surface-rail)', color: 'var(--text-strong)', borderRadius: 'var(--radius-sm)',
             boxShadow: 'var(--shadow-md)', fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-12)',
             fontWeight: 'var(--fw-bold)' as React.CSSProperties['fontWeight'], animation: 'lt-tip var(--dur-fast) var(--ease-out)',
           }}

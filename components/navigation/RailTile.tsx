@@ -36,9 +36,19 @@ export function RailTile({ label, icon, flag, src, color = 'var(--brand)', size 
   const isEmoji = flag && !/^[A-Za-z]{1,3}$/.test(flag);
   return (
     <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, width: '100%', ...style }} {...rest}>
+      {/* The active pip is sized against the glyph inside the tile rather than the
+          tile itself — at 0.48 it comes out level with an 18px icon in the default
+          38px tile, so the two read as one mark. Spanning most of the tile height,
+          as it used to, made it the loudest thing in the rail.
+          Anchored by its centre rather than its top edge: `height` is what animates,
+          so pinning `top` grew the pip downward from a fixed top and left it riding
+          high above the icon for the whole transition — visible on every navigation.
+          translateY(-50%) keeps the midpoint fixed, so it opens symmetrically and is
+          level with the icon at every frame, whatever `size` is set to. */}
       <span
         style={{
-          position: 'absolute', left: 0, top: size * 0.15, width: 4, height: active ? size * 0.7 : 0,
+          position: 'absolute', left: 0, top: size / 2, transform: 'translateY(-50%)',
+          width: 4, height: active ? size * 0.48 : 0,
           borderRadius: '0 4px 4px 0', background: 'var(--text-strong)',
           transition: 'height var(--dur-base) var(--ease-spring)',
         }}
@@ -54,7 +64,11 @@ export function RailTile({ label, icon, flag, src, color = 'var(--brand)', size 
           width: size, height: size, border: 'none', cursor: 'pointer', padding: 0,
           display: 'grid', placeItems: 'center', overflow: 'hidden',
           borderRadius: lit ? 'var(--radius-lg)' : 'var(--radius-xl)',
-          background: active ? color : hover ? 'var(--surface-card)' : quiet ? 'transparent' : 'var(--surface-card)',
+          // backgroundColor, not the `background` shorthand: the longhands below
+          // set the tile's image, and a shorthand re-rendering alongside them
+          // resets those (React warns about the mix, and a tile with `src` loses
+          // its image on hover).
+          backgroundColor: active ? color : hover ? 'var(--surface-card)' : quiet ? 'transparent' : 'var(--surface-card)',
           color: active ? '#fff' : hover ? 'var(--text-strong)' : 'var(--text-muted)',
           boxShadow: active && hover ? '0 0 0 3px color-mix(in oklab, ' + color + ' 28%, transparent)' : 'none',
           fontFamily: isEmoji ? 'inherit' : 'var(--font-display)',
@@ -72,7 +86,10 @@ export function RailTile({ label, icon, flag, src, color = 'var(--brand)', size 
             maxWidth: 60, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
             fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-10)', fontWeight: 'var(--fw-bold)' as React.CSSProperties['fontWeight'],
             letterSpacing: 'var(--ls-wide)', textAlign: 'center',
-            color: active || hover ? 'var(--text-strong)' : 'var(--text-faint)',
+            // --text-muted, not --text-faint: at --fs-10 this is small text needing
+            // 4.5:1, and faint on the rail surface measures 3.14. Muted gives 5.88 —
+            // and is already what the inactive icon above it uses, so the two match.
+            color: active || hover ? 'var(--text-strong)' : 'var(--text-muted)',
             transition: 'color var(--dur-fast) var(--ease-standard)',
           }}
         >
@@ -84,7 +101,7 @@ export function RailTile({ label, icon, flag, src, color = 'var(--brand)', size 
           style={{
             position: 'absolute', right: 4, top: size - 12, minWidth: 18, height: 18, padding: '0 5px',
             display: 'grid', placeItems: 'center', borderRadius: 'var(--radius-pill)',
-            background: 'var(--danger)', color: '#fff', boxShadow: '0 0 0 3px var(--surface-rail)',
+            background: 'var(--danger)', color: 'var(--on-danger)', boxShadow: '0 0 0 3px var(--surface-rail)',
             fontFamily: 'var(--font-display)', fontSize: 'var(--fs-11)', fontWeight: 'var(--fw-black)' as React.CSSProperties['fontWeight'],
           }}
         >
