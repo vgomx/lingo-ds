@@ -36,9 +36,14 @@ export function RailTile({ label, icon, flag, src, color = 'var(--brand)', size 
   const isEmoji = flag && !/^[A-Za-z]{1,3}$/.test(flag);
   return (
     <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, width: '100%', ...style }} {...rest}>
+      {/* The active pip is sized against the glyph inside the tile rather than the
+          tile itself — at 0.48 it comes out level with an 18px icon in the default
+          38px tile, so the two read as one mark. Spanning most of the tile height,
+          as it used to, made it the loudest thing in the rail. Centred, so it stays
+          level whatever `size` is set to. */}
       <span
         style={{
-          position: 'absolute', left: 0, top: size * 0.15, width: 4, height: active ? size * 0.7 : 0,
+          position: 'absolute', left: 0, top: size * 0.26, width: 4, height: active ? size * 0.48 : 0,
           borderRadius: '0 4px 4px 0', background: 'var(--text-strong)',
           transition: 'height var(--dur-base) var(--ease-spring)',
         }}

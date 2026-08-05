@@ -1764,9 +1764,9 @@ function RailTile({
     style: {
       position: 'absolute',
       left: 0,
-      top: size * 0.15,
+      top: size * 0.26,
       width: 4,
-      height: active ? size * 0.7 : 0,
+      height: active ? size * 0.48 : 0,
       borderRadius: '0 4px 4px 0',
       background: 'var(--text-strong)',
       transition: 'height var(--dur-base) var(--ease-spring)'
