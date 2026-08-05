@@ -148,7 +148,7 @@ function AppShell({ workspace, onWorkspace, tool, onTool, title, titleIcon, topR
           {topRight}
           <span style={{ width: 4 }} />
           <LanguageMenu ws={ws} onWorkspace={onWorkspace} onAdd={onNewDeck} />
-          <StreakPill days={26} />
+          <StreakPill days={26} size="sm" />
           <Tooltip label="Notifications"><IconButton label="Notifications"><Icon name="bell" size={18} /></IconButton></Tooltip>
           <Tooltip label="Help"><IconButton label="Help"><Icon name="circle-question-mark" size={18} /></IconButton></Tooltip>
         </header>

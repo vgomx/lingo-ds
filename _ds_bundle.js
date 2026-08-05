@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: 9f008acea983b07f
+// source-hash: c95c1f066dd05b1b
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -990,31 +990,50 @@ var LingoToolboxDesignSystem_898611 = (() => {
 
   // components/data-display/StreakPill.tsx
   var import_jsx_runtime15 = __toESM(require_react_jsx_runtime_global(), 1);
+  var SIZES3 = {
+    sm: { height: 28, padding: "0 10px", gap: 6, icon: 15, value: "var(--fs-14)", unit: "var(--fs-11)" },
+    md: { height: 36, padding: "0 14px", gap: 8, icon: 20, value: "var(--fs-18)", unit: "var(--fs-13)" },
+    lg: { height: 44, padding: "0 16px", gap: 9, icon: 22, value: "var(--fs-20)", unit: "var(--fs-13)" },
+    xl: { height: 52, padding: "0 20px", gap: 10, icon: 26, value: "var(--fs-24)", unit: "var(--fs-14)" }
+  };
   function StreakPill({ days = 0, active = true, size = "md", style, ...rest }) {
-    const lg = size === "lg";
+    const s = SIZES3[size] || SIZES3.md;
     return /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
       "span",
       {
         style: {
           display: "inline-flex",
           alignItems: "center",
-          gap: lg ? 8 : 6,
-          height: lg ? 36 : 28,
-          padding: lg ? "0 14px" : "0 10px",
+          gap: s.gap,
+          height: s.height,
+          padding: s.padding,
           borderRadius: "var(--radius-pill)",
           background: active ? "var(--warning-subtle)" : "var(--surface-raised)",
           boxShadow: active ? "inset 0 0 0 1px color-mix(in oklab, var(--streak) 35%, transparent)" : "none",
           color: active ? "var(--streak-text)" : "var(--text-faint)",
           fontFamily: "var(--font-display)",
-          fontSize: lg ? "var(--fs-18)" : "var(--fs-14)",
+          fontSize: s.value,
           fontWeight: "var(--fw-black)",
           ...style
         },
         ...rest,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Icon, { name: "flame", size: lg ? 20 : 15, style: { filter: active ? "drop-shadow(0 0 6px rgba(255,176,32,.6))" : "none" } }),
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(Icon, { name: "flame", size: s.icon, style: { filter: active ? "drop-shadow(0 0 6px rgba(255,176,32,.6))" : "none" } }),
           days,
-          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("span", { style: { fontFamily: "var(--font-ui)", fontSize: lg ? "var(--fs-13)" : "var(--fs-11)", fontWeight: "var(--fw-bold)", letterSpacing: "var(--ls-caps)", textTransform: "uppercase", opacity: 0.75 }, children: days === 1 ? "day" : "days" })
+          /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
+            "span",
+            {
+              style: {
+                fontFamily: "var(--font-ui)",
+                fontSize: s.unit,
+                fontWeight: "var(--fw-bold)",
+                letterSpacing: "var(--ls-caps)",
+                textTransform: "uppercase",
+                opacity: 0.75
+              },
+              children: days === 1 ? "day" : "days"
+            }
+          )
         ]
       }
     );
@@ -1022,10 +1041,10 @@ var LingoToolboxDesignSystem_898611 = (() => {
 
   // components/data-display/Avatar.tsx
   var import_jsx_runtime16 = __toESM(require_react_jsx_runtime_global(), 1);
-  var SIZES3 = { xs: 20, sm: 28, md: 36, lg: 48, xl: 72 };
+  var SIZES4 = { xs: 20, sm: 28, md: 36, lg: 48, xl: 72 };
   var RING = { online: "var(--success)", idle: "var(--warning)", offline: "var(--border-strong)" };
   function Avatar({ name = "", src, size = "md", status, flag, style, ...rest }) {
-    const px = SIZES3[size] || SIZES3.md;
+    const px = SIZES4[size] || SIZES4.md;
     const initials = name.trim().split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
     const hues = ["var(--violet-500)", "var(--cyan-500)", "var(--mint-500)", "var(--coral-500)", "var(--pink-500)", "var(--amber-500)"];
     const bg = hues[(name.charCodeAt(0) || 0) % hues.length];

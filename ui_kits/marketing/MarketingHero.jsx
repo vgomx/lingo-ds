@@ -38,7 +38,7 @@ function MarketingHero({ onCta }) {
       <div style={heroStyles.stageWrap}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <span style={{ fontSize: 'var(--fs-11)', fontWeight: 'var(--fw-black)', letterSpacing: 'var(--ls-caps)', textTransform: 'uppercase', color: 'rgba(255,255,255,.75)' }}>Kitchen Spanish · 12 due</span>
-          <StreakPill days={26} />
+          <StreakPill days={26} size="sm" />
         </div>
         <div data-theme="dark" style={{ background: 'var(--ink-700)', borderRadius: 'var(--radius-xl)', padding: 16, display: 'flex', flexDirection: 'column', gap: 14 }}>
           <Flashcard language="Spanish" front="sobremesa" phonetic="/so.bɾeˈme.sa/" back="the long talk after a meal"
