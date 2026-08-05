@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: 0daf515acadd3761
+// source-hash: 693a921efd87b004
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -501,6 +501,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
             borderRadius: "var(--radius-control)",
             boxShadow: error ? "inset 0 0 0 1.5px var(--danger)" : focus ? "inset 0 0 0 1.5px var(--brand), var(--ring-focus)" : "inset 0 0 0 1px var(--border)",
             color: "var(--text-faint)",
+            /* faint-ok: inherited by iconLeft/iconRight; the input sets its own colour */
             transition: "var(--transition-control)",
             opacity: disabled ? 0.5 : 1,
             ...style
@@ -537,7 +538,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
           ]
         }
       ),
-      (hint || error) && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { style: { fontFamily: "var(--font-ui)", fontSize: "var(--fs-12)", color: error ? "var(--danger)" : "var(--text-faint)" }, children: error || hint })
+      (hint || error) && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { style: { fontFamily: "var(--font-ui)", fontSize: "var(--fs-12)", color: error ? "var(--danger)" : "var(--text-muted)" }, children: error || hint })
     ] });
   }
 
@@ -662,7 +663,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
           ),
           /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)("span", { style: { display: "flex", flexDirection: "column", gap: 2 }, children: [
             /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { style: { fontFamily: "var(--font-ui)", fontSize: "var(--fs-14)", fontWeight: "var(--fw-semibold)", color: "var(--text-strong)" }, children: label }),
-            hint && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { style: { fontFamily: "var(--font-ui)", fontSize: "var(--fs-12)", color: "var(--text-faint)" }, children: hint })
+            hint && /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("span", { style: { fontFamily: "var(--font-ui)", fontSize: "var(--fs-12)", color: "var(--text-muted)" }, children: hint })
           ] })
         ]
       }
@@ -706,7 +707,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
           ),
           /* @__PURE__ */ (0, import_jsx_runtime8.jsxs)("span", { style: { display: "flex", flexDirection: "column", gap: 2 }, children: [
             /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: { fontFamily: "var(--font-ui)", fontSize: "var(--fs-14)", fontWeight: "var(--fw-semibold)", color: "var(--text-strong)" }, children: label }),
-            hint && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: { fontFamily: "var(--font-ui)", fontSize: "var(--fs-12)", color: "var(--text-faint)" }, children: hint })
+            hint && /* @__PURE__ */ (0, import_jsx_runtime8.jsx)("span", { style: { fontFamily: "var(--font-ui)", fontSize: "var(--fs-12)", color: "var(--text-muted)" }, children: hint })
           ] })
         ]
       }
@@ -744,7 +745,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
         children: [
           (label || hint) && /* @__PURE__ */ (0, import_jsx_runtime9.jsxs)("span", { style: { display: "flex", flexDirection: "column", gap: 2 }, children: [
             label && /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { style: { fontFamily: "var(--font-ui)", fontSize: "var(--fs-14)", fontWeight: "var(--fw-semibold)", color: "var(--text-strong)" }, children: label }),
-            hint && /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { style: { fontFamily: "var(--font-ui)", fontSize: "var(--fs-12)", color: "var(--text-faint)" }, children: hint })
+            hint && /* @__PURE__ */ (0, import_jsx_runtime9.jsx)("span", { style: { fontFamily: "var(--font-ui)", fontSize: "var(--fs-12)", color: "var(--text-muted)" }, children: hint })
           ] }),
           /* @__PURE__ */ (0, import_jsx_runtime9.jsx)(
             "span",
@@ -843,6 +844,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
             borderRadius: "var(--radius-control)",
             boxShadow: focus ? "inset 0 0 0 1.5px var(--brand), var(--ring-focus)" : "inset 0 0 0 1px var(--border)",
             color: "var(--text-faint)",
+            /* faint-ok: inherited by the search Icon; the input sets its own colour */
             transition: "var(--transition-control)"
           },
           children: [
@@ -906,7 +908,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
             borderRadius: "var(--radius-control)",
             boxShadow: "inset 0 0 0 1px var(--border)"
           },
-          children: sections.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { style: { margin: 0, padding: "20px 12px", textAlign: "center", fontFamily: "var(--font-ui)", fontSize: "var(--fs-13)", color: "var(--text-faint)" }, children: [
+          children: sections.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { style: { margin: 0, padding: "20px 12px", textAlign: "center", fontFamily: "var(--font-ui)", fontSize: "var(--fs-13)", color: "var(--text-muted)" }, children: [
             "Nothing matches \u201C",
             query.trim(),
             "\u201D."
@@ -977,10 +979,8 @@ var LingoToolboxDesignSystem_898611 = (() => {
           ] }, section.id || section.label))
         }
       ),
-      hint && // Deliberately --text-muted where Input's hint still uses --text-faint:
-      // faint measures 3.27 in light and 2.53 in dark against these surfaces,
-      // and a hint is small text that has to clear 4.5:1. Input and the other
-      // form controls have the same defect and want the same fix.
+      hint && // --text-muted for the same reason as Input's hint: 12px is small text
+      // needing 4.5:1, and faint measures 3.27 light / 2.53 dark here.
       /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("span", { style: { fontFamily: "var(--font-ui)", fontSize: "var(--fs-12)", color: "var(--text-muted)" }, children: hint })
     ] });
   }
@@ -1157,7 +1157,11 @@ var LingoToolboxDesignSystem_898611 = (() => {
           fontWeight: "var(--fw-bold)",
           whiteSpace: "nowrap",
           background: solid ? color : "color-mix(in oklab, " + color + " 18%, transparent)",
-          color: solid ? "#fff" : color,
+          // The accent is tuned to read on a dark surface. On a light one the same
+          // step sits at 2.42 against its own 18% tint, so --tag-ink pulls it toward
+          // ink there and is a no-op in dark. Both come from the theme scope, so a
+          // Tag inside a nested light or dark island resolves against that island.
+          color: solid ? "#fff" : "color-mix(in oklab, " + color + ", var(--tag-ink) var(--tag-ink-amount))",
           boxShadow: solid ? "none" : "inset 0 0 0 1px color-mix(in oklab, " + color + " 35%, transparent)",
           ...style
         },
@@ -1215,7 +1219,9 @@ var LingoToolboxDesignSystem_898611 = (() => {
           borderRadius: "var(--radius-pill)",
           background: active ? "var(--warning-subtle)" : "var(--surface-raised)",
           boxShadow: active ? "inset 0 0 0 1px color-mix(in oklab, var(--streak) 35%, transparent)" : "none",
-          color: active ? "var(--streak-text)" : "var(--text-faint)",
+          // --text-muted for the broken state: faint measured 3.06 against
+          // --surface-raised, and "0 days" is text, not decoration.
+          color: active ? "var(--streak-text)" : "var(--text-muted)",
           fontFamily: "var(--font-display)",
           fontSize: s.value,
           fontWeight: "var(--fw-black)",
@@ -1339,7 +1345,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
               children: [
                 item.icon,
                 item.label,
-                item.count !== void 0 && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { style: { fontFamily: "var(--font-display)", fontSize: "var(--fs-12)", fontWeight: "var(--fw-black)", padding: "1px 6px", borderRadius: "var(--radius-pill)", background: on ? "var(--brand-subtle)" : "var(--surface-raised)", color: on ? "var(--violet-200)" : "var(--text-faint)" }, children: item.count })
+                item.count !== void 0 && /* @__PURE__ */ (0, import_jsx_runtime18.jsx)("span", { style: { fontFamily: "var(--font-display)", fontSize: "var(--fs-12)", fontWeight: "var(--fw-black)", padding: "1px 6px", borderRadius: "var(--radius-pill)", background: on ? "var(--brand-subtle)" : "var(--surface-raised)", color: on ? "var(--violet-200)" : "var(--text-muted)" }, children: item.count })
               ]
             },
             item.value
@@ -1373,15 +1379,19 @@ var LingoToolboxDesignSystem_898611 = (() => {
           textAlign: "left",
           borderRadius: "var(--radius-sm)",
           background: active ? "var(--surface-selected)" : hover ? "var(--surface-hover)" : "transparent",
-          color: active ? "var(--text-strong)" : muted ? "var(--text-faint)" : hover ? "var(--text-body)" : "var(--text-muted)",
+          // Four states, three legible steps — so `muted` shares --text-muted with
+          // the resting state rather than reaching for faint, which fails as text.
+          // The de-emphasis it still carries is the dimmed icon below; there is no
+          // colour quieter than resting that a reader can actually see.
+          color: active ? "var(--text-strong)" : hover ? "var(--text-body)" : "var(--text-muted)",
           transition: "var(--transition-control)",
           ...style
         },
         ...rest,
         children: [
           icon && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { style: { display: "grid", placeItems: "center", flex: "none", opacity: active ? 1 : 0.8 }, children: icon }),
-          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { style: { flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontFamily: "var(--font-ui)", fontSize: "var(--fs-14)", fontWeight: "var(--fw-bold)" }, children: label }),
-          meta && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { style: { flex: "none", fontFamily: "var(--font-ui)", fontSize: "var(--fs-11)", fontWeight: "var(--fw-bold)", color: "var(--text-faint)" }, children: meta }),
+          /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { style: { flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontFamily: "var(--font-ui)", fontSize: "var(--fs-14)", fontWeight: muted ? "var(--fw-medium)" : "var(--fw-bold)" }, children: label }),
+          meta && /* @__PURE__ */ (0, import_jsx_runtime19.jsx)("span", { style: { flex: "none", fontFamily: "var(--font-ui)", fontSize: "var(--fs-11)", fontWeight: "var(--fw-bold)", color: "var(--text-muted)" }, children: meta }),
           badge
         ]
       }
@@ -1589,7 +1599,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
               children: [
                 /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("style", { children: "@keyframes lt-tip{from{opacity:0}to{opacity:1}}" }),
                 label,
-                shortcut && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("kbd", { style: { fontFamily: "var(--font-mono)", fontSize: "var(--fs-11)", color: "var(--text-faint)", background: "var(--surface-raised)", borderRadius: "var(--radius-xs)", padding: "1px 4px" }, children: shortcut })
+                shortcut && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("kbd", { style: { fontFamily: "var(--font-mono)", fontSize: "var(--fs-11)", color: "var(--text-muted)", background: "var(--surface-raised)", borderRadius: "var(--radius-xs)", padding: "1px 4px" }, children: shortcut })
               ]
             }
           )
@@ -1668,13 +1678,13 @@ var LingoToolboxDesignSystem_898611 = (() => {
             },
             children: [
               /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: { ...face, opacity: isFlipped ? 0 : 1, background: "var(--surface-card)", boxShadow: "var(--ring-inset), var(--shadow-md)" }, children: [
-                language && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { position: "absolute", top: 20, left: 24, fontFamily: "var(--font-ui)", fontSize: "var(--fs-11)", fontWeight: "var(--fw-black)", letterSpacing: "var(--ls-caps)", textTransform: "uppercase", color: "var(--text-faint)" }, children: language }),
+                language && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { position: "absolute", top: 20, left: 24, fontFamily: "var(--font-ui)", fontSize: "var(--fs-11)", fontWeight: "var(--fw-black)", letterSpacing: "var(--ls-caps)", textTransform: "uppercase", color: "var(--text-muted)" }, children: language }),
                 onFront && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { display: "grid", lineHeight: 0 }, children: illustration }),
                 /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { fontFamily: "var(--font-display)", fontSize: "var(--fs-48)", fontWeight: "var(--fw-black)", lineHeight: 1.05, color: "var(--text-strong)" }, children: front }),
                 phonetic && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { fontFamily: "var(--font-mono)", fontSize: "var(--fs-16)", color: "var(--text-muted)" }, children: phonetic }),
-                hint && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { position: "absolute", bottom: 18, fontFamily: "var(--font-ui)", fontSize: "var(--fs-12)", fontWeight: "var(--fw-semibold)", color: "var(--text-faint)" }, children: hint })
+                hint && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { position: "absolute", bottom: 18, fontFamily: "var(--font-ui)", fontSize: "var(--fs-12)", fontWeight: "var(--fw-semibold)", color: "var(--text-muted)" }, children: hint })
               ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: { ...face, opacity: isFlipped ? 1 : 0, transform: "rotateY(180deg)", background: "var(--violet-800)", boxShadow: "inset 0 0 0 1.5px var(--violet-600), var(--shadow-md)" }, children: [
+              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { "data-theme": "dark", style: { ...face, opacity: isFlipped ? 1 : 0, transform: "rotateY(180deg)", background: "var(--violet-800)", boxShadow: "inset 0 0 0 1.5px var(--violet-600), var(--shadow-md)" }, children: [
                 onBack && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { display: "grid", lineHeight: 0 }, children: illustration }),
                 /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { fontFamily: "var(--font-display)", fontSize: "var(--fs-32)", fontWeight: "var(--fw-black)", lineHeight: 1.1, color: "#fff" }, children: back }),
                 tags && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: { display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center" }, children: tags })
@@ -1700,7 +1710,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
         g.label,
         showShortcuts && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("kbd", { style: { fontFamily: "var(--font-mono)", fontSize: "var(--fs-11)", opacity: 0.7, marginLeft: 2 }, children: g.shortcut })
       ] }),
-      showDue && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { style: { fontFamily: "var(--font-ui)", fontSize: "var(--fs-11)", fontWeight: "var(--fw-bold)", letterSpacing: "var(--ls-wide)", color: "var(--text-faint)" }, children: g.due })
+      showDue && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("span", { style: { fontFamily: "var(--font-ui)", fontSize: "var(--fs-11)", fontWeight: "var(--fw-bold)", letterSpacing: "var(--ls-wide)", color: "var(--text-muted)" }, children: g.due })
     ] }, g.key)) });
   }
 
@@ -1716,7 +1726,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
         /* @__PURE__ */ (0, import_jsx_runtime25.jsxs)("div", { style: { display: "flex", alignItems: "baseline", gap: "var(--space-4)", flexWrap: "wrap" }, children: [
           /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { style: { fontFamily: "var(--font-display)", fontSize: "var(--fs-24)", fontWeight: "var(--fw-black)", color: current ? "var(--text-strong)" : "var(--text-body)", lineHeight: 1.1 }, children: word }),
           /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { style: { fontFamily: "var(--font-ui)", fontSize: "var(--fs-11)", fontWeight: "var(--fw-black)", letterSpacing: "var(--ls-caps)", textTransform: "uppercase", color }, children: language }),
-          era && /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { style: { fontFamily: "var(--font-mono)", fontSize: "var(--fs-11)", color: "var(--text-faint)" }, children: era })
+          era && /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("span", { style: { fontFamily: "var(--font-mono)", fontSize: "var(--fs-11)", color: "var(--text-muted)" }, children: era })
         ] }),
         gloss && /* @__PURE__ */ (0, import_jsx_runtime25.jsx)("p", { style: { margin: "4px 0 0", fontFamily: "var(--font-ui)", fontSize: "var(--fs-14)", color: "var(--text-muted)", lineHeight: "var(--lh-relaxed)" }, children: gloss })
       ] })

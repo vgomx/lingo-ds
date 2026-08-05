@@ -25,7 +25,11 @@ export function Tag({ children, color = 'var(--brand)', variant = 'soft', icon =
         borderRadius: 'var(--radius-tag)', fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-12)',
         fontWeight: 'var(--fw-bold)' as React.CSSProperties['fontWeight'], whiteSpace: 'nowrap',
         background: solid ? color : 'color-mix(in oklab, ' + color + ' 18%, transparent)',
-        color: solid ? '#fff' : color,
+        // The accent is tuned to read on a dark surface. On a light one the same
+        // step sits at 2.42 against its own 18% tint, so --tag-ink pulls it toward
+        // ink there and is a no-op in dark. Both come from the theme scope, so a
+        // Tag inside a nested light or dark island resolves against that island.
+        color: solid ? '#fff' : 'color-mix(in oklab, ' + color + ', var(--tag-ink) var(--tag-ink-amount))',
         boxShadow: solid ? 'none' : 'inset 0 0 0 1px color-mix(in oklab, ' + color + ' 35%, transparent)',
         ...style,
       }}

@@ -7,7 +7,7 @@
   /* ---------- Base palette: Ink (dark product surfaces) ---------- */
   --ink-1000:#0E0E15; --ink-900:#14141C; --ink-800:#1B1B26; --ink-700:#23232F;
   --ink-600:#2C2C3B; --ink-500:#363648; --ink-400:#45455B; --ink-300:#5E6079;
-  --ink-200:#8A8DA3; --ink-100:#B7B9CB; --ink-50:#F4F4F8;
+  --ink-200:#8A8DA3; --ink-150:#9DA0B4; --ink-100:#B7B9CB; --ink-50:#F4F4F8;
 
   /* ---------- Base palette: Paper (light surfaces / marketing) ---------- */
   --paper-0:#FFFFFF; --paper-50:#F7F7FB; --paper-100:#F0F0F6; --paper-200:#E5E5EF; --paper-300:#D3D3E0;
@@ -23,8 +23,14 @@
   /* ---------- Semantic: text ---------- */
   --text-strong:var(--ink-50);
   --text-body:var(--ink-100);
-  --text-muted:var(--ink-200);
-  --text-faint:var(--ink-300);
+  --text-muted:var(--ink-150);
+  --text-faint:var(--ink-200);
+  /* Tag text is the accent colour itself. On dark surfaces the accent already
+     carries; on light ones it has to be pulled toward ink or it fails on its own
+     18% tint (pink-500 measured 2.42). Scope-aware so a Tag is correct inside a
+     nested island, not just at the page level. */
+  --tag-ink:transparent;
+  --tag-ink-amount:0%;
   --text-on-brand:#FFFFFF;
   --text-link:var(--cyan-300);
   --text-inverse:var(--ink-900);
@@ -89,8 +95,14 @@
 [data-theme="dark"]{
   --text-strong:var(--ink-50);
   --text-body:var(--ink-100);
-  --text-muted:var(--ink-200);
-  --text-faint:var(--ink-300);
+  --text-muted:var(--ink-150);
+  --text-faint:var(--ink-200);
+  /* Tag text is the accent colour itself. On dark surfaces the accent already
+     carries; on light ones it has to be pulled toward ink or it fails on its own
+     18% tint (pink-500 measured 2.42). Scope-aware so a Tag is correct inside a
+     nested island, not just at the page level. */
+  --tag-ink:transparent;
+  --tag-ink-amount:0%;
   --text-link:var(--cyan-300);
   --text-inverse:var(--ink-900);
 
@@ -151,6 +163,8 @@
   --text-body:#3A3A4D;
   --text-muted:#63637C;
   --text-faint:#8A8DA3;
+  --tag-ink:var(--ink-900);
+  --tag-ink-amount:42%;
   --text-link:var(--violet-600);
   --text-inverse:var(--ink-50);
 

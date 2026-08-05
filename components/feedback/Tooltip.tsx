@@ -51,7 +51,7 @@ export function Tooltip({ children, label, side = 'top', shortcut, style, ...res
           <style>{'@keyframes lt-tip{from{opacity:0}to{opacity:1}}'}</style>
           {label}
           {shortcut && (
-            <kbd style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--fs-11)', color: 'var(--text-faint)', background: 'var(--surface-raised)', borderRadius: 'var(--radius-xs)', padding: '1px 4px' }}>
+            <kbd style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--fs-11)', color: 'var(--text-muted)', background: 'var(--surface-raised)', borderRadius: 'var(--radius-xs)', padding: '1px 4px' }}>
               {shortcut}
             </kbd>
           )}

@@ -38,7 +38,7 @@ export function Radio({ checked = false, label, hint, name, value, disabled = fa
       />
       <span style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <span style={{ fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-14)', fontWeight: 'var(--fw-semibold)' as React.CSSProperties['fontWeight'], color: 'var(--text-strong)' }}>{label}</span>
-        {hint && <span style={{ fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-12)', color: 'var(--text-faint)' }}>{hint}</span>}
+        {hint && <span style={{ fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-12)', color: 'var(--text-muted)' }}>{hint}</span>}
       </span>
     </label>
   );

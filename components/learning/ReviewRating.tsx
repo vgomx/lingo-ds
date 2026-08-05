@@ -36,7 +36,7 @@ export function ReviewRating({ grades = GRADES, onGrade, showDue = true, showSho
             )}
           </Button>
           {showDue && (
-            <span style={{ fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-11)', fontWeight: 'var(--fw-bold)' as React.CSSProperties['fontWeight'], letterSpacing: 'var(--ls-wide)', color: 'var(--text-faint)' }}>{g.due}</span>
+            <span style={{ fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-11)', fontWeight: 'var(--fw-bold)' as React.CSSProperties['fontWeight'], letterSpacing: 'var(--ls-wide)', color: 'var(--text-muted)' }}>{g.due}</span>
           )}
         </div>
       ))}

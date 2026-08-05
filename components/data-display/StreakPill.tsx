@@ -42,7 +42,9 @@ export function StreakPill({ days = 0, active = true, size = 'md', style, ...res
         borderRadius: 'var(--radius-pill)',
         background: active ? 'var(--warning-subtle)' : 'var(--surface-raised)',
         boxShadow: active ? 'inset 0 0 0 1px color-mix(in oklab, var(--streak) 35%, transparent)' : 'none',
-        color: active ? 'var(--streak-text)' : 'var(--text-faint)',
+        // --text-muted for the broken state: faint measured 3.06 against
+        // --surface-raised, and "0 days" is text, not decoration.
+        color: active ? 'var(--streak-text)' : 'var(--text-muted)',
         fontFamily: 'var(--font-display)', fontSize: s.value,
         fontWeight: 'var(--fw-black)' as React.CSSProperties['fontWeight'],
         ...style,

@@ -110,7 +110,7 @@ export function IllustrationPicker({
           height: 'var(--control-h-sm)', padding: '0 10px',
           background: 'var(--surface-input)', borderRadius: 'var(--radius-control)',
           boxShadow: focus ? 'inset 0 0 0 1.5px var(--brand), var(--ring-focus)' : 'inset 0 0 0 1px var(--border)',
-          color: 'var(--text-faint)', transition: 'var(--transition-control)',
+          color: 'var(--text-faint)', /* faint-ok: inherited by the search Icon; the input sets its own colour */ transition: 'var(--transition-control)',
         }}
       >
         <Icon name="search" size={15} />
@@ -153,7 +153,7 @@ export function IllustrationPicker({
         }}
       >
         {sections.length === 0 ? (
-          <p style={{ margin: 0, padding: '20px 12px', textAlign: 'center', fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-13)', color: 'var(--text-faint)' }}>
+          <p style={{ margin: 0, padding: '20px 12px', textAlign: 'center', fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-13)', color: 'var(--text-muted)' }}>
             Nothing matches “{query.trim()}”.
           </p>
         ) : sections.map((section) => (
@@ -216,10 +216,8 @@ export function IllustrationPicker({
       </div>
 
       {hint && (
-        // Deliberately --text-muted where Input's hint still uses --text-faint:
-        // faint measures 3.27 in light and 2.53 in dark against these surfaces,
-        // and a hint is small text that has to clear 4.5:1. Input and the other
-        // form controls have the same defect and want the same fix.
+        // --text-muted for the same reason as Input's hint: 12px is small text
+        // needing 4.5:1, and faint measures 3.27 light / 2.53 dark here.
         <span style={{ fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-12)', color: 'var(--text-muted)' }}>{hint}</span>
       )}
     </div>

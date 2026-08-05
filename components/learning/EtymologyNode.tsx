@@ -38,7 +38,7 @@ export function EtymologyNode({ word, language, gloss, era, color = 'var(--tool-
           <span style={{ fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-11)', fontWeight: 'var(--fw-black)' as React.CSSProperties['fontWeight'], letterSpacing: 'var(--ls-caps)', textTransform: 'uppercase', color: color }}>
             {language}
           </span>
-          {era && <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--fs-11)', color: 'var(--text-faint)' }}>{era}</span>}
+          {era && <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--fs-11)', color: 'var(--text-muted)' }}>{era}</span>}
         </div>
         {gloss && (
           <p style={{ margin: '4px 0 0', fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-14)', color: 'var(--text-muted)', lineHeight: 'var(--lh-relaxed)' }}>

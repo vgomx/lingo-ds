@@ -52,7 +52,7 @@ export function Input({
           boxShadow: error
             ? 'inset 0 0 0 1.5px var(--danger)'
             : focus ? 'inset 0 0 0 1.5px var(--brand), var(--ring-focus)' : 'inset 0 0 0 1px var(--border)',
-          color: 'var(--text-faint)', transition: 'var(--transition-control)',
+          color: 'var(--text-faint)', /* faint-ok: inherited by iconLeft/iconRight; the input sets its own colour */ transition: 'var(--transition-control)',
           opacity: disabled ? 0.5 : 1, ...style,
         }}
       >
@@ -75,8 +75,12 @@ export function Input({
         />
         {iconRight}
       </span>
+      {/* --text-muted, not --text-faint: a hint is 12px, so it is small text and
+          has to clear 4.5:1. Faint measured 3.27 in light and 2.53 in dark against
+          the surfaces these controls actually sit on. Checkbox, Radio and Switch
+          carry the same hint and the same fix. */}
       {(hint || error) && (
-        <span style={{ fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-12)', color: error ? 'var(--danger)' : 'var(--text-faint)' }}>
+        <span style={{ fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-12)', color: error ? 'var(--danger)' : 'var(--text-muted)' }}>
           {error || hint}
         </span>
       )}

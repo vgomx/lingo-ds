@@ -37,7 +37,7 @@ import { Button, Flashcard, RailTile } from 'lingo-ds';
 
 ### Guards
 
-Three rules in this guide were previously enforced by nothing but attention, and
+Four rules in this guide were previously enforced by nothing but attention, and
 each had been broken in ways that were invisible until measured. They now fail
 the build:
 
@@ -45,6 +45,7 @@ the build:
 | --- | --- |
 | `check:theme` | A token one scope overrides and the other doesn't — which makes a nested dark island silently keep the outer light value |
 | `check:palette` | A component reaching for `--ink-*`/`--paper-*` instead of a semantic token, which pins a surface to one theme while its text follows the other |
+| `check:faint` | `--text-faint` used as a `color:` — it is below the contrast floor as text on every surface in both themes |
 | `check:bundle` | `_ds_bundle.js` being older than the components it was built from |
 
 ### `_ds_bundle.js`
@@ -125,6 +126,7 @@ Dark is the product default; `[data-theme="light"]` is a complete second scope, 
 Two rules keep it that way:
 
 - **Components never reach for a raw palette step** that only reads on one background. Use `--success` / `--warning` / `--danger` / `--info` for the fill and `--success-text` (…`-text`) for a label sitting on a `*-subtle` tint; use `--on-success` / `--on-danger` for a label on a solid one. The `-500` accents and `--tool-*` hues step down to dedicated `-800` values on paper (the `-500`s and even the `-700`s fall under 4.5:1 on white; the `-800`s measure 6.4–8.3:1, and white on them the same).
+- **The text ramp is three steps, not four.** `--text-strong` / `--text-body` / `--text-muted` are the legible ones. `--text-faint` is **not a text colour** — measured against the surfaces it actually sits on it runs 1.93–2.99 in dark and 3.06–3.27 in light, all under the 4.5:1 floor. It survives for non-text only: icon glyphs, dividers, decorative rules, which answer to 3:1 and which it clears. A genuine non-text use marks itself with a `faint-ok:` comment saying why. There is deliberately nothing quieter than `--text-muted` that a reader can still see, so a component wanting a fourth level of de-emphasis reaches for weight, not colour.
 - **Shadows are tokens, not literals.** Near-black shadows read as dirt on paper, so `--shadow-*` is retuned per scope. Never write `0 4px 12px rgba(0,0,0,…)` inline.
 
 ### Type
