@@ -10,7 +10,9 @@
 const { Flashcard, ReviewRating, EtymologyNode, Tag } = window.LingoToolboxDesignSystem_898611;
 function Demo(){return (<div style={{display:'grid',gridTemplateColumns:'1.1fr 1fr',gap:20,alignItems:'start'}}>
  <div className="col" style={{gap:14}}>
-  <Flashcard language="Spanish" front="sobremesa" phonetic="/so.bɾeˈme.sa/" back="the long talk after a meal" height={210} tags={<><Tag color="var(--cyan-300)">noun</Tag><Tag color="var(--mint-300)">B1</Tag></>}/>
+  <Flashcard language="Spanish" front="sobremesa" phonetic="/so.bɾeˈme.sa/" back="the long talk after a meal" height={210}
+             illustration={<img src="../../assets/illustrations/openmoji/speech-balloon-1F4AC.svg" alt="" width="48" height="48"/>}
+             defaultFlipped tags={<><Tag color="var(--cyan-300)">noun</Tag><Tag color="var(--mint-300)">B1</Tag></>}/>
   <ReviewRating onGrade={()=>{}}/>
  </div>
  <div className="col" style={{gap:0,paddingTop:4}}>

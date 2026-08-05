@@ -182,6 +182,8 @@ Illustration is **OpenMoji** colour SVG (CC BY-SA 4.0) — never bespoke drawing
 - **Sizes:** 44–56px on a card, 56–72px in an empty state. Never inline in a sentence, never in place of a UI icon, never on top of a saturated fill.
 - One illustration per surface. If two would appear side by side, they belong in a grid of equals (deck, tool or empty-state cards), not scattered.
 - **Attribution is required** where the app credits third-party work; `LICENSE.txt` ships beside the assets.
+- **Choosing one** is `IllustrationPicker`, which takes resolved `src` URLs and never reaches for an asset folder — that is what keeps the full set in the product repo. Its grid is the sanctioned exception to one-per-surface, and its 34px cells are the exception to the 44px floor: a picker cell is a control, not an illustration on a surface.
+- **On a flashcard**, the glyph belongs on the **answer** face. A picture of the answer sitting on the prompt turns a recall test into a reading test. `Flashcard`'s `illustrationSide` defaults to `back` for that reason; `front` is for picture-prompt decks, where naming the picture is the exercise.
 
 ---
 
@@ -209,7 +211,7 @@ Grouped by concern; each directory holds `<Name>.jsx`, `<Name>.d.ts`, `<Name>.pr
 
 - **`components/actions/`** — `Button`, `IconButton`
 - **`components/icon/`** — `Icon`
-- **`components/forms/`** — `Input`, `Select`, `Checkbox`, `Radio`, `Switch`
+- **`components/forms/`** — `Input`, `Select`, `Checkbox`, `Radio`, `Switch`, `IllustrationPicker`
 - **`components/surfaces/`** — `Card`, `Dialog`
 - **`components/data-display/`** — `Badge`, `Tag`, `ProgressBar`, `StreakPill`, `Avatar`
 - **`components/navigation/`** — `Tabs`, `SidebarItem`, `RailTile`

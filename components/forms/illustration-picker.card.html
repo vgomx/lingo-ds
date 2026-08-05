@@ -1,0 +1,65 @@
+<!-- @dsCard group="Components" viewport="700x420" name="Illustration picker" subtitle="Search, sections and a way back to none" -->
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Illustration picker</title><link rel="stylesheet" href="../../styles.css">
+<style>body{background:var(--surface-app);margin:0;padding:20px;font-family:var(--font-ui)}#root{display:flex;gap:20px;align-items:flex-start}.note{font-size:var(--fs-12);color:var(--text-muted);line-height:var(--lh-relaxed);max-width:260px}.note b{color:var(--text-strong)}.picked{display:flex;align-items:center;gap:12px;background:var(--surface-card);border-radius:var(--radius-lg);box-shadow:var(--ring-inset);padding:14px;margin-bottom:14px}.picked img{width:48px;height:48px}.picked span{font-family:var(--font-display);font-size:var(--fs-16);font-weight:var(--fw-black);color:var(--text-strong)}.picked small{display:block;font-family:var(--font-ui);font-size:var(--fs-11);font-weight:var(--fw-bold);letter-spacing:var(--ls-caps);text-transform:uppercase;color:var(--text-faint)}</style>
+</head><body><div id="root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script type="text/babel">
+const { IllustrationPicker } = window.LingoToolboxDesignSystem_898611;
+
+// The design system's own 18-glyph sample. The product repo vendors the full set
+// and builds this list from OpenMoji's metadata; here it is written out so the
+// card stays self-contained.
+const BASE = '../../assets/illustrations/openmoji/';
+const SAMPLE = [
+  ['1F4DA','books-1F4DA','books','library reading'],
+  ['1F4D6','open-book-1F4D6','open book','reading study'],
+  ['1F4D3','notebook-1F4D3','notebook','notes'],
+  ['1F4DC','scroll-1F4DC','scroll','document'],
+  ['1F4DD','memo-1F4DD','memo','write note pencil'],
+  ['1F4AC','speech-balloon-1F4AC','speech balloon','talk chat say'],
+  ['1F4AD','thought-balloon-1F4AD','thought balloon','think idea'],
+  ['1F5E3','speaking-head-1F5E3','speaking head','pronounce say aloud'],
+  ['1F30D','globe-1F30D','globe','world earth'],
+  ['1F5FA','world-map-1F5FA','world map','atlas travel'],
+  ['1F9ED','compass-1F9ED','compass','direction navigate'],
+  ['1F9E0','brain-1F9E0','brain','memory think'],
+  ['1F4A1','light-bulb-1F4A1','light bulb','idea insight'],
+  ['1F50D','magnifying-glass-1F50D','magnifying glass','search look find'],
+  ['1F393','graduation-cap-1F393','graduation cap','study school degree'],
+  ['1F520','input-latin-uppercase-1F520','input latin uppercase','letters abc capital'],
+  ['1F521','input-latin-lowercase-1F521','input latin lowercase','letters abc'],
+  ['1F524','input-latin-letters-1F524','input latin letters','alphabet abc'],
+];
+const GROUPS = [{id:'reading',label:'Reading & writing'},{id:'thinking',label:'Thinking & speaking'},{id:'world',label:'World'}];
+const GROUP_OF = {'1F4DA':'reading','1F4D6':'reading','1F4D3':'reading','1F4DC':'reading','1F4DD':'reading','1F520':'reading','1F521':'reading','1F524':'reading','1F4AC':'thinking','1F4AD':'thinking','1F5E3':'thinking','1F9E0':'thinking','1F4A1':'thinking','1F50D':'thinking','1F393':'thinking'};
+const ITEMS = SAMPLE.map(([hex,file,name,kw])=>({
+  id:hex, src:`${BASE}${file}.svg`, name, group:GROUP_OF[hex]||'world', keywords:kw.split(' '),
+}));
+
+function Demo(){
+  const [value,setValue]=React.useState('1F9E0');
+  const picked=ITEMS.find(i=>i.id===value);
+  return (<>
+    <div style={{width:330}}>
+      <IllustrationPicker
+        label="Illustration"
+        hint="Optional. Shows on the answer side of the card."
+        items={ITEMS} groups={GROUPS} value={value} onChange={setValue} height={250}
+      />
+    </div>
+    <div>
+      <div className="picked">
+        {picked
+          ? <><img src={picked.src} alt=""/><span><small>Selected</small>{picked.name}</span></>
+          : <span><small>Selected</small>Nothing</span>}
+      </div>
+      <p className="note">Takes resolved <b>src</b> URLs — it never reaches for the asset folder itself, so the full OpenMoji set can stay vendored in the product repo.</p>
+      <p className="note">Clicking the selected glyph again, or the ✕ in the search field, clears it. Choosing one is never a required step.</p>
+    </div>
+  </>);
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo />);
+</script></body></html>

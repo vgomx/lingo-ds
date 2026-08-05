@@ -1,8 +1,21 @@
 import * as React from 'react';
 
+export type FlashcardIllustrationSide = 'front' | 'back' | 'both';
+
 export interface FlashcardOwnProps {
   front?: React.ReactNode;
   back?: React.ReactNode;
+  /**
+   * An OpenMoji glyph for the card, sized 44–56px by the caller. Shown on the
+   * back by default — see `illustrationSide`.
+   */
+  illustration?: React.ReactNode;
+  /**
+   * Which face carries the illustration. Defaults to `back`: a picture of the
+   * answer sitting on the prompt turns a recall test into a reading test. Set
+   * `front` for picture-prompt decks, where naming the picture is the exercise.
+   */
+  illustrationSide?: FlashcardIllustrationSide;
   /** IPA or romanisation, set in the mono face. */
   phonetic?: string;
   /** Uppercase language stamp in the top-left of the front face. */
@@ -27,9 +40,12 @@ export interface FlashcardProps
  * Front = prompt in the target language, back = meaning plus notes.
  */
 export function Flashcard({
-  front, back, phonetic, language, tags, flipped, defaultFlipped = false, height = 300,
+  front, back, illustration, illustrationSide = 'back', phonetic, language, tags,
+  flipped, defaultFlipped = false, height = 300,
   hint = 'Click or press Space to flip', onFlip, style, ...rest
 }: FlashcardProps) {
+  const onFront = !!illustration && illustrationSide !== 'back';
+  const onBack = !!illustration && illustrationSide !== 'front';
   const [inner, setInner] = React.useState(defaultFlipped);
   const isFlipped = flipped === undefined ? inner : flipped;
   const flip = () => {
@@ -71,6 +87,7 @@ export function Flashcard({
               {language}
             </span>
           )}
+          {onFront && <span style={{ display: 'grid', lineHeight: 0 }}>{illustration}</span>}
           <span style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--fs-48)', fontWeight: 'var(--fw-black)' as React.CSSProperties['fontWeight'], lineHeight: 1.05, color: 'var(--text-strong)' }}>
             {front}
           </span>
@@ -82,6 +99,7 @@ export function Flashcard({
           )}
         </div>
         <div style={{ ...face, opacity: isFlipped ? 1 : 0, transform: 'rotateY(180deg)', background: 'var(--violet-800)', boxShadow: 'inset 0 0 0 1.5px var(--violet-600), var(--shadow-md)' }}>
+          {onBack && <span style={{ display: 'grid', lineHeight: 0 }}>{illustration}</span>}
           <span style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--fs-32)', fontWeight: 'var(--fw-black)' as React.CSSProperties['fontWeight'], lineHeight: 1.1, color: '#fff' }}>{back}</span>
           {tags && <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'center' }}>{tags}</div>}
         </div>

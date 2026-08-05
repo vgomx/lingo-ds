@@ -2,12 +2,69 @@
 // Every specimen card in the bundle is embedded in an iframe, grouped and ordered
 // by GROUP_ORDER. Re-run after adding or renaming a card:  node scripts/build-showcase.mjs
 
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
+import { dirname, join, relative } from 'node:path';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const manifest = JSON.parse(readFileSync(join(root, '_ds_manifest.json'), 'utf8'));
+
+/**
+ * Cards are discovered on disk rather than read from the manifest's list.
+ *
+ * The list used to be maintained by hand, so adding a card meant remembering to
+ * add it in two places; forgetting the second one dropped the card from the
+ * showcase with no error, which is exactly what happened when the illustration
+ * picker was added. The `@dsCard` comment at the top of each file already
+ * carries every field the manifest stored, so the file is the only source of
+ * truth and the manifest is refreshed from it below.
+ */
+// `templates/` is deliberately out: those are copy-to-start artifacts for
+// consuming projects, not specimens of this system.
+const IGNORE = new Set(['node_modules', '.git', 'dist', 'templates']);
+
+const walk = (dir) => readdirSync(dir).flatMap((entry) => {
+  if (IGNORE.has(entry) || entry.startsWith('.')) return [];
+  const full = join(dir, entry);
+  if (statSync(full).isDirectory()) return walk(full);
+  return entry.endsWith('.html') ? [full] : [];
+});
+
+const ATTR = (meta, key) => meta.match(new RegExp(`${key}="([^"]*)"`))?.[1];
+
+// The marker is what makes a page a card, not its filename — the two full
+// recreations under ui_kits/ are `index.html` and belong in the showcase too.
+const discovered = walk(root).map((file) => {
+  const head = readFileSync(file, 'utf8').slice(0, 600);
+  const meta = head.match(/<!--\s*@dsCard\s+([^>]*?)-->/)?.[1];
+  if (!meta) return null;
+  const path = relative(root, file).split(/[\\/]/).join('/');
+  return {
+    path,
+    group: ATTR(meta, 'group') ?? 'Components',
+    viewport: ATTR(meta, 'viewport') ?? '700x200',
+    subtitle: ATTR(meta, 'subtitle') ?? '',
+    name: ATTR(meta, 'name') ?? path,
+  };
+}).filter(Boolean);
+
+// Stable order within a group: whatever the manifest already listed keeps its
+// place, so adding a card appends rather than reshuffling the whole page.
+const previous = new Map(manifest.cards.map((c, i) => [c.path, i]));
+discovered.sort((a, b) => (previous.get(a.path) ?? Infinity) - (previous.get(b.path) ?? Infinity)
+  || a.path.localeCompare(b.path));
+
+const added = discovered.filter((c) => !previous.has(c.path));
+const removed = manifest.cards.filter((c) => !discovered.some((d) => d.path === c.path));
+if (added.length) console.log(`  + ${added.map((c) => c.path).join('\n  + ')}`);
+if (removed.length) console.log(`  - ${removed.map((c) => c.path).join('\n  - ')}`);
+
+manifest.cards = discovered;
+if (added.length || removed.length) {
+  // Written back in the single-line form the file already uses, so the diff is
+  // the cards that changed rather than a reformat of all 2,600 lines.
+  writeFileSync(join(root, '_ds_manifest.json'), JSON.stringify(manifest));
+}
 
 /** Reading order: foundations first, then components, then the two full recreations. */
 const GROUP_ORDER = [
