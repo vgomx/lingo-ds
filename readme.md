@@ -141,6 +141,8 @@ Cool-toned and high-contrast when it exists; ink backgrounds mean images should 
 - **Tool mapping:** Flashcards `layers` · Etymology Explorer `git-branch` · Conjugation Drill `spell-check` · Phrasebook `message-square-quote` · Grammar Notes `scroll-text` · Streak `flame` · Mastery `trophy`.
 - **Flags are not icons.** Country-flag emoji appear only in the language picker at the top right of the content pane (and in its menu rows), always beside the language name. Never use a flag to stand for a language in body copy or a tag.
 - **Logo is not an icon.** Use `assets/logo/mark-*.svg` for the app tile; never substitute a Lucide glyph for the brand mark, and never redraw the wordmark in a live font.
+- **Picking a lockup by the space you have.** `mark-*` is the reduced symbol — it is what works at app-icon and favicon sizes, and the only thing that survives below about 24px. `logo-wordmark-*` is the horizontal lockup, minimum 96px wide. `stack-*` sits between them: the reduced mark with TOOLBOX beneath, for square-ish space where the horizontal wordmark would have to be set too small to read — a splash, a share card, an about screen. Minimum 96px tall; below that the TOOLBOX letterforms close up.
+- **`stack-*` was composed, not redrawn.** Its TOOLBOX is the wordmark's own outlines, lifted from `logo-wordmark-white.svg` by `scripts/build-stack-lockup.mjs`, so it is the same flattened Dangrek lettering rather than a re-setting of it. Re-run that script rather than editing the four `stack-*.svg` files by hand.
 
 ### Illustration
 
@@ -162,7 +164,7 @@ Illustration is **OpenMoji** colour SVG (CC BY-SA 4.0) — never bespoke drawing
 | `SKILL.md` | Agent-skill entry point |
 | `styles.css` | Global entry — `@import` list only |
 | `tokens/` | `colors.css` · `typography.css` · `spacing.css` · `radii.css` · `elevation.css` · `motion.css` · `fonts.css` · `base.css` |
-| `assets/logo/` | 12 lockups + the original master sheet |
+| `assets/logo/` | 16 lockups + the original master sheet |
 | `assets/icons/` | 76 Lucide SVGs |
 | `guidelines/` | 20 foundation specimen cards (Colors, Type, Spacing, Elevation, Motion, Brand) |
 | `components/` | React primitives, grouped by concern |
