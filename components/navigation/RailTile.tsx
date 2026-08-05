@@ -81,7 +81,10 @@ export function RailTile({ label, icon, flag, src, color = 'var(--brand)', size 
             maxWidth: 60, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
             fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-10)', fontWeight: 'var(--fw-bold)' as React.CSSProperties['fontWeight'],
             letterSpacing: 'var(--ls-wide)', textAlign: 'center',
-            color: active || hover ? 'var(--text-strong)' : 'var(--text-faint)',
+            // --text-muted, not --text-faint: at --fs-10 this is small text needing
+            // 4.5:1, and faint on the rail surface measures 3.14. Muted gives 5.88 —
+            // and is already what the inactive icon above it uses, so the two match.
+            color: active || hover ? 'var(--text-strong)' : 'var(--text-muted)',
             transition: 'color var(--dur-fast) var(--ease-standard)',
           }}
         >

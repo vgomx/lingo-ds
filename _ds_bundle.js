@@ -1812,7 +1812,7 @@ function RailTile({
       fontWeight: 'var(--fw-bold)',
       letterSpacing: 'var(--ls-wide)',
       textAlign: 'center',
-      color: active || hover ? 'var(--text-strong)' : 'var(--text-faint)',
+      color: active || hover ? 'var(--text-strong)' : 'var(--text-muted)',
       transition: 'color var(--dur-fast) var(--ease-standard)'
     }
   }, label), unread > 0 && /*#__PURE__*/React.createElement("span", {
