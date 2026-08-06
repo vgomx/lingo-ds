@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: f2c753b61ddb3f1c
+// source-hash: 76027ed5e644c143
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -1282,6 +1282,8 @@ var LingoToolboxDesignSystem_898611 = (() => {
     ...rest
   }) {
     const [hover, setHover] = React9.useState(false);
+    const ring = selected ? "inset 0 0 0 1.5px var(--brand)" : "var(--ring-inset)";
+    const lifted = interactive && hover;
     return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(
       "div",
       {
@@ -1296,9 +1298,9 @@ var LingoToolboxDesignSystem_898611 = (() => {
           background: "var(--surface-card)",
           borderRadius: "var(--radius-card)",
           padding,
-          boxShadow: selected ? "inset 0 0 0 1.5px var(--brand)" : "var(--ring-inset)",
+          boxShadow: lifted ? `${ring}, var(--shadow-md)` : ring,
           cursor: interactive ? "pointer" : void 0,
-          transform: interactive && hover ? "translateY(-2px)" : "none",
+          transform: lifted ? "translateY(-2px)" : "none",
           transition: "transform var(--dur-base) var(--ease-out), background-color var(--dur-base) var(--ease-standard), box-shadow var(--dur-base) var(--ease-standard)",
           overflow: "hidden",
           ...style
