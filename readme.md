@@ -132,6 +132,8 @@ Two rules keep it that way:
 ### Type
 Two families. **Baloo 2** (`--font-display`) at weight 800 carries anything that should feel like the logo: hero copy, the word on a flashcard, section headings, numbers. **Nunito Sans** (`--font-ui`) does all reading and all chrome, 400 for prose and 600/700 for labels. **JetBrains Mono** for IPA, roots, intervals and `<kbd>`. Tracking is normal everywhere except the eyebrow (0.08em) and hero display (-0.02em). Line height 1.5 for prose, 1.15–1.2 for display.
 
+The scale bottoms out at **`--fs-8`**, which exists for one job: a stamp on chrome too narrow for anything else — the rail's "Soon" marker is the only thing using it, and it drops `--ls-wide` because that tracking exists to open caps up for *reading*. Anything a reader is meant to read starts at `--fs-11`, and the 4.5:1 contrast floor applies to all of it regardless of size.
+
 ### Spacing & layout
 4px base scale. Product chrome is fixed: 72px rail, 248px sidebar, 48px top bar, 320px side panel; content maxes at 1120px and centres. Sidebar rows are 34px tall with 8px inset. Cards pad 20px, dialogs 24px, stack gap 12px, inline gap 8px, section gap 32px. Controls are 28/36/44/52px; 44px is the floor for anything touchable.
 
