@@ -98,7 +98,7 @@ Everything else is untouched: `tokens/`, `styles.css`, `assets/`, `guidelines/`,
 - **Length.** Buttons 1–3 words. Card titles ≤ 4 words. Descriptions one sentence, ideally under 12 words. Empty states get two lines: what's missing, then the one action.
 - **Punctuation.** No exclamation marks in UI chrome; they're reserved for genuine milestones ("26-day streak!"). Middle dots separate metadata (`42 cards · 12 due · Spanish`). Em dashes are fine in prose, never in labels.
 - **Numbers.** Always concrete and always in the display face. "12 due", never "some cards". Intervals are short-form: `<1m`, `6m`, `1d`, `4d`.
-- **Emoji.** **Not used as UI, with one exception:** country-flag emoji identify language workspaces on the rail, always paired with the language name in small type below (a flag is never the only identifier). Everything else is a Lucide glyph. Emoji may appear inside user-authored card content, never in product copy.
+- **Emoji.** **Not used as UI at all.** Language workspaces are identified by an OpenMoji flag SVG beside the language name written out in full (a flag is never the only identifier) — not by a flag emoji, which Windows does not render: the OS ships no glyphs for regional indicator pairs, so a reader there sees the two letters in a box. Everything else is a Lucide glyph. Emoji may still appear inside user-authored card content, never in product copy.
 - **Language names** are written out in full ("Spanish", "Japanese") everywhere, including under the rail's flag tiles; two-letter caps codes (ES, JA, TR) are the fallback where flag emoji don't render.
 - **Errors** state what happened and what happens next, no blame: "We don't recognise that address." / "Couldn't sync — we'll retry in the background."
 
