@@ -42,6 +42,7 @@ export default defineConfig([
         ...options.alias,
         'react/jsx-runtime': './scripts/react-jsx-runtime-global.cjs',
         react: './scripts/react-global.cjs',
+        'react-dom': './scripts/react-dom-global.cjs',
       };
     },
   },

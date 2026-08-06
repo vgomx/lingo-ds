@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { createPortal } from 'react-dom';
 import { useIsMobile } from '../../hooks/useBreakpoint';
 import { IconButton } from '../actions/IconButton';
 
@@ -18,16 +19,28 @@ export interface DialogProps
   extends DialogOwnProps,
     Omit<React.ComponentPropsWithoutRef<'div'>, keyof DialogOwnProps> {}
 
-/** Centred modal over a blurred scrim. Body scrolls; header and footer stay put. */
+/**
+ * Centred modal over a blurred scrim. Body scrolls; header and footer stay put.
+ *
+ * Portalled to <body>. It used to position itself `absolute`, which sizes the
+ * scrim to the nearest positioned ancestor rather than to the screen — so a
+ * dialog opened from anything inside a positioned element covered only that
+ * element. Opening one from the top bar's help menu dimmed the top bar and
+ * nothing else. `fixed` alone would not fix it either: the top bar has a
+ * backdrop-filter, and that makes a containing block for fixed descendants too.
+ * A modal should not be positioned by whatever happens to contain its trigger.
+ */
 export function Dialog({ open = true, title, description, children, footer, width = 440, onClose, style, ...rest }: DialogProps) {
   const isMobile = useIsMobile();
   if (!open) return null;
-  return (
+  if (typeof document === 'undefined') return null;
+
+  return createPortal(
     <div
       style={{
         // --space-4 on a phone: 32px each side takes a sixth of a 375px screen
         // away from a dialog that already caps at 100%.
-        position: 'absolute', inset: 0, display: 'grid', placeItems: 'center',
+        position: 'fixed', inset: 0, display: 'grid', placeItems: 'center',
         padding: isMobile ? 'var(--space-4)' : 'var(--space-8)',
         background: 'var(--surface-overlay)', backdropFilter: 'var(--blur-scrim)', zIndex: 40,
         animation: 'lt-fade var(--dur-base) var(--ease-out)',
@@ -64,6 +77,7 @@ export function Dialog({ open = true, title, description, children, footer, widt
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

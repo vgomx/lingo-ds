@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: 76027ed5e644c143
+// source-hash: 2a56e1e8cbbe19ee
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -78,6 +78,20 @@ var LingoToolboxDesignSystem_898611 = (() => {
         jsxs: jsx26,
         jsxDEV: jsx26
       };
+    }
+  });
+
+  // scripts/react-dom-global.cjs
+  var require_react_dom_global = __commonJS({
+    "scripts/react-dom-global.cjs"(exports, module) {
+      "use strict";
+      var ReactDOM = globalThis.ReactDOM;
+      if (!ReactDOM) {
+        throw new Error(
+          "lingo-ds browser bundle: window.ReactDOM is missing. Load react-dom before this script \u2014 the bundle deliberately does not carry its own copy."
+        );
+      }
+      module.exports = ReactDOM;
     }
   });
 
@@ -1322,64 +1336,69 @@ var LingoToolboxDesignSystem_898611 = (() => {
   }
 
   // components/surfaces/Dialog.tsx
+  var import_react_dom = __toESM(require_react_dom_global(), 1);
   var import_jsx_runtime12 = __toESM(require_react_jsx_runtime_global(), 1);
   function Dialog({ open = true, title, description, children, footer, width = 440, onClose, style, ...rest }) {
     const isMobile = useIsMobile();
     if (!open) return null;
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
-      "div",
-      {
-        style: {
-          // --space-4 on a phone: 32px each side takes a sixth of a 375px screen
-          // away from a dialog that already caps at 100%.
-          position: "absolute",
-          inset: 0,
-          display: "grid",
-          placeItems: "center",
-          padding: isMobile ? "var(--space-4)" : "var(--space-8)",
-          background: "var(--surface-overlay)",
-          backdropFilter: "var(--blur-scrim)",
-          zIndex: 40,
-          animation: "lt-fade var(--dur-base) var(--ease-out)"
-        },
-        onClick: onClose,
-        children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("style", { children: "@keyframes lt-fade{from{opacity:0}to{opacity:1}}@keyframes lt-pop{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}" }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
-            "div",
-            {
-              role: "dialog",
-              "aria-modal": "true",
-              onClick: (e) => e.stopPropagation(),
-              style: {
-                width,
-                maxWidth: "100%",
-                maxHeight: "100%",
-                display: "flex",
-                flexDirection: "column",
-                background: "var(--surface-app)",
-                borderRadius: "var(--radius-dialog)",
-                boxShadow: "var(--shadow-xl)",
-                animation: "lt-pop var(--dur-slow) var(--ease-spring)",
-                overflow: "hidden",
-                ...style
-              },
-              ...rest,
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { display: "flex", alignItems: "flex-start", gap: "var(--space-5)", padding: "var(--pad-dialog)", paddingBottom: "var(--space-4)" }, children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { flex: 1, display: "flex", flexDirection: "column", gap: "var(--space-2)" }, children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h2", { style: { margin: 0, fontFamily: "var(--font-display)", fontSize: "var(--fs-24)", fontWeight: "var(--fw-black)", color: "var(--text-strong)", lineHeight: 1.15 }, children: title }),
-                    description && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: { margin: 0, fontFamily: "var(--font-ui)", fontSize: "var(--fs-14)", color: "var(--text-muted)", lineHeight: "var(--lh-relaxed)" }, children: description })
+    if (typeof document === "undefined") return null;
+    return (0, import_react_dom.createPortal)(
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
+        "div",
+        {
+          style: {
+            // --space-4 on a phone: 32px each side takes a sixth of a 375px screen
+            // away from a dialog that already caps at 100%.
+            position: "fixed",
+            inset: 0,
+            display: "grid",
+            placeItems: "center",
+            padding: isMobile ? "var(--space-4)" : "var(--space-8)",
+            background: "var(--surface-overlay)",
+            backdropFilter: "var(--blur-scrim)",
+            zIndex: 40,
+            animation: "lt-fade var(--dur-base) var(--ease-out)"
+          },
+          onClick: onClose,
+          children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("style", { children: "@keyframes lt-fade{from{opacity:0}to{opacity:1}}@keyframes lt-pop{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}" }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
+              "div",
+              {
+                role: "dialog",
+                "aria-modal": "true",
+                onClick: (e) => e.stopPropagation(),
+                style: {
+                  width,
+                  maxWidth: "100%",
+                  maxHeight: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  background: "var(--surface-app)",
+                  borderRadius: "var(--radius-dialog)",
+                  boxShadow: "var(--shadow-xl)",
+                  animation: "lt-pop var(--dur-slow) var(--ease-spring)",
+                  overflow: "hidden",
+                  ...style
+                },
+                ...rest,
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { display: "flex", alignItems: "flex-start", gap: "var(--space-5)", padding: "var(--pad-dialog)", paddingBottom: "var(--space-4)" }, children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { flex: 1, display: "flex", flexDirection: "column", gap: "var(--space-2)" }, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h2", { style: { margin: 0, fontFamily: "var(--font-display)", fontSize: "var(--fs-24)", fontWeight: "var(--fw-black)", color: "var(--text-strong)", lineHeight: 1.15 }, children: title }),
+                      description && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: { margin: 0, fontFamily: "var(--font-ui)", fontSize: "var(--fs-14)", color: "var(--text-muted)", lineHeight: "var(--lh-relaxed)" }, children: description })
+                    ] }),
+                    onClose && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(IconButton, { label: "Close", onClick: onClose, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("path", { d: "M18 6 6 18M6 6l12 12" }) }) })
                   ] }),
-                  onClose && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(IconButton, { label: "Close", onClick: onClose, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("path", { d: "M18 6 6 18M6 6l12 12" }) }) })
-                ] }),
-                children && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { padding: "0 var(--pad-dialog)", overflowY: "auto" }, children }),
-                footer && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { display: "flex", justifyContent: "flex-end", gap: "var(--gap-inline)", padding: "var(--pad-dialog)", marginTop: "var(--space-4)", background: "var(--surface-sidebar)" }, children: footer })
-              ]
-            }
-          )
-        ]
-      }
+                  children && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { padding: "0 var(--pad-dialog)", overflowY: "auto" }, children }),
+                  footer && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { display: "flex", justifyContent: "flex-end", gap: "var(--gap-inline)", padding: "var(--pad-dialog)", marginTop: "var(--space-4)", background: "var(--surface-sidebar)" }, children: footer })
+                ]
+              }
+            )
+          ]
+        }
+      ),
+      document.body
     );
   }
 
