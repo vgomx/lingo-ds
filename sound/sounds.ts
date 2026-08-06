@@ -16,7 +16,7 @@ import { zzfx, type ZzfxParams } from './zzfx';
  * - **Celebration is rationed.** Only `sessionComplete` rises. If every grade
  *   sounded triumphant, none of them would.
  *
- * Kept short on purpose. Measured: `toggle` 50ms, the card ticks 90–100, `flip`
+ * Kept short on purpose. Measured: `tap` 34ms, `toggle` 50, the card ticks 90–100, `flip`
  * 140, the grades 200–250, and `sessionComplete` 580 — the only one allowed to
  * outlast the interaction that caused it. A reviewer hammering the grade keys
  * hears them queue, never pile up.
@@ -38,7 +38,15 @@ export const SOUNDS = {
   cardAdded: [0.4, 0.05, 800, 0.01, 0.02, 0.06, 1, 1.2, 0, 0, 220, 0.02],
   cardRemoved: [0.4, 0.05, 520, 0.01, 0.02, 0.07, 1, 1.2, -12],
 
-  /** Generic chrome: a panel opening, a switch. Quietest thing in the set. */
+  /**
+   * A press on ordinary chrome — the default for Button and IconButton, and so
+   * by far the most-repeated sound here. Which is exactly why it is the smallest:
+   * a click you hear a hundred times a session has to be something you stop
+   * noticing, or it becomes the sound of the app.
+   */
+  tap: [0.28, 0.02, 620, 0, 0.006, 0.022, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 0.006],
+
+  /** A switch or a panel. Slightly rounder than `tap`, and rarer. */
   toggle: [0.35, 0.02, 700, 0, 0.01, 0.03, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.6, 0.01],
 } satisfies Record<string, ZzfxParams>;
 

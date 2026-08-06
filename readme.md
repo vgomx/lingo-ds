@@ -154,6 +154,7 @@ UI sound is **synthesised with ZzFX** (MIT) — no audio files, no network, no `
 - **Nothing scolds.** `gradeAgain` is the softest and lowest sound in the set. Forgetting a word is the normal case in spaced repetition — it is what the algorithm is *for* — and a failure noise four times a session teaches people to dread the button.
 - **Celebration is rationed.** Only `sessionComplete` rises, and it is the only sound allowed to outlast the interaction that caused it (580ms against 50–250 for everything else).
 - **Sound answers an interaction, never announces one.** Nothing plays on load, on arrival at a screen, or on a background event.
+- **`Button` and `IconButton` tap by default.** Wiring a click at every call site is not a system, it is a hundred chances to forget one — so the control owns its own feedback and the call site opts out with `sound={false}` where it already has a voice. Chrome feedback belongs to the control; a domain event like a card flip or a grade belongs to the app. `tap` is the shortest sound in the set for the same reason it is the most frequent.
 - **The context unlocks on the first gesture.** Browsers keep an AudioContext suspended until a real click or keypress, so `unlockSound()` is wired to the first one; a sound played before that is silently swallowed.
 - There is no `prefers-reduced-sound` to honour the way motion has `prefers-reduced-motion`, so the control is an **explicit setting** — which the product surfaces in Settings, defaulting to on.
 

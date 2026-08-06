@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { useIsTouch } from '../../hooks/useBreakpoint';
+import { playSound } from '../../sound/sounds';
+import type { SoundName } from '../../sound/sounds';
 
 export type IconButtonSize = 'sm' | 'md' | 'lg';
 export type IconButtonVariant = 'ghost' | 'solid' | 'brand' | 'danger';
@@ -7,6 +9,8 @@ export type IconButtonVariant = 'ghost' | 'solid' | 'brand' | 'danger';
 const SIZES: Record<IconButtonSize, number> = { sm: 28, md: 36, lg: 44 };
 
 export interface IconButtonOwnProps {
+  /** What it sounds like. Defaults to `tap`; `false` where the caller has its own. */
+  sound?: SoundName | false;
   /** Exactly one <Icon /> (or 16-20px glyph). */
   children?: React.ReactNode;
   /** Required — becomes aria-label and the tooltip title. */
@@ -28,7 +32,7 @@ export interface IconButtonProps
 /** Square/round icon-only control for toolbars, card corners and the app rail. */
 export function IconButton({
   children, label, size = 'md', variant = 'ghost', shape = 'rounded', active = false,
-  disabled = false, onClick, style, ...rest
+  disabled = false, sound = 'tap', onClick, style, ...rest
 }: IconButtonProps) {
   const [hover, setHover] = React.useState(false);
   const [press, setPress] = React.useState(false);
@@ -56,7 +60,10 @@ export function IconButton({
       aria-label={label}
       title={label}
       disabled={disabled}
-      onClick={onClick}
+      onClick={(e) => {
+        if (sound) playSound(sound);
+        onClick && onClick(e);
+      }}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => { setHover(false); setPress(false); }}
       onMouseDown={() => setPress(true)}

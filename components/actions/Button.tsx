@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { useIsTouch } from '../../hooks/useBreakpoint';
+import { playSound } from '../../sound/sounds';
+import type { SoundName } from '../../sound/sounds';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'outline' | 'success' | 'danger' | 'link';
 export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';
@@ -43,6 +45,12 @@ const VARIANTS: Record<ButtonVariant, { rest: React.CSSProperties; hover: React.
 };
 
 export interface ButtonOwnProps {
+  /**
+   * What this button sounds like. Defaults to `tap`; pass `false` where the
+   * caller plays its own — a grade button and a card flip already have a voice,
+   * and two sounds on one press is one too many.
+   */
+  sound?: SoundName | false;
   children?: React.ReactNode;
   /** Visual role. `primary` is the only violet fill on a screen. */
   variant?: ButtonVariant;
@@ -67,7 +75,7 @@ export interface ButtonProps
 /** Primary action control. Chunky bottom edge + 1px press travel is the brand's signature. */
 export function Button({
   children, variant = 'primary', size = 'md', pill = false, block = false, disabled = false,
-  loading = false, iconLeft = null, iconRight = null, type = 'button', onClick, style, ...rest
+  loading = false, iconLeft = null, iconRight = null, type = 'button', sound = 'tap', onClick, style, ...rest
 }: ButtonProps) {
   const [hover, setHover] = React.useState(false);
   const [press, setPress] = React.useState(false);
@@ -112,7 +120,12 @@ export function Button({
     <button
       type={type}
       disabled={disabled || loading}
-      onClick={onClick}
+      onClick={(e) => {
+        // Before the handler, so the press is acknowledged even when the handler
+        // navigates away. playSound is a no-op when sound is off.
+        if (sound) playSound(sound);
+        onClick && onClick(e);
+      }}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => { setHover(false); setPress(false); }}
       onMouseDown={() => setPress(true)}
