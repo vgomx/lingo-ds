@@ -53,7 +53,7 @@ export type { ToastProps, ToastOwnProps, ToastTone } from './components/feedback
 export { Tooltip } from './components/feedback/Tooltip';
 export type { TooltipProps, TooltipOwnProps, TooltipSide } from './components/feedback/Tooltip';
 
-export { useBreakpoint, useIsMobile, useIsTouch, BREAKPOINTS } from './hooks/useBreakpoint';
+export { useBreakpoint, useIsMobile, useIsTouch, usePrefersReducedMotion, BREAKPOINTS } from './hooks/useBreakpoint';
 export type { Breakpoint } from './hooks/useBreakpoint';
 
 export { playSound, SOUNDS, SOUND_NAMES } from './sound/sounds';

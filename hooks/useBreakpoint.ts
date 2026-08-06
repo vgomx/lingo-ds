@@ -82,3 +82,30 @@ export function useIsTouch(): boolean {
 
   return touch;
 }
+
+/**
+ * Whether the reader has asked for less motion.
+ *
+ * `tokens/motion.css` zeroes every duration under this query, which is right for
+ * a transition but not for an effect that has no duration to zero — a card that
+ * tilts instantly instead of smoothly is worse, not calmer. Anything that moves
+ * because the pointer moved has to check this and simply not run.
+ */
+export function usePrefersReducedMotion(): boolean {
+  const [reduced, setReduced] = React.useState(() => (
+    typeof window !== 'undefined' && !!window.matchMedia
+      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      : false
+  ));
+
+  React.useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return undefined;
+    const list = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const onChange = () => setReduced(list.matches);
+    list.addEventListener('change', onChange);
+    onChange();
+    return () => list.removeEventListener('change', onChange);
+  }, []);
+
+  return reduced;
+}

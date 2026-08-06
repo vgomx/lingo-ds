@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: 8a598230128b3606
+// source-hash: f2c753b61ddb3f1c
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -123,6 +123,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
     useBreakpoint: () => useBreakpoint,
     useIsMobile: () => useIsMobile,
     useIsTouch: () => useIsTouch,
+    usePrefersReducedMotion: () => usePrefersReducedMotion,
     zzfx: () => zzfx
   });
 
@@ -165,6 +166,18 @@ var LingoToolboxDesignSystem_898611 = (() => {
       return () => list.removeEventListener("change", onChange);
     }, []);
     return touch;
+  }
+  function usePrefersReducedMotion() {
+    const [reduced, setReduced] = React.useState(() => typeof window !== "undefined" && !!window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)").matches : false);
+    React.useEffect(() => {
+      if (typeof window === "undefined" || !window.matchMedia) return void 0;
+      const list = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const onChange = () => setReduced(list.matches);
+      list.addEventListener("change", onChange);
+      onChange();
+      return () => list.removeEventListener("change", onChange);
+    }, []);
+    return reduced;
   }
 
   // sound/zzfx.ts
@@ -1881,6 +1894,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
   // components/learning/Flashcard.tsx
   var React13 = __toESM(require_react_global(), 1);
   var import_jsx_runtime23 = __toESM(require_react_jsx_runtime_global(), 1);
+  var MAX_TILT = 7;
   function Flashcard({
     front,
     back,
@@ -1894,11 +1908,31 @@ var LingoToolboxDesignSystem_898611 = (() => {
     height = 300,
     hint = "Click or press Space to flip",
     onFlip,
+    tilt = true,
     style,
     ...rest
   }) {
     const onFront = !!illustration && illustrationSide !== "back";
     const onBack = !!illustration && illustrationSide !== "front";
+    const isTouch = useIsTouch();
+    const reducedMotion = usePrefersReducedMotion();
+    const canTilt = tilt && !isTouch && !reducedMotion;
+    const tiltRef = React13.useRef(null);
+    const applyTilt = (e) => {
+      const node = tiltRef.current;
+      if (!canTilt || !node) return;
+      const r = e.currentTarget.getBoundingClientRect();
+      const px = ((e.clientX - r.left) / r.width - 0.5) * 2;
+      const py = ((e.clientY - r.top) / r.height - 0.5) * 2;
+      node.style.transition = "transform var(--dur-fast) linear";
+      node.style.transform = `rotateX(${(py * MAX_TILT).toFixed(2)}deg) rotateY(${(-px * MAX_TILT).toFixed(2)}deg)`;
+    };
+    const resetTilt = () => {
+      const node = tiltRef.current;
+      if (!node) return;
+      node.style.transition = "transform var(--dur-base) var(--ease-spring)";
+      node.style.transform = "none";
+    };
     const [inner, setInner] = React13.useState(defaultFlipped);
     const isFlipped = flipped === void 0 ? inner : flipped;
     const flip = () => {
@@ -1933,33 +1967,49 @@ var LingoToolboxDesignSystem_898611 = (() => {
         role: "button",
         tabIndex: 0,
         "aria-pressed": isFlipped,
+        onPointerMove: applyTilt,
+        onPointerLeave: resetTilt,
         style: { perspective: 1400, height, cursor: "pointer", userSelect: "none", ...style },
         ...rest,
-        children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+        children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
           "div",
           {
+            ref: tiltRef,
             style: {
-              position: "relative",
               width: "100%",
               height: "100%",
               transformStyle: "preserve-3d",
-              transform: isFlipped ? "rotateY(180deg)" : "none",
-              transition: "transform var(--dur-flip) var(--ease-spring)"
+              // No transition here at rest: applyTilt and resetTilt each set the one
+              // they want, so the way in is quick and the way out settles.
+              willChange: canTilt ? "transform" : void 0
             },
-            children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: { ...face, opacity: isFlipped ? 0 : 1, background: "var(--surface-card)", boxShadow: "var(--ring-inset), var(--shadow-md)" }, children: [
-                language && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { position: "absolute", top: 20, left: 24, fontFamily: "var(--font-ui)", fontSize: "var(--fs-11)", fontWeight: "var(--fw-black)", letterSpacing: "var(--ls-caps)", textTransform: "uppercase", color: "var(--text-muted)" }, children: language }),
-                onFront && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { display: "grid", lineHeight: 0 }, children: illustration }),
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { fontFamily: "var(--font-display)", fontSize: "var(--fs-48)", fontWeight: "var(--fw-black)", lineHeight: 1.05, color: "var(--text-strong)" }, children: front }),
-                phonetic && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { fontFamily: "var(--font-mono)", fontSize: "var(--fs-16)", color: "var(--text-muted)" }, children: phonetic }),
-                hint && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { position: "absolute", bottom: 18, fontFamily: "var(--font-ui)", fontSize: "var(--fs-12)", fontWeight: "var(--fw-semibold)", color: "var(--text-muted)" }, children: hint })
-              ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { "data-theme": "dark", style: { ...face, opacity: isFlipped ? 1 : 0, transform: "rotateY(180deg)", background: "var(--violet-800)", boxShadow: "inset 0 0 0 1.5px var(--violet-600), var(--shadow-md)" }, children: [
-                onBack && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { display: "grid", lineHeight: 0 }, children: illustration }),
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { fontFamily: "var(--font-display)", fontSize: "var(--fs-32)", fontWeight: "var(--fw-black)", lineHeight: 1.1, color: "#fff" }, children: back }),
-                tags && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: { display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center" }, children: tags })
-              ] })
-            ]
+            children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+              "div",
+              {
+                style: {
+                  position: "relative",
+                  width: "100%",
+                  height: "100%",
+                  transformStyle: "preserve-3d",
+                  transform: isFlipped ? "rotateY(180deg)" : "none",
+                  transition: "transform var(--dur-flip) var(--ease-spring)"
+                },
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: { ...face, opacity: isFlipped ? 0 : 1, background: "var(--surface-card)", boxShadow: "var(--ring-inset), var(--shadow-md)" }, children: [
+                    language && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { position: "absolute", top: 20, left: 24, fontFamily: "var(--font-ui)", fontSize: "var(--fs-11)", fontWeight: "var(--fw-black)", letterSpacing: "var(--ls-caps)", textTransform: "uppercase", color: "var(--text-muted)" }, children: language }),
+                    onFront && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { display: "grid", lineHeight: 0 }, children: illustration }),
+                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { fontFamily: "var(--font-display)", fontSize: "var(--fs-48)", fontWeight: "var(--fw-black)", lineHeight: 1.05, color: "var(--text-strong)" }, children: front }),
+                    phonetic && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { fontFamily: "var(--font-mono)", fontSize: "var(--fs-16)", color: "var(--text-muted)" }, children: phonetic }),
+                    hint && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { position: "absolute", bottom: 18, fontFamily: "var(--font-ui)", fontSize: "var(--fs-12)", fontWeight: "var(--fw-semibold)", color: "var(--text-muted)" }, children: hint })
+                  ] }),
+                  /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { "data-theme": "dark", style: { ...face, opacity: isFlipped ? 1 : 0, transform: "rotateY(180deg)", background: "var(--violet-800)", boxShadow: "inset 0 0 0 1.5px var(--violet-600), var(--shadow-md)" }, children: [
+                    onBack && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { display: "grid", lineHeight: 0 }, children: illustration }),
+                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { fontFamily: "var(--font-display)", fontSize: "var(--fs-32)", fontWeight: "var(--fw-black)", lineHeight: 1.1, color: "#fff" }, children: back }),
+                    tags && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: { display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center" }, children: tags })
+                  ] })
+                ]
+              }
+            )
           }
         )
       }
