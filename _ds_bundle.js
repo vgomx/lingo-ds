@@ -317,10 +317,16 @@ var LingoToolboxDesignSystem_898611 = (() => {
      * by far the most-repeated sound here. Which is exactly why it is the smallest:
      * a click you hear a hundred times a session has to be something you stop
      * noticing, or it becomes the sound of the app.
+     *
+     * Broadband noise (shape 4 plus a heavy `noise` term) falling fast, not a tone.
+     * Both of these were a tan wave at a fixed pitch, which is a *blip* — the first
+     * version measured 2,486 zero-crossings per second against `flip`'s 21,543, and
+     * that gap is the whole difference between something that reads as a physical
+     * click and something that reads as a note. A real click has no pitch to hear.
      */
-    tap: [0.28, 0.02, 620, 0, 6e-3, 0.022, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.5, 6e-3],
-    /** A switch or a panel. Slightly rounder than `tap`, and rarer. */
-    toggle: [0.35, 0.02, 700, 0, 0.01, 0.03, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.6, 0.01]
+    tap: [0.45, 0.05, 700, 0, 4e-3, 0.018, 4, 2.4, -40, 0, 0, 0, 0, 2, 0, 0, 0, 0.3, 4e-3],
+    /** A switch or a panel: the same click, lower and a little longer. */
+    toggle: [0.45, 0.05, 480, 0, 6e-3, 0.028, 4, 2.2, -26, 0, 0, 0, 0, 1.8, 0, 0, 0, 0.35, 6e-3]
   };
   var SOUND_NAMES = Object.keys(SOUNDS);
   function playSound(name) {
