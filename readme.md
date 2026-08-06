@@ -98,7 +98,7 @@ Everything else is untouched: `tokens/`, `styles.css`, `assets/`, `guidelines/`,
 - **Length.** Buttons 1–3 words. Card titles ≤ 4 words. Descriptions one sentence, ideally under 12 words. Empty states get two lines: what's missing, then the one action.
 - **Punctuation.** No exclamation marks in UI chrome; they're reserved for genuine milestones ("26-day streak!"). Middle dots separate metadata (`42 cards · 12 due · Spanish`). Em dashes are fine in prose, never in labels.
 - **Numbers.** Always concrete and always in the display face. "12 due", never "some cards". Intervals are short-form: `<1m`, `6m`, `1d`, `4d`.
-- **Emoji.** **Not used as UI, with one exception:** country-flag emoji identify language workspaces on the rail, always paired with the language name in small type below (a flag is never the only identifier). Everything else is a Lucide glyph. Emoji may appear inside user-authored card content, never in product copy.
+- **Emoji.** **Not used as UI at all.** Language workspaces are identified by an OpenMoji flag SVG beside the language name written out in full (a flag is never the only identifier) — not by a flag emoji, which Windows does not render: the OS ships no glyphs for regional indicator pairs, so a reader there sees the two letters in a box. Everything else is a Lucide glyph. Emoji may still appear inside user-authored card content, never in product copy.
 - **Language names** are written out in full ("Spanish", "Japanese") everywhere, including under the rail's flag tiles; two-letter caps codes (ES, JA, TR) are the fallback where flag emoji don't render.
 - **Errors** state what happened and what happens next, no blame: "We don't recognise that address." / "Couldn't sync — we'll retry in the background."
 
@@ -132,6 +132,8 @@ Two rules keep it that way:
 ### Type
 Two families. **Baloo 2** (`--font-display`) at weight 800 carries anything that should feel like the logo: hero copy, the word on a flashcard, section headings, numbers. **Nunito Sans** (`--font-ui`) does all reading and all chrome, 400 for prose and 600/700 for labels. **JetBrains Mono** for IPA, roots, intervals and `<kbd>`. Tracking is normal everywhere except the eyebrow (0.08em) and hero display (-0.02em). Line height 1.5 for prose, 1.15–1.2 for display.
 
+The scale bottoms out at **`--fs-8`**, which exists for one job: a stamp on chrome too narrow for anything else — the rail's "Soon" marker is the only thing using it, and it drops `--ls-wide` because that tracking exists to open caps up for *reading*. Anything a reader is meant to read starts at `--fs-11`, and the 4.5:1 contrast floor applies to all of it regardless of size.
+
 ### Spacing & layout
 4px base scale. Product chrome is fixed: 72px rail, 248px sidebar, 48px top bar, 320px side panel; content maxes at 1120px and centres. Sidebar rows are 34px tall with 8px inset. Cards pad 20px, dialogs 24px, stack gap 12px, inline gap 8px, section gap 32px. Controls are 28/36/44/52px; 44px is the floor for anything touchable.
 
@@ -154,6 +156,7 @@ UI sound is **synthesised with ZzFX** (MIT) — no audio files, no network, no `
 - **Nothing scolds.** `gradeAgain` is the softest and lowest sound in the set. Forgetting a word is the normal case in spaced repetition — it is what the algorithm is *for* — and a failure noise four times a session teaches people to dread the button.
 - **Celebration is rationed.** Only `sessionComplete` rises, and it is the only sound allowed to outlast the interaction that caused it (580ms against 50–250 for everything else).
 - **Sound answers an interaction, never announces one.** Nothing plays on load, on arrival at a screen, or on a background event.
+- **`Button` and `IconButton` tap by default.** Wiring a click at every call site is not a system, it is a hundred chances to forget one — so the control owns its own feedback and the call site opts out with `sound={false}` where it already has a voice. Chrome feedback belongs to the control; a domain event like a card flip or a grade belongs to the app. `tap` is the shortest sound in the set for the same reason it is the most frequent.
 - **The context unlocks on the first gesture.** Browsers keep an AudioContext suspended until a real click or keypress, so `unlockSound()` is wired to the first one; a sound played before that is silently swallowed.
 - There is no `prefers-reduced-sound` to honour the way motion has `prefers-reduced-motion`, so the control is an **explicit setting** — which the product surfaces in Settings, defaulting to on.
 

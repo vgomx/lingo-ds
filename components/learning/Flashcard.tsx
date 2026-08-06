@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useIsTouch, usePrefersReducedMotion } from '../../hooks/useBreakpoint';
 
 export type FlashcardIllustrationSide = 'front' | 'back' | 'both';
 
@@ -28,12 +29,21 @@ export interface FlashcardOwnProps {
   height?: number;
   hint?: string;
   onFlip?: (next: boolean) => void;
+  /**
+   * Tilts toward the pointer on hover, so the corner nearest the cursor lifts.
+   * Off on touch — there is no hover to answer — and off under
+   * prefers-reduced-motion, where the honest response is not to move at all.
+   */
+  tilt?: boolean;
   style?: React.CSSProperties;
 }
 
 export interface FlashcardProps
   extends FlashcardOwnProps,
     Omit<React.ComponentPropsWithoutRef<'div'>, keyof FlashcardOwnProps> {}
+
+/** Degrees at the very corner. Small on purpose: this is a lift, not a carousel. */
+const MAX_TILT = 7;
 
 /**
  * The product's hero object: a two-faced review card that flips on click.
@@ -42,10 +52,43 @@ export interface FlashcardProps
 export function Flashcard({
   front, back, illustration, illustrationSide = 'back', phonetic, language, tags,
   flipped, defaultFlipped = false, height = 300,
-  hint = 'Click or press Space to flip', onFlip, style, ...rest
+  hint = 'Click or press Space to flip', onFlip, tilt = true, style, ...rest
 }: FlashcardProps) {
   const onFront = !!illustration && illustrationSide !== 'back';
   const onBack = !!illustration && illustrationSide !== 'front';
+
+  const isTouch = useIsTouch();
+  const reducedMotion = usePrefersReducedMotion();
+  const canTilt = tilt && !isTouch && !reducedMotion;
+
+  /**
+   * The tilt is written straight to the node rather than held in state.
+   * A pointermove fires dozens of times a second, and re-rendering the whole
+   * card — both faces, the illustration, the tags — on each one to change one
+   * transform is work with nothing to show for it.
+   */
+  const tiltRef = React.useRef<HTMLDivElement>(null);
+
+  const applyTilt = (e: React.PointerEvent<HTMLDivElement>) => {
+    const node = tiltRef.current;
+    if (!canTilt || !node) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    // Doubled to ±1, so MAX_TILT is the angle at the edge rather than half of it.
+    const px = ((e.clientX - r.left) / r.width - 0.5) * 2;   // -1 (left) … 1 (right)
+    const py = ((e.clientY - r.top) / r.height - 0.5) * 2;   // -1 (top)  … 1 (bottom)
+    // Signs chosen so the card leans *toward* the cursor: the corner under the
+    // pointer is the one that lifts. Flip both to make it lean away instead.
+    node.style.transition = 'transform var(--dur-fast) linear';
+    node.style.transform = `rotateX(${(py * MAX_TILT).toFixed(2)}deg) rotateY(${(-px * MAX_TILT).toFixed(2)}deg)`;
+  };
+
+  const resetTilt = () => {
+    const node = tiltRef.current;
+    if (!node) return;
+    // Slower on the way out, so the card settles rather than snaps.
+    node.style.transition = 'transform var(--dur-base) var(--ease-spring)';
+    node.style.transform = 'none';
+  };
   const [inner, setInner] = React.useState(defaultFlipped);
   const isFlipped = flipped === undefined ? inner : flipped;
   const flip = () => {
@@ -70,9 +113,26 @@ export function Flashcard({
       role="button"
       tabIndex={0}
       aria-pressed={isFlipped}
+      onPointerMove={applyTilt}
+      onPointerLeave={resetTilt}
       style={{ perspective: 1400, height, cursor: 'pointer', userSelect: 'none', ...style }}
       {...rest}
     >
+      {/* The tilt gets its own layer, wrapping the flipper rather than sharing
+          with it. Both are transforms on the same axis, so composing them in one
+          declaration would mean the hover fighting the flip for the property —
+          and the flip's 420ms spring is the product's hero animation, not
+          something to make a pointer wait for. Nested, each keeps its own
+          timing and they multiply cleanly. */}
+      <div
+        ref={tiltRef}
+        style={{
+          width: '100%', height: '100%', transformStyle: 'preserve-3d',
+          // No transition here at rest: applyTilt and resetTilt each set the one
+          // they want, so the way in is quick and the way out settles.
+          willChange: canTilt ? 'transform' : undefined,
+        }}
+      >
       <div
         style={{
           position: 'relative', width: '100%', height: '100%',
@@ -107,6 +167,7 @@ export function Flashcard({
           <span style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--fs-32)', fontWeight: 'var(--fw-black)' as React.CSSProperties['fontWeight'], lineHeight: 1.1, color: '#fff' }}>{back}</span>
           {tags && <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'center' }}>{tags}</div>}
         </div>
+      </div>
       </div>
     </div>
   );

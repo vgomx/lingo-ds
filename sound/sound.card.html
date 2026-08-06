@@ -1,4 +1,4 @@
-<!-- @dsCard group="Sound" viewport="820x420" name="Sound palette" subtitle="ZzFX-synthesised UI sound — click to audition" -->
+<!-- @dsCard group="Sound" viewport="820x460" name="Sound palette" subtitle="ZzFX-synthesised UI sound — click to audition" -->
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Sound palette</title><link rel="stylesheet" href="../styles.css">
 <style>
 body{background:var(--surface-app);margin:0;padding:22px;font-family:var(--font-ui);color:var(--text-body)}
@@ -31,6 +31,7 @@ const WHEN = {
   sessionComplete: 'Session finished — the only rise',
   cardAdded: 'Card saved',
   cardRemoved: 'Card deleted',
+  tap: 'Any button — the default, and the smallest',
   toggle: 'Panel or switch',
 };
 
@@ -41,7 +42,7 @@ function Demo(){
   const play=(n)=>{unlockSound();playSound(n);setLast(n);};
   return (<>
     <h1>Sound palette</h1>
-    <p className="lede">Synthesised with <b>ZzFX</b> — no audio files, no network. Sounds fire only on a real interaction, and stay under 140ms so a fast reviewer never hears two overlap. Nothing here scolds: <b>gradeAgain</b> is the quietest and lowest, because forgetting is what spaced repetition is for.</p>
+    <p className="lede">Synthesised with <b>ZzFX</b> — no audio files, no network. Sounds fire only on a real interaction. <b>tap</b> is the default for every Button and IconButton, which is why it is the shortest thing here at 34ms — a click you hear a hundred times a session has to be one you stop noticing. Nothing here scolds: <b>gradeAgain</b> is the quietest and lowest, because forgetting is what spaced repetition is for.</p>
     <div className="grid">
       {SOUND_NAMES.map(n=>(
         <button key={n} className="snd" onClick={()=>play(n)}>

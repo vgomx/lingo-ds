@@ -10,7 +10,7 @@ export interface CardOwnProps {
   /** Buttons/IconButtons pinned to the header's right edge. */
   actions?: React.ReactNode;
   padding?: string;
-  /** Lifts 2px on hover and takes a pointer cursor. */
+  /** Lifts 2px on hover, casts a shadow while lifted, and takes a pointer cursor. */
   interactive?: boolean;
   selected?: boolean;
   onClick?: (e: React.MouseEvent) => void;
@@ -27,6 +27,16 @@ export function Card({
   interactive = false, selected = false, onClick, style, ...rest
 }: CardProps) {
   const [hover, setHover] = React.useState(false);
+
+  // The ring is the card's own edge and is always there; the drop shadow only
+  // exists while the card is lifted. That is the rule the guide already sets —
+  // shadows are for things that actually float, and a resting surface gets none —
+  // so the 2px lift and the shadow are the same event rather than two effects.
+  // A glow would be the wrong instrument: it is spent, exactly once, on the
+  // streak flame.
+  const ring = selected ? 'inset 0 0 0 1.5px var(--brand)' : 'var(--ring-inset)';
+  const lifted = interactive && hover;
+
   return (
     <div
       onClick={onClick}
@@ -35,9 +45,9 @@ export function Card({
       style={{
         position: 'relative', display: 'flex', flexDirection: 'column', gap: 'var(--gap-stack)',
         background: 'var(--surface-card)', borderRadius: 'var(--radius-card)', padding,
-        boxShadow: selected ? 'inset 0 0 0 1.5px var(--brand)' : 'var(--ring-inset)',
+        boxShadow: lifted ? `${ring}, var(--shadow-md)` : ring,
         cursor: interactive ? 'pointer' : undefined,
-        transform: interactive && hover ? 'translateY(-2px)' : 'none',
+        transform: lifted ? 'translateY(-2px)' : 'none',
         transition: 'transform var(--dur-base) var(--ease-out), background-color var(--dur-base) var(--ease-standard), box-shadow var(--dur-base) var(--ease-standard)',
         overflow: 'hidden', ...style,
       }}

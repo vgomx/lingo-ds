@@ -15,7 +15,7 @@
   /* --fs-9 is the floor, for micro-labels on chrome too narrow for --fs-10 —
      a rail badge, say. Uppercase and tracked only; never for anything the
      reader has to read rather than glance at. */
-  --fs-9:9px;
+  --fs-8:8px; --fs-9:9px;
   --fs-10:10px; --fs-11:11px; --fs-12:12px; --fs-13:13px; --fs-14:14px; --fs-15:15px; --fs-16:16px;
   --fs-18:18px; --fs-20:20px; --fs-24:24px; --fs-28:28px; --fs-32:32px; --fs-40:40px;
   --fs-48:48px; --fs-56:56px; --fs-72:72px;

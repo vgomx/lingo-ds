@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: 2fbe9369d4fda83f
+// source-hash: 2a56e1e8cbbe19ee
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -81,6 +81,20 @@ var LingoToolboxDesignSystem_898611 = (() => {
     }
   });
 
+  // scripts/react-dom-global.cjs
+  var require_react_dom_global = __commonJS({
+    "scripts/react-dom-global.cjs"(exports, module) {
+      "use strict";
+      var ReactDOM = globalThis.ReactDOM;
+      if (!ReactDOM) {
+        throw new Error(
+          "lingo-ds browser bundle: window.ReactDOM is missing. Load react-dom before this script \u2014 the bundle deliberately does not carry its own copy."
+        );
+      }
+      module.exports = ReactDOM;
+    }
+  });
+
   // index.ts
   var index_exports = {};
   __export(index_exports, {
@@ -123,6 +137,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
     useBreakpoint: () => useBreakpoint,
     useIsMobile: () => useIsMobile,
     useIsTouch: () => useIsTouch,
+    usePrefersReducedMotion: () => usePrefersReducedMotion,
     zzfx: () => zzfx
   });
 
@@ -165,6 +180,185 @@ var LingoToolboxDesignSystem_898611 = (() => {
       return () => list.removeEventListener("change", onChange);
     }, []);
     return touch;
+  }
+  function usePrefersReducedMotion() {
+    const [reduced, setReduced] = React.useState(() => typeof window !== "undefined" && !!window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)").matches : false);
+    React.useEffect(() => {
+      if (typeof window === "undefined" || !window.matchMedia) return void 0;
+      const list = window.matchMedia("(prefers-reduced-motion: reduce)");
+      const onChange = () => setReduced(list.matches);
+      list.addEventListener("change", onChange);
+      onChange();
+      return () => list.removeEventListener("change", onChange);
+    }, []);
+    return reduced;
+  }
+
+  // sound/zzfx.ts
+  var ctx = null;
+  var master = null;
+  var enabled = true;
+  var volume = 0.3;
+  function audio() {
+    if (ctx) return ctx;
+    if (typeof window === "undefined") return null;
+    const Ctx = window.AudioContext ?? window.webkitAudioContext;
+    if (!Ctx) return null;
+    ctx = new Ctx();
+    master = ctx.createGain();
+    master.gain.value = volume;
+    master.connect(ctx.destination);
+    return ctx;
+  }
+  function setSoundEnabled(next) {
+    enabled = next;
+  }
+  function isSoundEnabled() {
+    return enabled;
+  }
+  function setSoundVolume(next) {
+    volume = Math.max(0, Math.min(1, next));
+    if (master) master.gain.value = volume;
+  }
+  function unlockSound() {
+    const c = audio();
+    if (c && c.state === "suspended") void c.resume();
+  }
+  function zzfx(...params) {
+    if (!enabled) return null;
+    const c = audio();
+    if (!c || !master) return null;
+    if (c.state === "suspended") void c.resume();
+    const [
+      pVolume = 1,
+      randomness = 0.05,
+      pFrequency = 220,
+      pAttack = 0,
+      pSustain = 0,
+      pRelease = 0.1,
+      shape = 0,
+      shapeCurve = 1,
+      pSlide = 0,
+      pDeltaSlide = 0,
+      pPitchJump = 0,
+      pPitchJumpTime = 0,
+      pRepeatTime = 0,
+      noise = 0,
+      pModulation = 0,
+      bitCrush = 0,
+      pDelay = 0,
+      sustainVolume = 1,
+      pDecay = 0,
+      tremolo = 0,
+      filter = 0
+    ] = params;
+    const sampleRate = 44100;
+    const PI2 = Math.PI * 2;
+    const abs = Math.abs;
+    const sign = (v) => v < 0 ? -1 : 1;
+    let slide = pSlide * 500 * PI2 / sampleRate / sampleRate;
+    const startSlide = slide;
+    let frequency = pFrequency * (1 + randomness * 2 * Math.random() - randomness) * PI2 / sampleRate;
+    let startFrequency = frequency;
+    let modOffset = 0;
+    let repeat = 0;
+    let crush = 0;
+    let jump = 1;
+    const b = [];
+    let t = 0;
+    let i = 0;
+    let s = 0;
+    let f;
+    const quality = 2;
+    const w = PI2 * abs(filter) * 2 / sampleRate;
+    const cos = Math.cos(w);
+    const alpha = Math.sin(w) / 2 / quality;
+    const a0 = 1 + alpha;
+    const a1 = -2 * cos / a0;
+    const a2 = (1 - alpha) / a0;
+    const b0 = (1 + sign(filter) * cos) / 2 / a0;
+    const b1 = -(sign(filter) + cos) / a0;
+    const b2 = b0;
+    let x2 = 0;
+    let x1 = 0;
+    let y2 = 0;
+    let y1 = 0;
+    const minAttack = 9;
+    const attack = pAttack * sampleRate || minAttack;
+    const decay = pDecay * sampleRate;
+    const sustain = pSustain * sampleRate;
+    const release = pRelease * sampleRate;
+    const delay = pDelay * sampleRate;
+    const deltaSlide = pDeltaSlide * 500 * PI2 / sampleRate ** 3;
+    const modulation = pModulation * PI2 / sampleRate;
+    const pitchJump = pPitchJump * PI2 / sampleRate;
+    const pitchJumpTime = pPitchJumpTime * sampleRate;
+    const repeatTime = pRepeatTime * sampleRate | 0;
+    const vol = pVolume;
+    const length = attack + decay + sustain + release + delay | 0;
+    for (; i < length; b[i++] = s * vol) {
+      if (!(++crush % (bitCrush * 100 | 0))) {
+        s = shape ? shape > 1 ? shape > 2 ? shape > 3 ? shape > 4 ? (t / PI2 % 1 < shapeCurve / 2) * 2 - 1 : Math.sin(t ** 3) : Math.max(Math.min(Math.tan(t), 1), -1) : 1 - (2 * t / PI2 % 2 + 2) % 2 : 1 - 4 * abs(Math.round(t / PI2) - t / PI2) : Math.sin(t);
+        s = (repeatTime ? 1 - tremolo + tremolo * Math.sin(PI2 * i / repeatTime) : 1) * (shape > 4 ? s : sign(s) * abs(s) ** shapeCurve) * (i < attack ? i / attack : i < attack + decay ? 1 - (i - attack) / decay * (1 - sustainVolume) : i < attack + decay + sustain ? sustainVolume : i < length - delay ? (length - i - delay) / release * sustainVolume : 0);
+        s = delay ? s / 2 + (delay > i ? 0 : (i < length - delay ? 1 : (length - i) / delay) * b[i - delay | 0] / 2 / vol) : s;
+        if (filter) s = y1 = b2 * x2 + b1 * (x2 = x1) + b0 * (x1 = s) - a2 * y2 - a1 * (y2 = y1);
+      }
+      f = (frequency += slide += deltaSlide) * Math.cos(modulation * modOffset++);
+      t += f + f * noise * Math.sin(i ** 5);
+      if (jump && ++jump > pitchJumpTime) {
+        frequency += pitchJump;
+        startFrequency += pitchJump;
+        jump = 0;
+      }
+      if (repeatTime && !(++repeat % repeatTime)) {
+        frequency = startFrequency;
+        slide = startSlide;
+        jump || (jump = 1);
+      }
+    }
+    const buffer = c.createBuffer(1, b.length, sampleRate);
+    buffer.getChannelData(0).set(b);
+    const source = c.createBufferSource();
+    source.buffer = buffer;
+    source.connect(master);
+    source.start();
+    return source;
+  }
+
+  // sound/sounds.ts
+  var SOUNDS = {
+    /** The card turning over. Papery and dry, no pitch — it is a movement, not an event. */
+    flip: [0.6, 0.08, 420, 0.01, 0.02, 0.08, 4, 2.2, -18, 0, 0, 0, 0, 1.2, 0, 0, 0, 0.5, 0.03],
+    /** Grades, low to high. The interval carries the meaning; only `easy` sparkles. */
+    gradeAgain: [0.5, 0.05, 220, 0.01, 0.05, 0.14, 0, 1, -3, 0, 0, 0, 0, 0, 0, 0, 0, 0.7, 0.05],
+    gradeHard: [0.5, 0.05, 300, 0.01, 0.05, 0.12, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.7, 0.04],
+    gradeGood: [0.5, 0.05, 440, 0.01, 0.04, 0.12, 1, 1.4, 0, 0, 180, 0.04, 0, 0, 0, 0, 0, 0.8, 0.03],
+    gradeEasy: [0.5, 0.05, 587, 0.01, 0.04, 0.14, 1, 1.5, 0, 0, 300, 0.05, 0, 0, 0, 0, 0, 0.8, 0.03],
+    /** The one celebration. Longer than everything else because it happens once. */
+    sessionComplete: [0.6, 0.05, 523, 0.02, 0.12, 0.3, 1, 1.6, 0, 0, 262, 0.08, 0.1, 0, 0, 0, 0.08, 0.7, 0.06],
+    /** Card written and card gone — the same gesture, up and down. */
+    cardAdded: [0.4, 0.05, 800, 0.01, 0.02, 0.06, 1, 1.2, 0, 0, 220, 0.02],
+    cardRemoved: [0.4, 0.05, 520, 0.01, 0.02, 0.07, 1, 1.2, -12],
+    /**
+     * A press on ordinary chrome — the default for Button and IconButton, and so
+     * by far the most-repeated sound here. Which is exactly why it is the smallest:
+     * a click you hear a hundred times a session has to be something you stop
+     * noticing, or it becomes the sound of the app.
+     *
+     * Broadband noise (shape 4 plus a heavy `noise` term) falling fast, not a tone.
+     * Both of these were a tan wave at a fixed pitch, which is a *blip* — the first
+     * version measured 2,486 zero-crossings per second against `flip`'s 21,543, and
+     * that gap is the whole difference between something that reads as a physical
+     * click and something that reads as a note. A real click has no pitch to hear.
+     */
+    tap: [0.45, 0.05, 700, 0, 4e-3, 0.018, 4, 2.4, -40, 0, 0, 0, 0, 2, 0, 0, 0, 0.3, 4e-3],
+    /** A switch or a panel: the same click, lower and a little longer. */
+    toggle: [0.45, 0.05, 480, 0, 6e-3, 0.028, 4, 2.2, -26, 0, 0, 0, 0, 1.8, 0, 0, 0, 0.35, 6e-3]
+  };
+  var SOUND_NAMES = Object.keys(SOUNDS);
+  function playSound(name) {
+    const params = SOUNDS[name];
+    if (params) zzfx(...params);
   }
 
   // components/actions/Button.tsx
@@ -216,6 +410,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
     iconLeft = null,
     iconRight = null,
     type = "button",
+    sound = "tap",
     onClick,
     style,
     ...rest
@@ -258,7 +453,10 @@ var LingoToolboxDesignSystem_898611 = (() => {
       {
         type,
         disabled: disabled || loading,
-        onClick,
+        onClick: (e) => {
+          if (sound) playSound(sound);
+          onClick && onClick(e);
+        },
         onMouseEnter: () => setHover(true),
         onMouseLeave: () => {
           setHover(false);
@@ -306,6 +504,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
     shape = "rounded",
     active = false,
     disabled = false,
+    sound = "tap",
     onClick,
     style,
     ...rest
@@ -333,7 +532,10 @@ var LingoToolboxDesignSystem_898611 = (() => {
         "aria-label": label,
         title: label,
         disabled,
-        onClick,
+        onClick: (e) => {
+          if (sound) playSound(sound);
+          onClick && onClick(e);
+        },
         onMouseEnter: () => setHover(true),
         onMouseLeave: () => {
           setHover(false);
@@ -1094,6 +1296,8 @@ var LingoToolboxDesignSystem_898611 = (() => {
     ...rest
   }) {
     const [hover, setHover] = React9.useState(false);
+    const ring = selected ? "inset 0 0 0 1.5px var(--brand)" : "var(--ring-inset)";
+    const lifted = interactive && hover;
     return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(
       "div",
       {
@@ -1108,9 +1312,9 @@ var LingoToolboxDesignSystem_898611 = (() => {
           background: "var(--surface-card)",
           borderRadius: "var(--radius-card)",
           padding,
-          boxShadow: selected ? "inset 0 0 0 1.5px var(--brand)" : "var(--ring-inset)",
+          boxShadow: lifted ? `${ring}, var(--shadow-md)` : ring,
           cursor: interactive ? "pointer" : void 0,
-          transform: interactive && hover ? "translateY(-2px)" : "none",
+          transform: lifted ? "translateY(-2px)" : "none",
           transition: "transform var(--dur-base) var(--ease-out), background-color var(--dur-base) var(--ease-standard), box-shadow var(--dur-base) var(--ease-standard)",
           overflow: "hidden",
           ...style
@@ -1132,64 +1336,69 @@ var LingoToolboxDesignSystem_898611 = (() => {
   }
 
   // components/surfaces/Dialog.tsx
+  var import_react_dom = __toESM(require_react_dom_global(), 1);
   var import_jsx_runtime12 = __toESM(require_react_jsx_runtime_global(), 1);
   function Dialog({ open = true, title, description, children, footer, width = 440, onClose, style, ...rest }) {
     const isMobile = useIsMobile();
     if (!open) return null;
-    return /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
-      "div",
-      {
-        style: {
-          // --space-4 on a phone: 32px each side takes a sixth of a 375px screen
-          // away from a dialog that already caps at 100%.
-          position: "absolute",
-          inset: 0,
-          display: "grid",
-          placeItems: "center",
-          padding: isMobile ? "var(--space-4)" : "var(--space-8)",
-          background: "var(--surface-overlay)",
-          backdropFilter: "var(--blur-scrim)",
-          zIndex: 40,
-          animation: "lt-fade var(--dur-base) var(--ease-out)"
-        },
-        onClick: onClose,
-        children: [
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("style", { children: "@keyframes lt-fade{from{opacity:0}to{opacity:1}}@keyframes lt-pop{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}" }),
-          /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
-            "div",
-            {
-              role: "dialog",
-              "aria-modal": "true",
-              onClick: (e) => e.stopPropagation(),
-              style: {
-                width,
-                maxWidth: "100%",
-                maxHeight: "100%",
-                display: "flex",
-                flexDirection: "column",
-                background: "var(--surface-app)",
-                borderRadius: "var(--radius-dialog)",
-                boxShadow: "var(--shadow-xl)",
-                animation: "lt-pop var(--dur-slow) var(--ease-spring)",
-                overflow: "hidden",
-                ...style
-              },
-              ...rest,
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { display: "flex", alignItems: "flex-start", gap: "var(--space-5)", padding: "var(--pad-dialog)", paddingBottom: "var(--space-4)" }, children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { flex: 1, display: "flex", flexDirection: "column", gap: "var(--space-2)" }, children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h2", { style: { margin: 0, fontFamily: "var(--font-display)", fontSize: "var(--fs-24)", fontWeight: "var(--fw-black)", color: "var(--text-strong)", lineHeight: 1.15 }, children: title }),
-                    description && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: { margin: 0, fontFamily: "var(--font-ui)", fontSize: "var(--fs-14)", color: "var(--text-muted)", lineHeight: "var(--lh-relaxed)" }, children: description })
+    if (typeof document === "undefined") return null;
+    return (0, import_react_dom.createPortal)(
+      /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
+        "div",
+        {
+          style: {
+            // --space-4 on a phone: 32px each side takes a sixth of a 375px screen
+            // away from a dialog that already caps at 100%.
+            position: "fixed",
+            inset: 0,
+            display: "grid",
+            placeItems: "center",
+            padding: isMobile ? "var(--space-4)" : "var(--space-8)",
+            background: "var(--surface-overlay)",
+            backdropFilter: "var(--blur-scrim)",
+            zIndex: 40,
+            animation: "lt-fade var(--dur-base) var(--ease-out)"
+          },
+          onClick: onClose,
+          children: [
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("style", { children: "@keyframes lt-fade{from{opacity:0}to{opacity:1}}@keyframes lt-pop{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}" }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
+              "div",
+              {
+                role: "dialog",
+                "aria-modal": "true",
+                onClick: (e) => e.stopPropagation(),
+                style: {
+                  width,
+                  maxWidth: "100%",
+                  maxHeight: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  background: "var(--surface-app)",
+                  borderRadius: "var(--radius-dialog)",
+                  boxShadow: "var(--shadow-xl)",
+                  animation: "lt-pop var(--dur-slow) var(--ease-spring)",
+                  overflow: "hidden",
+                  ...style
+                },
+                ...rest,
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { display: "flex", alignItems: "flex-start", gap: "var(--space-5)", padding: "var(--pad-dialog)", paddingBottom: "var(--space-4)" }, children: [
+                    /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { flex: 1, display: "flex", flexDirection: "column", gap: "var(--space-2)" }, children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h2", { style: { margin: 0, fontFamily: "var(--font-display)", fontSize: "var(--fs-24)", fontWeight: "var(--fw-black)", color: "var(--text-strong)", lineHeight: 1.15 }, children: title }),
+                      description && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: { margin: 0, fontFamily: "var(--font-ui)", fontSize: "var(--fs-14)", color: "var(--text-muted)", lineHeight: "var(--lh-relaxed)" }, children: description })
+                    ] }),
+                    onClose && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(IconButton, { label: "Close", onClick: onClose, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("path", { d: "M18 6 6 18M6 6l12 12" }) }) })
                   ] }),
-                  onClose && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(IconButton, { label: "Close", onClick: onClose, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("path", { d: "M18 6 6 18M6 6l12 12" }) }) })
-                ] }),
-                children && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { padding: "0 var(--pad-dialog)", overflowY: "auto" }, children }),
-                footer && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { display: "flex", justifyContent: "flex-end", gap: "var(--gap-inline)", padding: "var(--pad-dialog)", marginTop: "var(--space-4)", background: "var(--surface-sidebar)" }, children: footer })
-              ]
-            }
-          )
-        ]
-      }
+                  children && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { padding: "0 var(--pad-dialog)", overflowY: "auto" }, children }),
+                  footer && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { display: "flex", justifyContent: "flex-end", gap: "var(--gap-inline)", padding: "var(--pad-dialog)", marginTop: "var(--space-4)", background: "var(--surface-sidebar)" }, children: footer })
+                ]
+              }
+            )
+          ]
+        }
+      ),
+      document.body
     );
   }
 
@@ -1703,163 +1912,10 @@ var LingoToolboxDesignSystem_898611 = (() => {
     );
   }
 
-  // sound/zzfx.ts
-  var ctx = null;
-  var master = null;
-  var enabled = true;
-  var volume = 0.3;
-  function audio() {
-    if (ctx) return ctx;
-    if (typeof window === "undefined") return null;
-    const Ctx = window.AudioContext ?? window.webkitAudioContext;
-    if (!Ctx) return null;
-    ctx = new Ctx();
-    master = ctx.createGain();
-    master.gain.value = volume;
-    master.connect(ctx.destination);
-    return ctx;
-  }
-  function setSoundEnabled(next) {
-    enabled = next;
-  }
-  function isSoundEnabled() {
-    return enabled;
-  }
-  function setSoundVolume(next) {
-    volume = Math.max(0, Math.min(1, next));
-    if (master) master.gain.value = volume;
-  }
-  function unlockSound() {
-    const c = audio();
-    if (c && c.state === "suspended") void c.resume();
-  }
-  function zzfx(...params) {
-    if (!enabled) return null;
-    const c = audio();
-    if (!c || !master) return null;
-    if (c.state === "suspended") void c.resume();
-    const [
-      pVolume = 1,
-      randomness = 0.05,
-      pFrequency = 220,
-      pAttack = 0,
-      pSustain = 0,
-      pRelease = 0.1,
-      shape = 0,
-      shapeCurve = 1,
-      pSlide = 0,
-      pDeltaSlide = 0,
-      pPitchJump = 0,
-      pPitchJumpTime = 0,
-      pRepeatTime = 0,
-      noise = 0,
-      pModulation = 0,
-      bitCrush = 0,
-      pDelay = 0,
-      sustainVolume = 1,
-      pDecay = 0,
-      tremolo = 0,
-      filter = 0
-    ] = params;
-    const sampleRate = 44100;
-    const PI2 = Math.PI * 2;
-    const abs = Math.abs;
-    const sign = (v) => v < 0 ? -1 : 1;
-    let slide = pSlide * 500 * PI2 / sampleRate / sampleRate;
-    const startSlide = slide;
-    let frequency = pFrequency * (1 + randomness * 2 * Math.random() - randomness) * PI2 / sampleRate;
-    let startFrequency = frequency;
-    let modOffset = 0;
-    let repeat = 0;
-    let crush = 0;
-    let jump = 1;
-    const b = [];
-    let t = 0;
-    let i = 0;
-    let s = 0;
-    let f;
-    const quality = 2;
-    const w = PI2 * abs(filter) * 2 / sampleRate;
-    const cos = Math.cos(w);
-    const alpha = Math.sin(w) / 2 / quality;
-    const a0 = 1 + alpha;
-    const a1 = -2 * cos / a0;
-    const a2 = (1 - alpha) / a0;
-    const b0 = (1 + sign(filter) * cos) / 2 / a0;
-    const b1 = -(sign(filter) + cos) / a0;
-    const b2 = b0;
-    let x2 = 0;
-    let x1 = 0;
-    let y2 = 0;
-    let y1 = 0;
-    const minAttack = 9;
-    const attack = pAttack * sampleRate || minAttack;
-    const decay = pDecay * sampleRate;
-    const sustain = pSustain * sampleRate;
-    const release = pRelease * sampleRate;
-    const delay = pDelay * sampleRate;
-    const deltaSlide = pDeltaSlide * 500 * PI2 / sampleRate ** 3;
-    const modulation = pModulation * PI2 / sampleRate;
-    const pitchJump = pPitchJump * PI2 / sampleRate;
-    const pitchJumpTime = pPitchJumpTime * sampleRate;
-    const repeatTime = pRepeatTime * sampleRate | 0;
-    const vol = pVolume;
-    const length = attack + decay + sustain + release + delay | 0;
-    for (; i < length; b[i++] = s * vol) {
-      if (!(++crush % (bitCrush * 100 | 0))) {
-        s = shape ? shape > 1 ? shape > 2 ? shape > 3 ? shape > 4 ? (t / PI2 % 1 < shapeCurve / 2) * 2 - 1 : Math.sin(t ** 3) : Math.max(Math.min(Math.tan(t), 1), -1) : 1 - (2 * t / PI2 % 2 + 2) % 2 : 1 - 4 * abs(Math.round(t / PI2) - t / PI2) : Math.sin(t);
-        s = (repeatTime ? 1 - tremolo + tremolo * Math.sin(PI2 * i / repeatTime) : 1) * (shape > 4 ? s : sign(s) * abs(s) ** shapeCurve) * (i < attack ? i / attack : i < attack + decay ? 1 - (i - attack) / decay * (1 - sustainVolume) : i < attack + decay + sustain ? sustainVolume : i < length - delay ? (length - i - delay) / release * sustainVolume : 0);
-        s = delay ? s / 2 + (delay > i ? 0 : (i < length - delay ? 1 : (length - i) / delay) * b[i - delay | 0] / 2 / vol) : s;
-        if (filter) s = y1 = b2 * x2 + b1 * (x2 = x1) + b0 * (x1 = s) - a2 * y2 - a1 * (y2 = y1);
-      }
-      f = (frequency += slide += deltaSlide) * Math.cos(modulation * modOffset++);
-      t += f + f * noise * Math.sin(i ** 5);
-      if (jump && ++jump > pitchJumpTime) {
-        frequency += pitchJump;
-        startFrequency += pitchJump;
-        jump = 0;
-      }
-      if (repeatTime && !(++repeat % repeatTime)) {
-        frequency = startFrequency;
-        slide = startSlide;
-        jump || (jump = 1);
-      }
-    }
-    const buffer = c.createBuffer(1, b.length, sampleRate);
-    buffer.getChannelData(0).set(b);
-    const source = c.createBufferSource();
-    source.buffer = buffer;
-    source.connect(master);
-    source.start();
-    return source;
-  }
-
-  // sound/sounds.ts
-  var SOUNDS = {
-    /** The card turning over. Papery and dry, no pitch — it is a movement, not an event. */
-    flip: [0.6, 0.08, 420, 0.01, 0.02, 0.08, 4, 2.2, -18, 0, 0, 0, 0, 1.2, 0, 0, 0, 0.5, 0.03],
-    /** Grades, low to high. The interval carries the meaning; only `easy` sparkles. */
-    gradeAgain: [0.5, 0.05, 220, 0.01, 0.05, 0.14, 0, 1, -3, 0, 0, 0, 0, 0, 0, 0, 0, 0.7, 0.05],
-    gradeHard: [0.5, 0.05, 300, 0.01, 0.05, 0.12, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.7, 0.04],
-    gradeGood: [0.5, 0.05, 440, 0.01, 0.04, 0.12, 1, 1.4, 0, 0, 180, 0.04, 0, 0, 0, 0, 0, 0.8, 0.03],
-    gradeEasy: [0.5, 0.05, 587, 0.01, 0.04, 0.14, 1, 1.5, 0, 0, 300, 0.05, 0, 0, 0, 0, 0, 0.8, 0.03],
-    /** The one celebration. Longer than everything else because it happens once. */
-    sessionComplete: [0.6, 0.05, 523, 0.02, 0.12, 0.3, 1, 1.6, 0, 0, 262, 0.08, 0.1, 0, 0, 0, 0.08, 0.7, 0.06],
-    /** Card written and card gone — the same gesture, up and down. */
-    cardAdded: [0.4, 0.05, 800, 0.01, 0.02, 0.06, 1, 1.2, 0, 0, 220, 0.02],
-    cardRemoved: [0.4, 0.05, 520, 0.01, 0.02, 0.07, 1, 1.2, -12],
-    /** Generic chrome: a panel opening, a switch. Quietest thing in the set. */
-    toggle: [0.35, 0.02, 700, 0, 0.01, 0.03, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.6, 0.01]
-  };
-  var SOUND_NAMES = Object.keys(SOUNDS);
-  function playSound(name) {
-    const params = SOUNDS[name];
-    if (params) zzfx(...params);
-  }
-
   // components/learning/Flashcard.tsx
   var React13 = __toESM(require_react_global(), 1);
   var import_jsx_runtime23 = __toESM(require_react_jsx_runtime_global(), 1);
+  var MAX_TILT = 7;
   function Flashcard({
     front,
     back,
@@ -1873,11 +1929,31 @@ var LingoToolboxDesignSystem_898611 = (() => {
     height = 300,
     hint = "Click or press Space to flip",
     onFlip,
+    tilt = true,
     style,
     ...rest
   }) {
     const onFront = !!illustration && illustrationSide !== "back";
     const onBack = !!illustration && illustrationSide !== "front";
+    const isTouch = useIsTouch();
+    const reducedMotion = usePrefersReducedMotion();
+    const canTilt = tilt && !isTouch && !reducedMotion;
+    const tiltRef = React13.useRef(null);
+    const applyTilt = (e) => {
+      const node = tiltRef.current;
+      if (!canTilt || !node) return;
+      const r = e.currentTarget.getBoundingClientRect();
+      const px = ((e.clientX - r.left) / r.width - 0.5) * 2;
+      const py = ((e.clientY - r.top) / r.height - 0.5) * 2;
+      node.style.transition = "transform var(--dur-fast) linear";
+      node.style.transform = `rotateX(${(py * MAX_TILT).toFixed(2)}deg) rotateY(${(-px * MAX_TILT).toFixed(2)}deg)`;
+    };
+    const resetTilt = () => {
+      const node = tiltRef.current;
+      if (!node) return;
+      node.style.transition = "transform var(--dur-base) var(--ease-spring)";
+      node.style.transform = "none";
+    };
     const [inner, setInner] = React13.useState(defaultFlipped);
     const isFlipped = flipped === void 0 ? inner : flipped;
     const flip = () => {
@@ -1912,33 +1988,49 @@ var LingoToolboxDesignSystem_898611 = (() => {
         role: "button",
         tabIndex: 0,
         "aria-pressed": isFlipped,
+        onPointerMove: applyTilt,
+        onPointerLeave: resetTilt,
         style: { perspective: 1400, height, cursor: "pointer", userSelect: "none", ...style },
         ...rest,
-        children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+        children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
           "div",
           {
+            ref: tiltRef,
             style: {
-              position: "relative",
               width: "100%",
               height: "100%",
               transformStyle: "preserve-3d",
-              transform: isFlipped ? "rotateY(180deg)" : "none",
-              transition: "transform var(--dur-flip) var(--ease-spring)"
+              // No transition here at rest: applyTilt and resetTilt each set the one
+              // they want, so the way in is quick and the way out settles.
+              willChange: canTilt ? "transform" : void 0
             },
-            children: [
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: { ...face, opacity: isFlipped ? 0 : 1, background: "var(--surface-card)", boxShadow: "var(--ring-inset), var(--shadow-md)" }, children: [
-                language && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { position: "absolute", top: 20, left: 24, fontFamily: "var(--font-ui)", fontSize: "var(--fs-11)", fontWeight: "var(--fw-black)", letterSpacing: "var(--ls-caps)", textTransform: "uppercase", color: "var(--text-muted)" }, children: language }),
-                onFront && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { display: "grid", lineHeight: 0 }, children: illustration }),
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { fontFamily: "var(--font-display)", fontSize: "var(--fs-48)", fontWeight: "var(--fw-black)", lineHeight: 1.05, color: "var(--text-strong)" }, children: front }),
-                phonetic && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { fontFamily: "var(--font-mono)", fontSize: "var(--fs-16)", color: "var(--text-muted)" }, children: phonetic }),
-                hint && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { position: "absolute", bottom: 18, fontFamily: "var(--font-ui)", fontSize: "var(--fs-12)", fontWeight: "var(--fw-semibold)", color: "var(--text-muted)" }, children: hint })
-              ] }),
-              /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { "data-theme": "dark", style: { ...face, opacity: isFlipped ? 1 : 0, transform: "rotateY(180deg)", background: "var(--violet-800)", boxShadow: "inset 0 0 0 1.5px var(--violet-600), var(--shadow-md)" }, children: [
-                onBack && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { display: "grid", lineHeight: 0 }, children: illustration }),
-                /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { fontFamily: "var(--font-display)", fontSize: "var(--fs-32)", fontWeight: "var(--fw-black)", lineHeight: 1.1, color: "#fff" }, children: back }),
-                tags && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: { display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center" }, children: tags })
-              ] })
-            ]
+            children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+              "div",
+              {
+                style: {
+                  position: "relative",
+                  width: "100%",
+                  height: "100%",
+                  transformStyle: "preserve-3d",
+                  transform: isFlipped ? "rotateY(180deg)" : "none",
+                  transition: "transform var(--dur-flip) var(--ease-spring)"
+                },
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: { ...face, opacity: isFlipped ? 0 : 1, background: "var(--surface-card)", boxShadow: "var(--ring-inset), var(--shadow-md)" }, children: [
+                    language && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { position: "absolute", top: 20, left: 24, fontFamily: "var(--font-ui)", fontSize: "var(--fs-11)", fontWeight: "var(--fw-black)", letterSpacing: "var(--ls-caps)", textTransform: "uppercase", color: "var(--text-muted)" }, children: language }),
+                    onFront && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { display: "grid", lineHeight: 0 }, children: illustration }),
+                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { fontFamily: "var(--font-display)", fontSize: "var(--fs-48)", fontWeight: "var(--fw-black)", lineHeight: 1.05, color: "var(--text-strong)" }, children: front }),
+                    phonetic && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { fontFamily: "var(--font-mono)", fontSize: "var(--fs-16)", color: "var(--text-muted)" }, children: phonetic }),
+                    hint && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { position: "absolute", bottom: 18, fontFamily: "var(--font-ui)", fontSize: "var(--fs-12)", fontWeight: "var(--fw-semibold)", color: "var(--text-muted)" }, children: hint })
+                  ] }),
+                  /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { "data-theme": "dark", style: { ...face, opacity: isFlipped ? 1 : 0, transform: "rotateY(180deg)", background: "var(--violet-800)", boxShadow: "inset 0 0 0 1.5px var(--violet-600), var(--shadow-md)" }, children: [
+                    onBack && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { display: "grid", lineHeight: 0 }, children: illustration }),
+                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { fontFamily: "var(--font-display)", fontSize: "var(--fs-32)", fontWeight: "var(--fw-black)", lineHeight: 1.1, color: "#fff" }, children: back }),
+                    tags && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: { display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center" }, children: tags })
+                  ] })
+                ]
+              }
+            )
           }
         )
       }
@@ -1965,7 +2057,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
       width: "100%",
       ...style
     }, ...rest, children: grades.map((g) => /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)("div", { style: { display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--space-3)" }, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(Button, { variant: g.variant, size: "lg", block: true, onClick: () => onGrade && onGrade(g.key), children: [
+      /* @__PURE__ */ (0, import_jsx_runtime24.jsxs)(Button, { variant: g.variant, size: "lg", block: true, sound: false, onClick: () => onGrade && onGrade(g.key), children: [
         g.label,
         showShortcuts && /* @__PURE__ */ (0, import_jsx_runtime24.jsx)("kbd", { style: { fontFamily: "var(--font-mono)", fontSize: "var(--fs-11)", opacity: 0.7, marginLeft: 2 }, children: g.shortcut })
       ] }),

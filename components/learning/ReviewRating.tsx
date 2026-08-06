@@ -34,7 +34,8 @@ export function ReviewRating({ grades = GRADES, onGrade, showDue = true, showSho
       gridTemplateColumns: isMobile ? 'repeat(2,minmax(0,1fr))' : `repeat(${grades.length},minmax(0,1fr))`, gap: 'var(--space-4)', width: '100%', ...style }} {...rest}>
       {grades.map((g) => (
         <div key={g.key} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 'var(--space-3)' }}>
-          <Button variant={g.variant} size="lg" block onClick={() => onGrade && onGrade(g.key)}>
+          {/* The grade itself has a voice — see SOUNDS.gradeAgain and friends. */}
+          <Button variant={g.variant} size="lg" block sound={false} onClick={() => onGrade && onGrade(g.key)}>
             {g.label}
             {showShortcuts && (
               <kbd style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--fs-11)', opacity: 0.7, marginLeft: 2 }}>{g.shortcut}</kbd>

@@ -16,7 +16,7 @@ import { zzfx, type ZzfxParams } from './zzfx';
  * - **Celebration is rationed.** Only `sessionComplete` rises. If every grade
  *   sounded triumphant, none of them would.
  *
- * Kept short on purpose. Measured: `toggle` 50ms, the card ticks 90–100, `flip`
+ * Kept short on purpose. Measured: `tap` 26ms, `toggle` 40, the card ticks 90–100, `flip`
  * 140, the grades 200–250, and `sessionComplete` 580 — the only one allowed to
  * outlast the interaction that caused it. A reviewer hammering the grade keys
  * hears them queue, never pile up.
@@ -38,8 +38,22 @@ export const SOUNDS = {
   cardAdded: [0.4, 0.05, 800, 0.01, 0.02, 0.06, 1, 1.2, 0, 0, 220, 0.02],
   cardRemoved: [0.4, 0.05, 520, 0.01, 0.02, 0.07, 1, 1.2, -12],
 
-  /** Generic chrome: a panel opening, a switch. Quietest thing in the set. */
-  toggle: [0.35, 0.02, 700, 0, 0.01, 0.03, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.6, 0.01],
+  /**
+   * A press on ordinary chrome — the default for Button and IconButton, and so
+   * by far the most-repeated sound here. Which is exactly why it is the smallest:
+   * a click you hear a hundred times a session has to be something you stop
+   * noticing, or it becomes the sound of the app.
+   *
+   * Broadband noise (shape 4 plus a heavy `noise` term) falling fast, not a tone.
+   * Both of these were a tan wave at a fixed pitch, which is a *blip* — the first
+   * version measured 2,486 zero-crossings per second against `flip`'s 21,543, and
+   * that gap is the whole difference between something that reads as a physical
+   * click and something that reads as a note. A real click has no pitch to hear.
+   */
+  tap: [0.45, 0.05, 700, 0, 0.004, 0.018, 4, 2.4, -40, 0, 0, 0, 0, 2.0, 0, 0, 0, 0.3, 0.004],
+
+  /** A switch or a panel: the same click, lower and a little longer. */
+  toggle: [0.45, 0.05, 480, 0, 0.006, 0.028, 4, 2.2, -26, 0, 0, 0, 0, 1.8, 0, 0, 0, 0.35, 0.006],
 } satisfies Record<string, ZzfxParams>;
 
 export type SoundName = keyof typeof SOUNDS;

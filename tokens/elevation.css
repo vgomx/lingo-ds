@@ -8,7 +8,14 @@
 
   /* Chunky "toy" bottom edge — the brand's signature press affordance. */
   --shadow-chunk:0 3px 0 var(--violet-700);
-  --shadow-chunk-neutral:0 3px 0 rgba(0,0,0,.35);
+  /* A solid step, as the light scope already uses, not translucent black.
+     The chunk is the button's shaded side and has to read as part of the button:
+     black at .35 over --surface-app composites to rgb(23,23,31), darker than the
+     page, so it read as a gap under the button rather than as its edge — which
+     made a secondary button look 3px shorter than the coloured ones beside it.
+     --ink-600 sits between the fill (--ink-500) and the page (--ink-700): one
+     step down from the button, one step up from the background. */
+  --shadow-chunk-neutral:0 3px 0 var(--ink-600);
   --shadow-chunk-pressed:0 1px 0 var(--violet-700);
 
   /* Glows — used sparingly on streaks, correct answers, active tools. */
@@ -48,6 +55,13 @@
   --shadow-md:0 4px 12px rgba(0,0,0,.32);
   --shadow-lg:0 8px 24px rgba(0,0,0,.40);
   --shadow-xl:0 16px 48px rgba(0,0,0,.48);
-  --shadow-chunk-neutral:0 3px 0 rgba(0,0,0,.35);
+  /* A solid step, as the light scope already uses, not translucent black.
+     The chunk is the button's shaded side and has to read as part of the button:
+     black at .35 over --surface-app composites to rgb(23,23,31), darker than the
+     page, so it read as a gap under the button rather than as its edge — which
+     made a secondary button look 3px shorter than the coloured ones beside it.
+     --ink-600 sits between the fill (--ink-500) and the page (--ink-700): one
+     step down from the button, one step up from the background. */
+  --shadow-chunk-neutral:0 3px 0 var(--ink-600);
   --scrim-bottom:linear-gradient(to top,rgba(14,14,21,.92) 0%,rgba(14,14,21,.65) 45%,rgba(14,14,21,0) 100%); /* @kind color */
 }
