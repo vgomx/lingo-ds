@@ -214,6 +214,19 @@ export function Flashcard({
     node.style.transition = 'transform var(--dur-base) var(--ease-spring)';
     node.style.transform = 'none';
   };
+  /**
+   * Bumped on every turn, and used as the ripple's key so that the animation
+   * restarts rather than being ignored as already-played.
+   */
+  const [landed, setLanded] = React.useState(0);
+  /**
+   * The face the ripple was last fired for, rather than a spent "first run"
+   * flag. StrictMode runs effects twice on mount, so a flag was already down by
+   * the second pass and the card rang out on arrival without having turned.
+   * Comparing against the previous face is the same answer both times.
+   */
+  const rungFor = React.useRef<boolean | null>(null);
+
   const [inner, setInner] = React.useState(defaultFlipped);
   const isFlipped = flipped === undefined ? inner : flipped;
   const flip = () => {
@@ -290,6 +303,16 @@ export function Flashcard({
     if (committed) flip();
   };
 
+  // Keyed off the state rather than the click, so a turn by drag, by keyboard or
+  // by the parent setting `flipped` all ring the same. Arriving at whatever face
+  // the card starts on is not a landing, so the first pass only records it.
+  React.useEffect(() => {
+    if (rungFor.current === null) { rungFor.current = isFlipped; return; }
+    if (rungFor.current === isFlipped) return;
+    rungFor.current = isFlipped;
+    setLanded((n) => n + 1);
+  }, [isFlipped]);
+
   const face: React.CSSProperties = {
     position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column',
     alignItems: 'center', justifyContent: 'center', gap: 'var(--space-5)',
@@ -317,6 +340,8 @@ export function Flashcard({
       onPointerLeave={resetTilt}
       style={{
         perspective: 1400, height, cursor: 'pointer', userSelect: 'none',
+        // So the ripple can sit against the card's own bounds.
+        position: 'relative',
         // Vertical panning stays the page's, horizontal is the card's. Without
         // this the browser claims the gesture as a scroll and the pointermoves
         // stop arriving partway through the turn.
@@ -325,6 +350,46 @@ export function Flashcard({
       }}
       {...rest}
     >
+      {/* The card striking the surface it sits on. Two rings out of the card's own
+          silhouette, the second a beat behind the first, so what reads is one
+          impact ringing out rather than a border growing.
+
+          First in the DOM and unpositioned in 3D, so it paints beneath the card:
+          everything below is transformed, and a transformed element stacks above
+          an earlier sibling. What you see is the part that has travelled past
+          the card's edge, which is what coming out from under it looks like.
+
+          Not rendered at all under prefers-reduced-motion — it is one movement
+          with nothing to say when it is still. */}
+      {landed > 0 && !reducedMotion && (
+        <span key={landed} aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+          <style>
+            {'@keyframes lt-card-land{'
+              // Brightest just past the card's edge rather than at the start.
+              // Starting at full meant peaking at scale 1 — exactly the card's
+              // own bounds, so the ring was behind it, and by the time it had
+              // cleared the edge it was down to a twelfth of its opacity.
+              + '0%{opacity:0;transform:scale(1)}'
+              + '16%{opacity:.85}'
+              + '100%{opacity:0;transform:scale(1.14)}}'}
+          </style>
+          <span
+            style={{
+              position: 'absolute', inset: 0, borderRadius: 'var(--radius-flashcard)',
+              border: '2px solid var(--brand-ring)',
+              animation: 'lt-card-land var(--dur-celebrate) var(--ease-out) forwards',
+            }}
+          />
+          <span
+            style={{
+              position: 'absolute', inset: 0, borderRadius: 'var(--radius-flashcard)',
+              border: '1.5px solid var(--brand-ring)',
+              animation: 'lt-card-land var(--dur-celebrate) var(--ease-out) 90ms forwards',
+            }}
+          />
+        </span>
+      )}
+
       {/* The tilt gets its own layer, wrapping the flipper rather than sharing
           with it. Both are transforms on the same axis, so composing them in one
           declaration would mean the hover fighting the flip for the property —
