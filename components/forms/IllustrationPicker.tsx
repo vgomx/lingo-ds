@@ -115,6 +115,9 @@ export function IllustrationPicker({
       >
         <Icon name="search" size={15} />
         <input
+          // The shell around this paints the focus treatment; without this the
+          // global :focus-visible ring draws a second one inside it.
+          data-focus-ring="delegated"
           type="search"
           value={query}
           placeholder={searchPlaceholder}

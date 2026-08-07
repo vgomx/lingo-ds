@@ -58,6 +58,9 @@ export function Input({
       >
         {iconLeft}
         <input
+          // The shell around this paints the focus treatment; without this the
+          // global :focus-visible ring draws a second one inside it.
+          data-focus-ring="delegated"
           type={type}
           value={value}
           defaultValue={defaultValue}

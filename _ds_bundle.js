@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: fe4971d527c82265
+// source-hash: 6fe1ee98e7a3b605
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -770,6 +770,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
             /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
               "input",
               {
+                "data-focus-ring": "delegated",
                 type,
                 value,
                 defaultValue,
@@ -828,6 +829,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
             /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
               "select",
               {
+                "data-focus-ring": "delegated",
                 value,
                 defaultValue,
                 disabled,
@@ -1146,6 +1148,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
             /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
               "input",
               {
+                "data-focus-ring": "delegated",
                 type: "search",
                 value: query2,
                 placeholder: searchPlaceholder,
