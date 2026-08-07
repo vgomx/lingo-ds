@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: b1570048110be58a
+// source-hash: edfe3c90f62717d6
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -1356,21 +1356,30 @@ var LingoToolboxDesignSystem_898611 = (() => {
         "div",
         {
           style: {
-            // --space-4 on a phone: 32px each side takes a sixth of a 375px screen
-            // away from a dialog that already caps at 100%.
             position: "fixed",
             inset: 0,
             display: "grid",
-            placeItems: "center",
-            padding: isMobile ? "var(--space-4)" : "var(--space-8)",
+            // minmax(0, 1fr), not the implicit `auto`. An auto column sizes to its
+            // item, so the panel's own `maxWidth: 100%` resolved against a column
+            // that had already grown to fit it — 460px of dialog sat on a 375px
+            // screen with 97 of it off the right edge, and the cap that was supposed
+            // to prevent exactly that was measuring itself.
+            gridTemplateColumns: "minmax(0, 1fr)",
+            // Full-bleed on a phone: a dialog this tall has nowhere to be inset to,
+            // and the scrim around it was only ever a hairline of blur.
+            placeItems: isMobile ? "stretch" : "center",
+            padding: isMobile ? 0 : "var(--space-8)",
+            // Above the app's own chrome — a bottom dock or tab bar sits in the 40s
+            // and was painting over the footer — and below tooltips at 50, so a
+            // tooltip raised from inside a dialog still lands on top of it.
             background: "var(--surface-overlay)",
             backdropFilter: "var(--blur-scrim)",
-            zIndex: 40,
+            zIndex: 48,
             animation: "lt-fade var(--dur-base) var(--ease-out)"
           },
           onClick: onClose,
           children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("style", { children: "@keyframes lt-fade{from{opacity:0}to{opacity:1}}@keyframes lt-pop{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}" }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("style", { children: "@keyframes lt-fade{from{opacity:0}to{opacity:1}}@keyframes lt-pop{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}@keyframes lt-sheet{from{transform:translateY(100%)}to{transform:none}}" }),
             /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
               "div",
               {
@@ -1378,29 +1387,61 @@ var LingoToolboxDesignSystem_898611 = (() => {
                 "aria-modal": "true",
                 onClick: (e) => e.stopPropagation(),
                 style: {
-                  width,
+                  width: isMobile ? "100%" : width,
                   maxWidth: "100%",
+                  height: isMobile ? "100%" : void 0,
                   maxHeight: "100%",
                   display: "flex",
                   flexDirection: "column",
                   background: "var(--surface-app)",
-                  borderRadius: "var(--radius-dialog)",
-                  boxShadow: "var(--shadow-xl)",
-                  animation: "lt-pop var(--dur-slow) var(--ease-spring)",
+                  borderRadius: isMobile ? 0 : "var(--radius-dialog)",
+                  boxShadow: isMobile ? "none" : "var(--shadow-xl)",
+                  animation: isMobile ? "lt-sheet var(--dur-slow) var(--ease-out)" : "lt-pop var(--dur-slow) var(--ease-spring)",
                   overflow: "hidden",
                   ...style
                 },
                 ...rest,
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { display: "flex", alignItems: "flex-start", gap: "var(--space-5)", padding: "var(--pad-dialog)", paddingBottom: "var(--space-4)" }, children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { flex: 1, display: "flex", flexDirection: "column", gap: "var(--space-2)" }, children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h2", { style: { margin: 0, fontFamily: "var(--font-display)", fontSize: "var(--fs-24)", fontWeight: "var(--fw-black)", color: "var(--text-strong)", lineHeight: 1.15 }, children: title }),
-                      description && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: { margin: 0, fontFamily: "var(--font-ui)", fontSize: "var(--fs-14)", color: "var(--text-muted)", lineHeight: "var(--lh-relaxed)" }, children: description })
-                    ] }),
-                    onClose && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(IconButton, { label: "Close", onClick: onClose, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("path", { d: "M18 6 6 18M6 6l12 12" }) }) })
-                  ] }),
-                  children && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { padding: "0 var(--pad-dialog)", overflowY: "auto" }, children }),
-                  footer && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { display: "flex", justifyContent: "flex-end", gap: "var(--gap-inline)", padding: "var(--pad-dialog)", marginTop: "var(--space-4)", background: "var(--surface-sidebar)" }, children: footer })
+                  /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
+                    "div",
+                    {
+                      style: {
+                        display: "flex",
+                        alignItems: "flex-start",
+                        gap: "var(--space-5)",
+                        padding: "var(--pad-dialog)",
+                        paddingBottom: "var(--space-4)",
+                        // Full-bleed puts the title where the notch is. The scrim cannot
+                        // carry this: it is the panel that reaches the top edge.
+                        paddingTop: isMobile ? "calc(var(--pad-dialog) + env(safe-area-inset-top, 0px))" : void 0
+                      },
+                      children: [
+                        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { flex: 1, display: "flex", flexDirection: "column", gap: "var(--space-2)" }, children: [
+                          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h2", { style: { margin: 0, fontFamily: "var(--font-display)", fontSize: "var(--fs-24)", fontWeight: "var(--fw-black)", color: "var(--text-strong)", lineHeight: 1.15 }, children: title }),
+                          description && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: { margin: 0, fontFamily: "var(--font-ui)", fontSize: "var(--fs-14)", color: "var(--text-muted)", lineHeight: "var(--lh-relaxed)" }, children: description })
+                        ] }),
+                        onClose && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(IconButton, { label: "Close", onClick: onClose, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("path", { d: "M18 6 6 18M6 6l12 12" }) }) })
+                      ]
+                    }
+                  ),
+                  children && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { padding: "0 var(--pad-dialog)", overflowY: "auto", flex: isMobile ? 1 : void 0, minHeight: 0 }, children }),
+                  footer && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+                    "div",
+                    {
+                      style: {
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        gap: "var(--gap-inline)",
+                        padding: "var(--pad-dialog)",
+                        marginTop: "var(--space-4)",
+                        background: "var(--surface-sidebar)",
+                        // flex-none so the body scrolls and the actions stay reachable
+                        // rather than being pushed off a full-height sheet.
+                        flex: "none"
+                      },
+                      children: footer
+                    }
+                  )
                 ]
               }
             )
