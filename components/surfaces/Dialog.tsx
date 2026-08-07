@@ -89,9 +89,16 @@ export function Dialog({ open = true, title, description, children, footer, widt
           style={{
             display: 'flex', alignItems: 'flex-start', gap: 'var(--space-5)',
             padding: 'var(--pad-dialog)', paddingBottom: 'var(--space-4)',
-            // Full-bleed puts the title where the notch is. The scrim cannot
-            // carry this: it is the panel that reaches the top edge.
-            paddingTop: isMobile ? 'calc(var(--pad-dialog) + env(safe-area-inset-top, 0px))' : undefined,
+            // Full-bleed puts the title where the notch is, and the scrim cannot
+            // carry that: it is the panel that reaches the top edge.
+            //
+            // Both arms are spelled out. `undefined` here does not fall back to
+            // the shorthand above — it replaces its top value in the object and
+            // React then skips the property, so every dialog on a desktop lost
+            // its top padding entirely and sat its title on the panel's edge.
+            paddingTop: isMobile
+              ? 'calc(var(--pad-dialog) + env(safe-area-inset-top, 0px))'
+              : 'var(--pad-dialog)',
           }}
         >
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>

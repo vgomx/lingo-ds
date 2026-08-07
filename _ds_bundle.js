@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: edfe3c90f62717d6
+// source-hash: 8e09a716ad630bba
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -1411,9 +1411,14 @@ var LingoToolboxDesignSystem_898611 = (() => {
                         gap: "var(--space-5)",
                         padding: "var(--pad-dialog)",
                         paddingBottom: "var(--space-4)",
-                        // Full-bleed puts the title where the notch is. The scrim cannot
-                        // carry this: it is the panel that reaches the top edge.
-                        paddingTop: isMobile ? "calc(var(--pad-dialog) + env(safe-area-inset-top, 0px))" : void 0
+                        // Full-bleed puts the title where the notch is, and the scrim cannot
+                        // carry that: it is the panel that reaches the top edge.
+                        //
+                        // Both arms are spelled out. `undefined` here does not fall back to
+                        // the shorthand above — it replaces its top value in the object and
+                        // React then skips the property, so every dialog on a desktop lost
+                        // its top padding entirely and sat its title on the panel's edge.
+                        paddingTop: isMobile ? "calc(var(--pad-dialog) + env(safe-area-inset-top, 0px))" : "var(--pad-dialog)"
                       },
                       children: [
                         /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { flex: 1, display: "flex", flexDirection: "column", gap: "var(--space-2)" }, children: [
