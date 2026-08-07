@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: c265eae2d96ab53e
+// source-hash: 2efca79b3cdf3776
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -1920,6 +1920,8 @@ var LingoToolboxDesignSystem_898611 = (() => {
   var TAP_SLOP = 6;
   var FLICK_MS = 260;
   var FLICK_PX = 24;
+  var PREVIEW_DELAY = 700;
+  var PREVIEW_BEAT = 380;
   function Flashcard({
     front,
     back,
@@ -1935,6 +1937,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
     onFlip,
     tilt = true,
     drag = true,
+    preview = true,
     style,
     ...rest
   }) {
@@ -1949,12 +1952,44 @@ var LingoToolboxDesignSystem_898611 = (() => {
     const applyTilt = (e) => {
       const node = tiltRef.current;
       if (!canTilt || !node) return;
+      cancelPreview();
       const r = e.currentTarget.getBoundingClientRect();
       const px = ((e.clientX - r.left) / r.width - 0.5) * 2;
       const py = ((e.clientY - r.top) / r.height - 0.5) * 2;
       node.style.transition = "transform var(--dur-fast) linear";
       node.style.transform = `rotateX(${(py * MAX_TILT).toFixed(2)}deg) rotateY(${(-px * MAX_TILT).toFixed(2)}deg)`;
     };
+    const previewTimers = React13.useRef([]);
+    const previewLeaning = React13.useRef(false);
+    const cancelPreview = () => {
+      previewTimers.current.forEach(clearTimeout);
+      previewTimers.current = [];
+      if (!previewLeaning.current) return;
+      previewLeaning.current = false;
+      const node = tiltRef.current;
+      if (!node) return;
+      node.style.transition = "transform var(--dur-fast) var(--ease-out)";
+      node.style.transform = "none";
+    };
+    React13.useEffect(() => {
+      const node = tiltRef.current;
+      if (!preview || reducedMotion || !node) return void 0;
+      const lean = (x, y) => {
+        previewLeaning.current = !!(x || y);
+        node.style.transition = "transform var(--dur-base) var(--ease-spring)";
+        node.style.transform = previewLeaning.current ? `rotateX(${x}deg) rotateY(${y}deg)` : "none";
+      };
+      const at = (ms, fn) => previewTimers.current.push(setTimeout(fn, ms));
+      if (isTouch) {
+        at(PREVIEW_DELAY, () => lean(0, MAX_TILT));
+        at(PREVIEW_DELAY + PREVIEW_BEAT, () => lean(0, -MAX_TILT));
+        at(PREVIEW_DELAY + PREVIEW_BEAT * 2, () => lean(0, 0));
+      } else {
+        at(PREVIEW_DELAY, () => lean(-MAX_TILT, -MAX_TILT));
+        at(PREVIEW_DELAY + PREVIEW_BEAT, () => lean(0, 0));
+      }
+      return cancelPreview;
+    }, [preview, reducedMotion, isTouch]);
     const resetTilt = () => {
       const node = tiltRef.current;
       if (!node) return;
@@ -1964,6 +1999,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
     const [inner, setInner] = React13.useState(defaultFlipped);
     const isFlipped = flipped === void 0 ? inner : flipped;
     const flip = () => {
+      cancelPreview();
       if (flipped === void 0) setInner(!isFlipped);
       onFlip && onFlip(!isFlipped);
     };
@@ -1973,6 +2009,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
     const turnDir = () => isFlipped ? -1 : 1;
     const onDragStart = (e) => {
       if (!canDrag || !dragRef.current) return;
+      cancelPreview();
       const r = e.currentTarget.getBoundingClientRect();
       gesture.current = { x: e.clientX, t: e.timeStamp, w: r.width, dx: 0, live: true };
       dragRef.current.style.transition = "none";

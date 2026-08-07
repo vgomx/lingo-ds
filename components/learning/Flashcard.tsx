@@ -41,6 +41,16 @@ export interface FlashcardOwnProps {
    * anyone tries on a card.
    */
   drag?: boolean;
+  /**
+   * Leans the card once, shortly after it appears, to show that it answers being
+   * touched. A card is a rectangle with a word on it — nothing about it says it
+   * moves, and the affordance it has is the one you only find by trying.
+   *
+   * The caller decides when it is worth saying: a review session opts in for its
+   * first card only, because a nudge on every card in a run of twenty is not a
+   * hint any more.
+   */
+  preview?: boolean;
   style?: React.CSSProperties;
 }
 
@@ -59,6 +69,11 @@ const TAP_SLOP = 6;
 const FLICK_MS = 260;
 const FLICK_PX = 24;
 
+/** Long enough for the card to have arrived and been read as a card first. */
+const PREVIEW_DELAY = 700;
+/** Each beat of it, close to the hover's own settle. */
+const PREVIEW_BEAT = 380;
+
 /**
  * The product's hero object: a two-faced review card that flips on click.
  * Front = prompt in the target language, back = meaning plus notes.
@@ -66,7 +81,7 @@ const FLICK_PX = 24;
 export function Flashcard({
   front, back, illustration, illustrationSide = 'back', phonetic, language, tags,
   flipped, defaultFlipped = false, height = 300,
-  hint, onFlip, tilt = true, drag = true, style, ...rest
+  hint, onFlip, tilt = true, drag = true, preview = true, style, ...rest
 }: FlashcardProps) {
   const onFront = !!illustration && illustrationSide !== 'back';
   const onBack = !!illustration && illustrationSide !== 'front';
@@ -91,6 +106,7 @@ export function Flashcard({
   const applyTilt = (e: React.PointerEvent<HTMLDivElement>) => {
     const node = tiltRef.current;
     if (!canTilt || !node) return;
+    cancelPreview();
     const r = e.currentTarget.getBoundingClientRect();
     // Doubled to ±1, so MAX_TILT is the angle at the edge rather than half of it.
     const px = ((e.clientX - r.left) / r.width - 0.5) * 2;   // -1 (left) … 1 (right)
@@ -100,6 +116,59 @@ export function Flashcard({
     node.style.transition = 'transform var(--dur-fast) linear';
     node.style.transform = `rotateX(${(py * MAX_TILT).toFixed(2)}deg) rotateY(${(-px * MAX_TILT).toFixed(2)}deg)`;
   };
+
+  /**
+   * The preview writes to the same node as the hover, with the same angles and
+   * the same settle — it is that interaction performed once, not an animation of
+   * its own. Which way it leans is the difference: on a pointer it lifts the
+   * corner a cursor would, and on touch it leans along the axis a finger drags.
+   *
+   * Held in a ref so that touching the card stops it. A pending beat that landed
+   * after a real gesture began would take the card back off the finger.
+   */
+  const previewTimers = React.useRef<ReturnType<typeof setTimeout>[]>([]);
+  const previewLeaning = React.useRef(false);
+  const cancelPreview = () => {
+    previewTimers.current.forEach(clearTimeout);
+    previewTimers.current = [];
+    if (!previewLeaning.current) return;
+    previewLeaning.current = false;
+    const node = tiltRef.current;
+    if (!node) return;
+    // Level again, and quickly. Dropping the pending beats alone would leave the
+    // card parked at the angle it happened to be passing through — on touch
+    // nothing else resets this layer, so it would stay askew under the finger
+    // that interrupted it.
+    node.style.transition = 'transform var(--dur-fast) var(--ease-out)';
+    node.style.transform = 'none';
+  };
+
+  React.useEffect(() => {
+    const node = tiltRef.current;
+    // Under prefers-reduced-motion the honest answer is the one applyTilt gives:
+    // do not move. A hint that has to move to be a hint is simply not shown.
+    if (!preview || reducedMotion || !node) return undefined;
+
+    const lean = (x: number, y: number) => {
+      previewLeaning.current = !!(x || y);
+      node.style.transition = 'transform var(--dur-base) var(--ease-spring)';
+      node.style.transform = previewLeaning.current ? `rotateX(${x}deg) rotateY(${y}deg)` : 'none';
+    };
+    const at = (ms: number, fn: () => void) => previewTimers.current.push(setTimeout(fn, ms));
+
+    if (isTouch) {
+      // Both ways along the drag's axis, so what it demonstrates is a turn.
+      at(PREVIEW_DELAY, () => lean(0, MAX_TILT));
+      at(PREVIEW_DELAY + PREVIEW_BEAT, () => lean(0, -MAX_TILT));
+      at(PREVIEW_DELAY + PREVIEW_BEAT * 2, () => lean(0, 0));
+    } else {
+      // The same lift a cursor in the top-right corner would produce: px = 1 and
+      // py = -1 through applyTilt's signs.
+      at(PREVIEW_DELAY, () => lean(-MAX_TILT, -MAX_TILT));
+      at(PREVIEW_DELAY + PREVIEW_BEAT, () => lean(0, 0));
+    }
+    return cancelPreview;
+  }, [preview, reducedMotion, isTouch]);
 
   const resetTilt = () => {
     const node = tiltRef.current;
@@ -111,6 +180,7 @@ export function Flashcard({
   const [inner, setInner] = React.useState(defaultFlipped);
   const isFlipped = flipped === undefined ? inner : flipped;
   const flip = () => {
+    cancelPreview();
     if (flipped === undefined) setInner(!isFlipped);
     onFlip && onFlip(!isFlipped);
   };
@@ -141,6 +211,7 @@ export function Flashcard({
 
   const onDragStart = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!canDrag || !dragRef.current) return;
+    cancelPreview();
     const r = e.currentTarget.getBoundingClientRect();
     gesture.current = { x: e.clientX, t: e.timeStamp, w: r.width, dx: 0, live: true };
     // Follows the finger exactly while it is down; nothing to ease toward.
