@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: 81b7736fc4402855
+// source-hash: 4a2fa22d81be5876
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -1705,7 +1705,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
   // components/navigation/RailTile.tsx
   var React11 = __toESM(require_react_global(), 1);
   var import_jsx_runtime20 = __toESM(require_react_jsx_runtime_global(), 1);
-  function RailTile({ label, icon, flag, src, color = "var(--brand)", size = 46, quiet = false, active = false, unread = 0, showLabel = false, onClick, style, ...rest }) {
+  function RailTile({ label, icon, flag, src, color = "var(--brand)", onColor = "var(--text-on-brand)", size = 46, quiet = false, active = false, unread = 0, showLabel = false, onClick, style, ...rest }) {
     const [hover, setHover] = React11.useState(false);
     const lit = active || hover;
     const isEmoji = flag && !/^[A-Za-z]{1,3}$/.test(flag);
@@ -1750,7 +1750,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
             // resets those (React warns about the mix, and a tile with `src` loses
             // its image on hover).
             backgroundColor: active ? color : hover ? "var(--surface-card)" : quiet ? "transparent" : "var(--surface-card)",
-            color: active ? "#fff" : hover ? "var(--text-strong)" : "var(--text-muted)",
+            color: active ? onColor : hover ? "var(--text-strong)" : "var(--text-muted)",
             boxShadow: active && hover ? "0 0 0 3px color-mix(in oklab, " + color + " 28%, transparent)" : "none",
             fontFamily: isEmoji ? "inherit" : "var(--font-display)",
             fontSize: isEmoji ? "26px" : "var(--fs-16)",

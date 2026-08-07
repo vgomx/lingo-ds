@@ -9,6 +9,15 @@ export interface RailTileOwnProps {
   src?: string;
   /** Fill colour when active — use the workspace's accent token. */
   color?: string;
+  /**
+   * The glyph's colour while active, which has to answer whatever `color` is.
+   *
+   * Defaults to --text-on-brand, which is right for the accent fills `color` is
+   * documented for. A rail that fills with a *surface* instead needs its theme's
+   * own ink: white on a near-white tile measures 1.07, which is what a light
+   * rail got when this was hard-coded to #fff.
+   */
+  onColor?: string;
   /** Tile edge length in px. Default 46. */
   size?: number;
   /** Transparent at rest — lighter visual weight for tool rails. */
@@ -30,7 +39,7 @@ export interface RailTileProps
  * Squircle at rest, rounds toward a squarer radius and grows a left pip when active.
  * `showLabel` puts the language name in small type underneath.
  */
-export function RailTile({ label, icon, flag, src, color = 'var(--brand)', size = 46, quiet = false, active = false, unread = 0, showLabel = false, onClick, style, ...rest }: RailTileProps) {
+export function RailTile({ label, icon, flag, src, color = 'var(--brand)', onColor = 'var(--text-on-brand)', size = 46, quiet = false, active = false, unread = 0, showLabel = false, onClick, style, ...rest }: RailTileProps) {
   const [hover, setHover] = React.useState(false);
   const lit = active || hover;
   const isEmoji = flag && !/^[A-Za-z]{1,3}$/.test(flag);
@@ -69,7 +78,7 @@ export function RailTile({ label, icon, flag, src, color = 'var(--brand)', size 
           // resets those (React warns about the mix, and a tile with `src` loses
           // its image on hover).
           backgroundColor: active ? color : hover ? 'var(--surface-card)' : quiet ? 'transparent' : 'var(--surface-card)',
-          color: active ? '#fff' : hover ? 'var(--text-strong)' : 'var(--text-muted)',
+          color: active ? onColor : hover ? 'var(--text-strong)' : 'var(--text-muted)',
           boxShadow: active && hover ? '0 0 0 3px color-mix(in oklab, ' + color + ' 28%, transparent)' : 'none',
           fontFamily: isEmoji ? 'inherit' : 'var(--font-display)',
           fontSize: isEmoji ? '26px' : 'var(--fs-16)',
