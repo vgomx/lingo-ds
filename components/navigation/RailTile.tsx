@@ -56,7 +56,13 @@ export function RailTile({ label, icon, flag, src, color = 'var(--brand)', onCol
           level with the icon at every frame, whatever `size` is set to. */}
       <span
         style={{
-          position: 'absolute', left: 0, top: size / 2, transform: 'translateY(-50%)',
+          // Anchored to the tile, not to this box. The root is width:100% of
+          // whatever wraps it, and a rail wrapping tiles in a shrink-to-fit
+          // element gets a box as wide as the *label* — so `left: 0` put the pip
+          // a little further left on every tile with a longer word under it, and
+          // well out of line on the longest. The tiles are all in the same
+          // column; the pip now is too.
+          position: 'absolute', left: `calc(50% - ${size / 2}px)`, top: size / 2, transform: 'translateY(-50%)',
           width: 4, height: active ? size * 0.48 : 0,
           borderRadius: '0 4px 4px 0', background: 'var(--text-strong)',
           transition: 'height var(--dur-base) var(--ease-spring)',

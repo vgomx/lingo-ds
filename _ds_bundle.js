@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: 66984705e683bd07
+// source-hash: fe4971d527c82265
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -1714,8 +1714,14 @@ var LingoToolboxDesignSystem_898611 = (() => {
         "span",
         {
           style: {
+            // Anchored to the tile, not to this box. The root is width:100% of
+            // whatever wraps it, and a rail wrapping tiles in a shrink-to-fit
+            // element gets a box as wide as the *label* — so `left: 0` put the pip
+            // a little further left on every tile with a longer word under it, and
+            // well out of line on the longest. The tiles are all in the same
+            // column; the pip now is too.
             position: "absolute",
-            left: 0,
+            left: `calc(50% - ${size / 2}px)`,
             top: size / 2,
             transform: "translateY(-50%)",
             width: 4,
