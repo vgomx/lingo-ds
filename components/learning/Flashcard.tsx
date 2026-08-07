@@ -35,6 +35,12 @@ export interface FlashcardOwnProps {
    * prefers-reduced-motion, where the honest response is not to move at all.
    */
   tilt?: boolean;
+  /**
+   * Turn the card by dragging it, on touch. Off elsewhere: a mouse has the
+   * hover tilt and a click, and a drag with a held button is not a gesture
+   * anyone tries on a card.
+   */
+  drag?: boolean;
   style?: React.CSSProperties;
 }
 
@@ -45,6 +51,14 @@ export interface FlashcardProps
 /** Degrees at the very corner. Small on purpose: this is a lift, not a carousel. */
 const MAX_TILT = 7;
 
+/** A drag across this fraction of the card's width completes the turn on release. */
+const FLIP_AT = 0.25;
+/** Under this, the finger did not really move and the gesture was a tap. */
+const TAP_SLOP = 6;
+/** A flick — short but quick — counts even though it never reached FLIP_AT. */
+const FLICK_MS = 260;
+const FLICK_PX = 24;
+
 /**
  * The product's hero object: a two-faced review card that flips on click.
  * Front = prompt in the target language, back = meaning plus notes.
@@ -52,7 +66,7 @@ const MAX_TILT = 7;
 export function Flashcard({
   front, back, illustration, illustrationSide = 'back', phonetic, language, tags,
   flipped, defaultFlipped = false, height = 300,
-  hint = 'Click or press Space to flip', onFlip, tilt = true, style, ...rest
+  hint, onFlip, tilt = true, drag = true, style, ...rest
 }: FlashcardProps) {
   const onFront = !!illustration && illustrationSide !== 'back';
   const onBack = !!illustration && illustrationSide !== 'front';
@@ -60,6 +74,11 @@ export function Flashcard({
   const isTouch = useIsTouch();
   const reducedMotion = usePrefersReducedMotion();
   const canTilt = tilt && !isTouch && !reducedMotion;
+  const canDrag = drag && isTouch;
+
+  // Named for the input that is actually there. "Click or press Space" on a
+  // phone describes a keyboard and a mouse, neither of which is present.
+  const hintText = hint ?? (isTouch ? 'Tap or drag to turn' : 'Click or press Space to flip');
 
   /**
    * The tilt is written straight to the node rather than held in state.
@@ -96,6 +115,73 @@ export function Flashcard({
     onFlip && onFlip(!isFlipped);
   };
 
+  /**
+   * The drag gets its own layer too, for the reason the tilt does: it is a
+   * rotation on the same axis as the flip, and the two have to be able to run at
+   * their own timings. Nested, they multiply — the finger's angle and the flip's
+   * angle add up to where the card is pointing.
+   */
+  const dragRef = React.useRef<HTMLDivElement>(null);
+  const gesture = React.useRef<{ x: number; t: number; w: number; dx: number; live: boolean } | null>(null);
+  // A drag that turned the card should not also arrive as a click and turn it
+  // back. Set on release, spent by the click that follows it.
+  const swallowClick = React.useRef(false);
+
+  /**
+   * Which way the card turns under the finger.
+   *
+   * Toward whichever face you are not looking at, whichever way you drag —
+   * rather than following the direction of the drag. Signed rotation would mean
+   * a leftward drag turning the card to -180 degrees while the flip it commits
+   * to is +180, so the card would reverse back through the face it started on
+   * to get there. This way the drag is always already heading where the release
+   * will finish, and the two motions add up to one continuous turn.
+   */
+  const turnDir = () => (isFlipped ? -1 : 1);
+
+  const onDragStart = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!canDrag || !dragRef.current) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    gesture.current = { x: e.clientX, t: e.timeStamp, w: r.width, dx: 0, live: true };
+    // Follows the finger exactly while it is down; nothing to ease toward.
+    dragRef.current.style.transition = 'none';
+    // Keeps the moves coming if the finger wanders off the card mid-turn.
+    // Throws if the pointer is already gone by the time this runs, which is a
+    // race worth surviving rather than an error worth raising.
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch { /* pointer already released */ }
+  };
+
+  const onDragMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const g = gesture.current;
+    const node = dragRef.current;
+    if (!g?.live || !node) return;
+    g.dx = e.clientX - g.x;
+    // Clamped at a half-turn: a card already showing its other face has nowhere
+    // further to go, and letting it keep spinning would make it a carousel.
+    const progress = Math.min(Math.abs(g.dx) / g.w, 1);
+    node.style.transform = `rotateY(${(turnDir() * progress * 180).toFixed(2)}deg)`;
+  };
+
+  const onDragEnd = (e: React.PointerEvent<HTMLDivElement>, cancelled = false) => {
+    const g = gesture.current;
+    const node = dragRef.current;
+    if (!g?.live || !node) return;
+    g.live = false;
+
+    const dist = Math.abs(g.dx);
+    const committed = !cancelled
+      && (dist > g.w * FLIP_AT || (dist > FLICK_PX && e.timeStamp - g.t < FLICK_MS));
+
+    swallowClick.current = dist > TAP_SLOP;
+
+    // Home either way. On a commit the flipper takes the rest of the turn, and
+    // matching its timing means the two cross over as one movement rather than
+    // the finger's angle snapping back out from under it.
+    node.style.transition = 'transform var(--dur-flip) var(--ease-spring)';
+    node.style.transform = 'none';
+    if (committed) flip();
+  };
+
   const face: React.CSSProperties = {
     position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column',
     alignItems: 'center', justifyContent: 'center', gap: 'var(--space-5)',
@@ -106,16 +192,29 @@ export function Flashcard({
 
   return (
     <div
-      onClick={flip}
+      onClick={() => {
+        if (swallowClick.current) { swallowClick.current = false; return; }
+        flip();
+      }}
       onKeyDown={(e) => {
         if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flip(); }
       }}
       role="button"
       tabIndex={0}
       aria-pressed={isFlipped}
-      onPointerMove={applyTilt}
+      onPointerDown={onDragStart}
+      onPointerMove={(e) => { applyTilt(e); onDragMove(e); }}
+      onPointerUp={onDragEnd}
+      onPointerCancel={(e) => onDragEnd(e, true)}
       onPointerLeave={resetTilt}
-      style={{ perspective: 1400, height, cursor: 'pointer', userSelect: 'none', ...style }}
+      style={{
+        perspective: 1400, height, cursor: 'pointer', userSelect: 'none',
+        // Vertical panning stays the page's, horizontal is the card's. Without
+        // this the browser claims the gesture as a scroll and the pointermoves
+        // stop arriving partway through the turn.
+        touchAction: canDrag ? 'pan-y' : undefined,
+        ...style,
+      }}
       {...rest}
     >
       {/* The tilt gets its own layer, wrapping the flipper rather than sharing
@@ -131,6 +230,13 @@ export function Flashcard({
           // No transition here at rest: applyTilt and resetTilt each set the one
           // they want, so the way in is quick and the way out settles.
           willChange: canTilt ? 'transform' : undefined,
+        }}
+      >
+      <div
+        ref={dragRef}
+        style={{
+          width: '100%', height: '100%', transformStyle: 'preserve-3d',
+          willChange: canDrag ? 'transform' : undefined,
         }}
       >
       <div
@@ -154,8 +260,8 @@ export function Flashcard({
           {phonetic && (
             <span style={{ fontFamily: 'var(--font-mono)', fontSize: 'var(--fs-16)', color: 'var(--text-muted)' }}>{phonetic}</span>
           )}
-          {hint && (
-            <span style={{ position: 'absolute', bottom: 18, fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-12)', fontWeight: 'var(--fw-semibold)' as React.CSSProperties['fontWeight'], color: 'var(--text-muted)' }}>{hint}</span>
+          {hintText && (
+            <span style={{ position: 'absolute', bottom: 18, fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-12)', fontWeight: 'var(--fw-semibold)' as React.CSSProperties['fontWeight'], color: 'var(--text-muted)' }}>{hintText}</span>
           )}
         </div>
         {/* The back face is deep violet whatever the page theme, so it is declared
@@ -167,6 +273,7 @@ export function Flashcard({
           <span style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--fs-32)', fontWeight: 'var(--fw-black)' as React.CSSProperties['fontWeight'], lineHeight: 1.1, color: '#fff' }}>{back}</span>
           {tags && <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'center' }}>{tags}</div>}
         </div>
+      </div>
       </div>
       </div>
     </div>
