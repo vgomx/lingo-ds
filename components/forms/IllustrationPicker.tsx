@@ -147,13 +147,28 @@ export function IllustrationPicker({
         )}
       </span>
 
+      {/* The frame and the scroller are two boxes on purpose.
+
+          A sticky heading offsets from the scrollport, which is the scroller's
+          *padding* box — so any padding-top here parks it that far down and
+          leaves a band above it for glyphs to scroll through. It was 4px of
+          emoji sliding past above the group name.
+
+          Dropping the padding alone would fix the gap and break something else:
+          the heading spans the content width, so its background would paint over
+          the middle of the 1px ring and leave the frame looking topless while
+          scrolled. The ring lives on this outer box now, one pixel out of the
+          scroller's reach, and the heading can sit flush against the top. */}
       <div
-        ref={scroller}
         style={{
-          height, overflowY: 'auto', padding: '4px 4px 8px',
+          height, padding: 1, overflow: 'hidden',
           background: 'var(--surface-input)', borderRadius: 'var(--radius-control)',
           boxShadow: 'inset 0 0 0 1px var(--border)',
         }}
+      >
+      <div
+        ref={scroller}
+        style={{ height: '100%', overflowY: 'auto', padding: '0 3px 8px' }}
       >
         {sections.length === 0 ? (
           <p style={{ margin: 0, padding: '20px 12px', textAlign: 'center', fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-13)', color: 'var(--text-muted)' }}>
@@ -216,6 +231,7 @@ export function IllustrationPicker({
             </div>
           </section>
         ))}
+      </div>
       </div>
 
       {hint && (

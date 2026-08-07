@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: 6fe1ee98e7a3b605
+// source-hash: b1570048110be58a
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -1196,84 +1196,90 @@ var LingoToolboxDesignSystem_898611 = (() => {
       /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
         "div",
         {
-          ref: scroller,
           style: {
             height,
-            overflowY: "auto",
-            padding: "4px 4px 8px",
+            padding: 1,
+            overflow: "hidden",
             background: "var(--surface-input)",
             borderRadius: "var(--radius-control)",
             boxShadow: "inset 0 0 0 1px var(--border)"
           },
-          children: sections.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { style: { margin: 0, padding: "20px 12px", textAlign: "center", fontFamily: "var(--font-ui)", fontSize: "var(--fs-13)", color: "var(--text-muted)" }, children: [
-            "Nothing matches \u201C",
-            query2.trim(),
-            "\u201D."
-          ] }) : sections.map((section) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("section", { children: [
-            section.label && /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-              "h4",
-              {
-                style: {
-                  // Sticky so the heading is still there once a long section is
-                  // scrolled into — otherwise everything below the fold is
-                  // unlabelled and the grid reads as one undifferentiated mass.
-                  position: "sticky",
-                  top: 0,
-                  zIndex: 1,
-                  margin: 0,
-                  padding: "8px 8px 5px",
-                  background: "var(--surface-input)",
-                  fontFamily: "var(--font-ui)",
-                  fontSize: "var(--fs-10)",
-                  fontWeight: "var(--fw-black)",
-                  letterSpacing: "var(--ls-caps)",
-                  textTransform: "uppercase",
-                  // --text-muted, not --text-faint: at --fs-10 this is small text
-                  // needing 4.5:1, and faint on the input well measures 3.27 in
-                  // light and 2.99 in dark. Muted clears it in both.
-                  color: "var(--text-muted)"
-                },
-                children: section.label
-              }
-            ),
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { style: { display: "grid", gridTemplateColumns: `repeat(auto-fill, minmax(${cell}px, 1fr))`, gap: 2 }, children: section.items.map((it) => {
-              const selected = it.id === value;
-              return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-                "button",
-                {
-                  type: "button",
-                  title: it.name,
-                  "aria-label": it.name,
-                  "aria-pressed": selected,
-                  onClick: () => onChange && onChange(selected ? null : it.id),
-                  style: {
-                    display: "grid",
-                    placeItems: "center",
-                    height: cell,
-                    padding: 0,
-                    border: "none",
-                    cursor: "pointer",
-                    borderRadius: "var(--radius-sm)",
-                    background: selected ? "var(--brand)" : "transparent",
-                    boxShadow: selected ? "var(--ring-focus)" : "none",
-                    transition: "background var(--dur-fast) var(--ease-standard)"
-                  },
-                  children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-                    "img",
+          children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+            "div",
+            {
+              ref: scroller,
+              style: { height: "100%", overflowY: "auto", padding: "0 3px 8px" },
+              children: sections.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { style: { margin: 0, padding: "20px 12px", textAlign: "center", fontFamily: "var(--font-ui)", fontSize: "var(--fs-13)", color: "var(--text-muted)" }, children: [
+                "Nothing matches \u201C",
+                query2.trim(),
+                "\u201D."
+              ] }) : sections.map((section) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("section", { children: [
+                section.label && /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+                  "h4",
+                  {
+                    style: {
+                      // Sticky so the heading is still there once a long section is
+                      // scrolled into — otherwise everything below the fold is
+                      // unlabelled and the grid reads as one undifferentiated mass.
+                      position: "sticky",
+                      top: 0,
+                      zIndex: 1,
+                      margin: 0,
+                      padding: "8px 8px 5px",
+                      background: "var(--surface-input)",
+                      fontFamily: "var(--font-ui)",
+                      fontSize: "var(--fs-10)",
+                      fontWeight: "var(--fw-black)",
+                      letterSpacing: "var(--ls-caps)",
+                      textTransform: "uppercase",
+                      // --text-muted, not --text-faint: at --fs-10 this is small text
+                      // needing 4.5:1, and faint on the input well measures 3.27 in
+                      // light and 2.99 in dark. Muted clears it in both.
+                      color: "var(--text-muted)"
+                    },
+                    children: section.label
+                  }
+                ),
+                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { style: { display: "grid", gridTemplateColumns: `repeat(auto-fill, minmax(${cell}px, 1fr))`, gap: 2 }, children: section.items.map((it) => {
+                  const selected = it.id === value;
+                  return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+                    "button",
                     {
-                      src: it.src,
-                      alt: "",
-                      loading: "lazy",
-                      decoding: "async",
-                      draggable: false,
-                      style: { width: glyphSize, height: glyphSize, display: "block" }
-                    }
-                  )
-                },
-                it.id
-              );
-            }) })
-          ] }, section.id || section.label))
+                      type: "button",
+                      title: it.name,
+                      "aria-label": it.name,
+                      "aria-pressed": selected,
+                      onClick: () => onChange && onChange(selected ? null : it.id),
+                      style: {
+                        display: "grid",
+                        placeItems: "center",
+                        height: cell,
+                        padding: 0,
+                        border: "none",
+                        cursor: "pointer",
+                        borderRadius: "var(--radius-sm)",
+                        background: selected ? "var(--brand)" : "transparent",
+                        boxShadow: selected ? "var(--ring-focus)" : "none",
+                        transition: "background var(--dur-fast) var(--ease-standard)"
+                      },
+                      children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+                        "img",
+                        {
+                          src: it.src,
+                          alt: "",
+                          loading: "lazy",
+                          decoding: "async",
+                          draggable: false,
+                          style: { width: glyphSize, height: glyphSize, display: "block" }
+                        }
+                      )
+                    },
+                    it.id
+                  );
+                }) })
+              ] }, section.id || section.label))
+            }
+          )
         }
       ),
       hint && // --text-muted for the same reason as Input's hint: 12px is small text
