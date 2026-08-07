@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: 2a56e1e8cbbe19ee
+// source-hash: fe4971d527c82265
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -1705,7 +1705,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
   // components/navigation/RailTile.tsx
   var React11 = __toESM(require_react_global(), 1);
   var import_jsx_runtime20 = __toESM(require_react_jsx_runtime_global(), 1);
-  function RailTile({ label, icon, flag, src, color = "var(--brand)", size = 46, quiet = false, active = false, unread = 0, showLabel = false, onClick, style, ...rest }) {
+  function RailTile({ label, icon, flag, src, color = "var(--brand)", onColor = "var(--text-on-brand)", size = 46, quiet = false, active = false, unread = 0, showLabel = false, onClick, style, ...rest }) {
     const [hover, setHover] = React11.useState(false);
     const lit = active || hover;
     const isEmoji = flag && !/^[A-Za-z]{1,3}$/.test(flag);
@@ -1714,8 +1714,14 @@ var LingoToolboxDesignSystem_898611 = (() => {
         "span",
         {
           style: {
+            // Anchored to the tile, not to this box. The root is width:100% of
+            // whatever wraps it, and a rail wrapping tiles in a shrink-to-fit
+            // element gets a box as wide as the *label* — so `left: 0` put the pip
+            // a little further left on every tile with a longer word under it, and
+            // well out of line on the longest. The tiles are all in the same
+            // column; the pip now is too.
             position: "absolute",
-            left: 0,
+            left: `calc(50% - ${size / 2}px)`,
             top: size / 2,
             transform: "translateY(-50%)",
             width: 4,
@@ -1750,7 +1756,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
             // resets those (React warns about the mix, and a tile with `src` loses
             // its image on hover).
             backgroundColor: active ? color : hover ? "var(--surface-card)" : quiet ? "transparent" : "var(--surface-card)",
-            color: active ? "#fff" : hover ? "var(--text-strong)" : "var(--text-muted)",
+            color: active ? onColor : hover ? "var(--text-strong)" : "var(--text-muted)",
             boxShadow: active && hover ? "0 0 0 3px color-mix(in oklab, " + color + " 28%, transparent)" : "none",
             fontFamily: isEmoji ? "inherit" : "var(--font-display)",
             fontSize: isEmoji ? "26px" : "var(--fs-16)",
@@ -1858,55 +1864,117 @@ var LingoToolboxDesignSystem_898611 = (() => {
 
   // components/feedback/Tooltip.tsx
   var React12 = __toESM(require_react_global(), 1);
+  var import_react_dom2 = __toESM(require_react_dom_global(), 1);
   var import_jsx_runtime22 = __toESM(require_react_jsx_runtime_global(), 1);
+  var GAP = 8;
+  var MARGIN = 8;
+  var OPPOSITE = {
+    top: "bottom",
+    bottom: "top",
+    left: "right",
+    right: "left"
+  };
+  var clamp = (v, lo, hi) => Math.min(Math.max(v, lo), hi);
   function Tooltip({ children, label, side = "top", shortcut, style, ...rest }) {
     const [open, setOpen] = React12.useState(false);
-    const pos = {
-      top: { bottom: "100%", left: "50%", transform: "translate(-50%,-8px)" },
-      bottom: { top: "100%", left: "50%", transform: "translate(-50%,8px)" },
-      left: { right: "100%", top: "50%", transform: "translate(-8px,-50%)" },
-      right: { left: "100%", top: "50%", transform: "translate(8px,-50%)" }
-    }[side];
+    const anchorRef = React12.useRef(null);
+    const tipRef = React12.useRef(null);
+    const [box, setBox] = React12.useState(null);
+    const [size, setSize] = React12.useState(null);
+    React12.useLayoutEffect(() => {
+      if (!open) {
+        setBox(null);
+        setSize(null);
+        return void 0;
+      }
+      const measure = () => {
+        const el = anchorRef.current;
+        if (el) setBox(el.getBoundingClientRect());
+      };
+      measure();
+      window.addEventListener("scroll", measure, true);
+      window.addEventListener("resize", measure);
+      return () => {
+        window.removeEventListener("scroll", measure, true);
+        window.removeEventListener("resize", measure);
+      };
+    }, [open]);
+    React12.useLayoutEffect(() => {
+      if (!open) return;
+      const el = tipRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      setSize((prev) => prev && prev.w === r.width && prev.h === r.height ? prev : { w: r.width, h: r.height });
+    }, [open, box, label, shortcut]);
+    const placed = React12.useMemo(() => {
+      if (!box || !size) return null;
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const fits = {
+        top: box.top - GAP - size.h >= MARGIN,
+        bottom: box.bottom + GAP + size.h <= vh - MARGIN,
+        left: box.left - GAP - size.w >= MARGIN,
+        right: box.right + GAP + size.w <= vw - MARGIN
+      };
+      const s = fits[side] || !fits[OPPOSITE[side]] ? side : OPPOSITE[side];
+      if (s === "top" || s === "bottom") {
+        return {
+          left: clamp(box.left + box.width / 2 - size.w / 2, MARGIN, Math.max(MARGIN, vw - MARGIN - size.w)),
+          top: s === "top" ? box.top - GAP - size.h : box.bottom + GAP
+        };
+      }
+      return {
+        left: s === "left" ? box.left - GAP - size.w : box.right + GAP,
+        top: clamp(box.top + box.height / 2 - size.h / 2, MARGIN, Math.max(MARGIN, vh - MARGIN - size.h))
+      };
+    }, [box, size, side]);
+    const tip = /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(
+      "span",
+      {
+        ref: tipRef,
+        role: "tooltip",
+        "data-theme": "dark",
+        style: {
+          position: "fixed",
+          left: placed ? placed.left : 0,
+          top: placed ? placed.top : 0,
+          // Hidden rather than unmounted for the frame it takes to measure itself,
+          // so it is never seen at the corner it was measured in.
+          visibility: placed ? "visible" : "hidden",
+          zIndex: 50,
+          whiteSpace: "nowrap",
+          pointerEvents: "none",
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 8,
+          padding: "6px 10px",
+          background: "var(--surface-rail)",
+          color: "var(--text-strong)",
+          borderRadius: "var(--radius-sm)",
+          boxShadow: "var(--shadow-md)",
+          fontFamily: "var(--font-ui)",
+          fontSize: "var(--fs-12)",
+          fontWeight: "var(--fw-bold)",
+          animation: "lt-tip var(--dur-fast) var(--ease-out)"
+        },
+        children: [
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("style", { children: "@keyframes lt-tip{from{opacity:0}to{opacity:1}}" }),
+          label,
+          shortcut && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("kbd", { style: { fontFamily: "var(--font-mono)", fontSize: "var(--fs-11)", color: "var(--text-muted)", background: "var(--surface-raised)", borderRadius: "var(--radius-xs)", padding: "1px 4px" }, children: shortcut })
+        ]
+      }
+    );
     return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(
       "span",
       {
+        ref: anchorRef,
         onMouseEnter: () => setOpen(true),
         onMouseLeave: () => setOpen(false),
         style: { position: "relative", display: "inline-flex", ...style },
         ...rest,
         children: [
           children,
-          open && /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(
-            "span",
-            {
-              role: "tooltip",
-              "data-theme": "dark",
-              style: {
-                position: "absolute",
-                ...pos,
-                zIndex: 50,
-                whiteSpace: "nowrap",
-                pointerEvents: "none",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-                padding: "6px 10px",
-                background: "var(--surface-rail)",
-                color: "var(--text-strong)",
-                borderRadius: "var(--radius-sm)",
-                boxShadow: "var(--shadow-md)",
-                fontFamily: "var(--font-ui)",
-                fontSize: "var(--fs-12)",
-                fontWeight: "var(--fw-bold)",
-                animation: "lt-tip var(--dur-fast) var(--ease-out)"
-              },
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("style", { children: "@keyframes lt-tip{from{opacity:0}to{opacity:1}}" }),
-                label,
-                shortcut && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("kbd", { style: { fontFamily: "var(--font-mono)", fontSize: "var(--fs-11)", color: "var(--text-muted)", background: "var(--surface-raised)", borderRadius: "var(--radius-xs)", padding: "1px 4px" }, children: shortcut })
-              ]
-            }
-          )
+          open && (0, import_react_dom2.createPortal)(tip, document.body)
         ]
       }
     );
@@ -1916,6 +1984,12 @@ var LingoToolboxDesignSystem_898611 = (() => {
   var React13 = __toESM(require_react_global(), 1);
   var import_jsx_runtime23 = __toESM(require_react_jsx_runtime_global(), 1);
   var MAX_TILT = 7;
+  var FLIP_AT = 0.25;
+  var TAP_SLOP = 6;
+  var FLICK_MS = 260;
+  var FLICK_PX = 24;
+  var PREVIEW_PERIOD = 9e3;
+  var PREVIEW_RAMP = 900;
   function Flashcard({
     front,
     back,
@@ -1927,9 +2001,11 @@ var LingoToolboxDesignSystem_898611 = (() => {
     flipped,
     defaultFlipped = false,
     height = 300,
-    hint = "Click or press Space to flip",
+    hint,
     onFlip,
     tilt = true,
+    drag = true,
+    preview = true,
     style,
     ...rest
   }) {
@@ -1938,28 +2014,129 @@ var LingoToolboxDesignSystem_898611 = (() => {
     const isTouch = useIsTouch();
     const reducedMotion = usePrefersReducedMotion();
     const canTilt = tilt && !isTouch && !reducedMotion;
+    const canDrag = drag && isTouch;
+    const hintText = hint ?? (isTouch ? "Tap or drag to turn" : "Click or press Space to flip");
     const tiltRef = React13.useRef(null);
+    const lastTilt = React13.useRef({ x: 0, y: 0 });
     const applyTilt = (e) => {
       const node = tiltRef.current;
       if (!canTilt || !node) return;
+      holdPreview();
       const r = e.currentTarget.getBoundingClientRect();
       const px = ((e.clientX - r.left) / r.width - 0.5) * 2;
       const py = ((e.clientY - r.top) / r.height - 0.5) * 2;
+      const x = py * MAX_TILT;
+      const y = -px * MAX_TILT;
+      lastTilt.current = { x, y };
       node.style.transition = "transform var(--dur-fast) linear";
-      node.style.transform = `rotateX(${(py * MAX_TILT).toFixed(2)}deg) rotateY(${(-px * MAX_TILT).toFixed(2)}deg)`;
+      node.style.transform = `rotateX(${x.toFixed(2)}deg) rotateY(${y.toFixed(2)}deg)`;
+    };
+    const previewPaused = React13.useRef(false);
+    const previewLive = React13.useRef(false);
+    const previewFrom = React13.useRef({ x: 0, y: 0 });
+    const previewRampAt = React13.useRef(0);
+    const previewT0 = React13.useRef(0);
+    React13.useEffect(() => {
+      const node = tiltRef.current;
+      if (!preview || reducedMotion || !node) return void 0;
+      previewLive.current = true;
+      let raf = 0;
+      const frame = (now) => {
+        raf = requestAnimationFrame(frame);
+        if (!previewT0.current) previewT0.current = now;
+        if (previewPaused.current) {
+          previewRampAt.current = 0;
+          return;
+        }
+        if (!previewRampAt.current) {
+          previewRampAt.current = now;
+          const { x: x2, y: y2 } = previewFrom.current;
+          if (x2 || y2) previewT0.current = now - Math.atan2(x2, y2) / (Math.PI * 2) * PREVIEW_PERIOD;
+        }
+        const a = (now - previewT0.current) / PREVIEW_PERIOD * Math.PI * 2;
+        const k = Math.min((now - previewRampAt.current) / PREVIEW_RAMP, 1);
+        const from = previewFrom.current;
+        const x = from.x + (Math.sin(a) * MAX_TILT - from.x) * k;
+        const y = from.y + (Math.cos(a) * MAX_TILT - from.y) * k;
+        node.style.transition = "none";
+        node.style.transform = `rotateX(${x.toFixed(2)}deg) rotateY(${y.toFixed(2)}deg)`;
+      };
+      raf = requestAnimationFrame(frame);
+      return () => {
+        previewLive.current = false;
+        cancelAnimationFrame(raf);
+        node.style.transform = "none";
+      };
+    }, [preview, reducedMotion]);
+    const holdPreview = () => {
+      previewPaused.current = true;
+    };
+    const releasePreview = (from = { x: 0, y: 0 }) => {
+      previewFrom.current = from;
+      previewRampAt.current = 0;
+      previewPaused.current = false;
     };
     const resetTilt = () => {
+      releasePreview(lastTilt.current);
+      if (previewLive.current) return;
       const node = tiltRef.current;
       if (!node) return;
       node.style.transition = "transform var(--dur-base) var(--ease-spring)";
       node.style.transform = "none";
     };
+    const [landed, setLanded] = React13.useState(0);
+    const rungFor = React13.useRef(null);
     const [inner, setInner] = React13.useState(defaultFlipped);
     const isFlipped = flipped === void 0 ? inner : flipped;
     const flip = () => {
       if (flipped === void 0) setInner(!isFlipped);
       onFlip && onFlip(!isFlipped);
     };
+    const dragRef = React13.useRef(null);
+    const gesture = React13.useRef(null);
+    const swallowClick = React13.useRef(false);
+    const turnDir = () => isFlipped ? -1 : 1;
+    const onDragStart = (e) => {
+      if (!canDrag || !dragRef.current) return;
+      holdPreview();
+      const r = e.currentTarget.getBoundingClientRect();
+      gesture.current = { x: e.clientX, t: e.timeStamp, w: r.width, dx: 0, live: true };
+      dragRef.current.style.transition = "none";
+      try {
+        e.currentTarget.setPointerCapture(e.pointerId);
+      } catch {
+      }
+    };
+    const onDragMove = (e) => {
+      const g = gesture.current;
+      const node = dragRef.current;
+      if (!g?.live || !node) return;
+      g.dx = e.clientX - g.x;
+      const progress = Math.min(Math.abs(g.dx) / g.w, 1);
+      node.style.transform = `rotateY(${(turnDir() * progress * 180).toFixed(2)}deg)`;
+    };
+    const onDragEnd = (e, cancelled = false) => {
+      const g = gesture.current;
+      const node = dragRef.current;
+      if (!g?.live || !node) return;
+      g.live = false;
+      const dist = Math.abs(g.dx);
+      const committed = !cancelled && (dist > g.w * FLIP_AT || dist > FLICK_PX && e.timeStamp - g.t < FLICK_MS);
+      swallowClick.current = dist > TAP_SLOP;
+      node.style.transition = "transform var(--dur-flip) var(--ease-spring)";
+      node.style.transform = "none";
+      releasePreview();
+      if (committed) flip();
+    };
+    React13.useEffect(() => {
+      if (rungFor.current === null) {
+        rungFor.current = isFlipped;
+        return;
+      }
+      if (rungFor.current === isFlipped) return;
+      rungFor.current = isFlipped;
+      setLanded((n) => n + 1);
+    }, [isFlipped]);
     const face = {
       position: "absolute",
       inset: 0,
@@ -1975,10 +2152,16 @@ var LingoToolboxDesignSystem_898611 = (() => {
       textAlign: "center",
       transition: "opacity var(--dur-fast) linear"
     };
-    return /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+    return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
       "div",
       {
-        onClick: flip,
+        onClick: () => {
+          if (swallowClick.current) {
+            swallowClick.current = false;
+            return;
+          }
+          flip();
+        },
         onKeyDown: (e) => {
           if (e.key === " " || e.key === "Enter") {
             e.preventDefault();
@@ -1988,51 +2171,110 @@ var LingoToolboxDesignSystem_898611 = (() => {
         role: "button",
         tabIndex: 0,
         "aria-pressed": isFlipped,
-        onPointerMove: applyTilt,
+        onPointerDown: onDragStart,
+        onPointerMove: (e) => {
+          applyTilt(e);
+          onDragMove(e);
+        },
+        onPointerUp: onDragEnd,
+        onPointerCancel: (e) => onDragEnd(e, true),
         onPointerLeave: resetTilt,
-        style: { perspective: 1400, height, cursor: "pointer", userSelect: "none", ...style },
+        style: {
+          perspective: 1400,
+          height,
+          cursor: "pointer",
+          userSelect: "none",
+          // So the ripple can sit against the card's own bounds.
+          position: "relative",
+          // Vertical panning stays the page's, horizontal is the card's. Without
+          // this the browser claims the gesture as a scroll and the pointermoves
+          // stop arriving partway through the turn.
+          touchAction: canDrag ? "pan-y" : void 0,
+          ...style
+        },
         ...rest,
-        children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
-          "div",
-          {
-            ref: tiltRef,
-            style: {
-              width: "100%",
-              height: "100%",
-              transformStyle: "preserve-3d",
-              // No transition here at rest: applyTilt and resetTilt each set the one
-              // they want, so the way in is quick and the way out settles.
-              willChange: canTilt ? "transform" : void 0
-            },
-            children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
-              "div",
+        children: [
+          landed > 0 && !reducedMotion && /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("span", { "aria-hidden": "true", style: { position: "absolute", inset: 0, pointerEvents: "none" }, children: [
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("style", { children: "@keyframes lt-card-land{0%{opacity:0;transform:scale(1)}16%{opacity:.85}100%{opacity:0;transform:scale(1.14)}}" }),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+              "span",
               {
                 style: {
-                  position: "relative",
-                  width: "100%",
-                  height: "100%",
-                  transformStyle: "preserve-3d",
-                  transform: isFlipped ? "rotateY(180deg)" : "none",
-                  transition: "transform var(--dur-flip) var(--ease-spring)"
-                },
-                children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: { ...face, opacity: isFlipped ? 0 : 1, background: "var(--surface-card)", boxShadow: "var(--ring-inset), var(--shadow-md)" }, children: [
-                    language && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { position: "absolute", top: 20, left: 24, fontFamily: "var(--font-ui)", fontSize: "var(--fs-11)", fontWeight: "var(--fw-black)", letterSpacing: "var(--ls-caps)", textTransform: "uppercase", color: "var(--text-muted)" }, children: language }),
-                    onFront && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { display: "grid", lineHeight: 0 }, children: illustration }),
-                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { fontFamily: "var(--font-display)", fontSize: "var(--fs-48)", fontWeight: "var(--fw-black)", lineHeight: 1.05, color: "var(--text-strong)" }, children: front }),
-                    phonetic && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { fontFamily: "var(--font-mono)", fontSize: "var(--fs-16)", color: "var(--text-muted)" }, children: phonetic }),
-                    hint && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { position: "absolute", bottom: 18, fontFamily: "var(--font-ui)", fontSize: "var(--fs-12)", fontWeight: "var(--fw-semibold)", color: "var(--text-muted)" }, children: hint })
-                  ] }),
-                  /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { "data-theme": "dark", style: { ...face, opacity: isFlipped ? 1 : 0, transform: "rotateY(180deg)", background: "var(--violet-800)", boxShadow: "inset 0 0 0 1.5px var(--violet-600), var(--shadow-md)" }, children: [
-                    onBack && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { display: "grid", lineHeight: 0 }, children: illustration }),
-                    /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { fontFamily: "var(--font-display)", fontSize: "var(--fs-32)", fontWeight: "var(--fw-black)", lineHeight: 1.1, color: "#fff" }, children: back }),
-                    tags && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: { display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center" }, children: tags })
-                  ] })
-                ]
+                  position: "absolute",
+                  inset: 0,
+                  borderRadius: "var(--radius-flashcard)",
+                  border: "2px solid var(--brand-ring)",
+                  animation: "lt-card-land var(--dur-celebrate) var(--ease-out) forwards"
+                }
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+              "span",
+              {
+                style: {
+                  position: "absolute",
+                  inset: 0,
+                  borderRadius: "var(--radius-flashcard)",
+                  border: "1.5px solid var(--brand-ring)",
+                  animation: "lt-card-land var(--dur-celebrate) var(--ease-out) 90ms forwards"
+                }
               }
             )
-          }
-        )
+          ] }, landed),
+          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+            "div",
+            {
+              ref: tiltRef,
+              style: {
+                width: "100%",
+                height: "100%",
+                transformStyle: "preserve-3d",
+                // No transition here at rest: applyTilt and resetTilt each set the one
+                // they want, so the way in is quick and the way out settles.
+                willChange: canTilt ? "transform" : void 0
+              },
+              children: /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                "div",
+                {
+                  ref: dragRef,
+                  style: {
+                    width: "100%",
+                    height: "100%",
+                    transformStyle: "preserve-3d",
+                    willChange: canDrag ? "transform" : void 0
+                  },
+                  children: /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)(
+                    "div",
+                    {
+                      style: {
+                        position: "relative",
+                        width: "100%",
+                        height: "100%",
+                        transformStyle: "preserve-3d",
+                        transform: isFlipped ? "rotateY(180deg)" : "none",
+                        transition: "transform var(--dur-flip) var(--ease-spring)"
+                      },
+                      children: [
+                        /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { style: { ...face, opacity: isFlipped ? 0 : 1, background: "var(--surface-card)", boxShadow: "var(--ring-inset), var(--shadow-md)" }, children: [
+                          language && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { position: "absolute", top: 20, left: 24, fontFamily: "var(--font-ui)", fontSize: "var(--fs-11)", fontWeight: "var(--fw-black)", letterSpacing: "var(--ls-caps)", textTransform: "uppercase", color: "var(--text-muted)" }, children: language }),
+                          onFront && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { display: "grid", lineHeight: 0 }, children: illustration }),
+                          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { fontFamily: "var(--font-display)", fontSize: "var(--fs-48)", fontWeight: "var(--fw-black)", lineHeight: 1.05, color: "var(--text-strong)" }, children: front }),
+                          phonetic && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { fontFamily: "var(--font-mono)", fontSize: "var(--fs-16)", color: "var(--text-muted)" }, children: phonetic }),
+                          hintText && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { position: "absolute", bottom: 18, fontFamily: "var(--font-ui)", fontSize: "var(--fs-12)", fontWeight: "var(--fw-semibold)", color: "var(--text-muted)" }, children: hintText })
+                        ] }),
+                        /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { "data-theme": "dark", style: { ...face, opacity: isFlipped ? 1 : 0, transform: "rotateY(180deg)", background: "var(--violet-800)", boxShadow: "inset 0 0 0 1.5px var(--violet-600), var(--shadow-md)" }, children: [
+                          onBack && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { display: "grid", lineHeight: 0 }, children: illustration }),
+                          /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("span", { style: { fontFamily: "var(--font-display)", fontSize: "var(--fs-32)", fontWeight: "var(--fw-black)", lineHeight: 1.1, color: "#fff" }, children: back }),
+                          tags && /* @__PURE__ */ (0, import_jsx_runtime23.jsx)("div", { style: { display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center" }, children: tags })
+                        ] })
+                      ]
+                    }
+                  )
+                }
+              )
+            }
+          )
+        ]
       }
     );
   }

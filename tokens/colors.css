@@ -169,7 +169,11 @@
   --text-inverse:var(--ink-50);
 
   --surface-app:var(--paper-0);
-  --surface-rail:var(--ink-900);
+  /* Paper-200, the deepest step, mirroring how the rail is ink-1000 against
+     an ink-700 app in the dark. It used to be ink-900 here — a dark island
+     kept deliberately, which meant every foreground on it had to be told it
+     was dark, and the app had one edge that never followed the theme. */
+  --surface-rail:var(--paper-200);
   --surface-sidebar:var(--paper-50);
   --surface-card:var(--paper-0);
   --surface-raised:var(--paper-50);
