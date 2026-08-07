@@ -38,28 +38,62 @@ export function Dialog({ open = true, title, description, children, footer, widt
   return createPortal(
     <div
       style={{
-        // --space-4 on a phone: 32px each side takes a sixth of a 375px screen
-        // away from a dialog that already caps at 100%.
-        position: 'fixed', inset: 0, display: 'grid', placeItems: 'center',
-        padding: isMobile ? 'var(--space-4)' : 'var(--space-8)',
-        background: 'var(--surface-overlay)', backdropFilter: 'var(--blur-scrim)', zIndex: 40,
+        position: 'fixed', inset: 0, display: 'grid',
+        // minmax(0, 1fr), not the implicit `auto`. An auto column sizes to its
+        // item, so the panel's own `maxWidth: 100%` resolved against a column
+        // that had already grown to fit it — 460px of dialog sat on a 375px
+        // screen with 97 of it off the right edge, and the cap that was supposed
+        // to prevent exactly that was measuring itself.
+        gridTemplateColumns: 'minmax(0, 1fr)',
+        // Full-bleed on a phone: a dialog this tall has nowhere to be inset to,
+        // and the scrim around it was only ever a hairline of blur.
+        placeItems: isMobile ? 'stretch' : 'center',
+        padding: isMobile ? 0 : 'var(--space-8)',
+        // Above the app's own chrome — a bottom dock or tab bar sits in the 40s
+        // and was painting over the footer — and below tooltips at 50, so a
+        // tooltip raised from inside a dialog still lands on top of it.
+        background: 'var(--surface-overlay)', backdropFilter: 'var(--blur-scrim)', zIndex: 48,
         animation: 'lt-fade var(--dur-base) var(--ease-out)',
       }}
       onClick={onClose}
     >
-      <style>{'@keyframes lt-fade{from{opacity:0}to{opacity:1}}@keyframes lt-pop{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}'}</style>
+      <style>
+        {'@keyframes lt-fade{from{opacity:0}to{opacity:1}}'
+          + '@keyframes lt-pop{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}'
+          // Full-bleed, so it comes up from the edge it is attached to
+          // rather than growing out of the middle of the screen.
+          + '@keyframes lt-sheet{from{transform:translateY(100%)}to{transform:none}}'}
+      </style>
       <div
         role="dialog"
         aria-modal="true"
         onClick={(e) => e.stopPropagation()}
         style={{
-          width, maxWidth: '100%', maxHeight: '100%', display: 'flex', flexDirection: 'column',
-          background: 'var(--surface-app)', borderRadius: 'var(--radius-dialog)', boxShadow: 'var(--shadow-xl)',
-          animation: 'lt-pop var(--dur-slow) var(--ease-spring)', overflow: 'hidden', ...style,
+          width: isMobile ? '100%' : width,
+          maxWidth: '100%',
+          height: isMobile ? '100%' : undefined,
+          maxHeight: '100%',
+          display: 'flex', flexDirection: 'column',
+          background: 'var(--surface-app)',
+          borderRadius: isMobile ? 0 : 'var(--radius-dialog)',
+          boxShadow: isMobile ? 'none' : 'var(--shadow-xl)',
+          animation: isMobile
+            ? 'lt-sheet var(--dur-slow) var(--ease-out)'
+            : 'lt-pop var(--dur-slow) var(--ease-spring)',
+          overflow: 'hidden',
+          ...style,
         }}
         {...rest}
       >
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-5)', padding: 'var(--pad-dialog)', paddingBottom: 'var(--space-4)' }}>
+        <div
+          style={{
+            display: 'flex', alignItems: 'flex-start', gap: 'var(--space-5)',
+            padding: 'var(--pad-dialog)', paddingBottom: 'var(--space-4)',
+            // Full-bleed puts the title where the notch is. The scrim cannot
+            // carry this: it is the panel that reaches the top edge.
+            paddingTop: isMobile ? 'calc(var(--pad-dialog) + env(safe-area-inset-top, 0px))' : undefined,
+          }}
+        >
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
             <h2 style={{ margin: 0, fontFamily: 'var(--font-display)', fontSize: 'var(--fs-24)', fontWeight: 'var(--fw-black)' as React.CSSProperties['fontWeight'], color: 'var(--text-strong)', lineHeight: 1.15 }}>{title}</h2>
             {description && <p style={{ margin: 0, fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-14)', color: 'var(--text-muted)', lineHeight: 'var(--lh-relaxed)' }}>{description}</p>}
@@ -70,9 +104,22 @@ export function Dialog({ open = true, title, description, children, footer, widt
             </IconButton>
           )}
         </div>
-        {children && <div style={{ padding: '0 var(--pad-dialog)', overflowY: 'auto' }}>{children}</div>}
+        {children && (
+          <div style={{ padding: '0 var(--pad-dialog)', overflowY: 'auto', flex: isMobile ? 1 : undefined, minHeight: 0 }}>
+            {children}
+          </div>
+        )}
         {footer && (
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--gap-inline)', padding: 'var(--pad-dialog)', marginTop: 'var(--space-4)', background: 'var(--surface-sidebar)' }}>
+          <div
+            style={{
+              display: 'flex', justifyContent: 'flex-end', gap: 'var(--gap-inline)',
+              padding: 'var(--pad-dialog)', marginTop: 'var(--space-4)',
+              background: 'var(--surface-sidebar)',
+              // flex-none so the body scrolls and the actions stay reachable
+              // rather than being pushed off a full-height sheet.
+              flex: 'none',
+            }}
+          >
             {footer}
           </div>
         )}

@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: fe4971d527c82265
+// source-hash: edfe3c90f62717d6
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -770,6 +770,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
             /* @__PURE__ */ (0, import_jsx_runtime5.jsx)(
               "input",
               {
+                "data-focus-ring": "delegated",
                 type,
                 value,
                 defaultValue,
@@ -828,6 +829,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
             /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
               "select",
               {
+                "data-focus-ring": "delegated",
                 value,
                 defaultValue,
                 disabled,
@@ -1146,6 +1148,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
             /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
               "input",
               {
+                "data-focus-ring": "delegated",
                 type: "search",
                 value: query2,
                 placeholder: searchPlaceholder,
@@ -1193,84 +1196,90 @@ var LingoToolboxDesignSystem_898611 = (() => {
       /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
         "div",
         {
-          ref: scroller,
           style: {
             height,
-            overflowY: "auto",
-            padding: "4px 4px 8px",
+            padding: 1,
+            overflow: "hidden",
             background: "var(--surface-input)",
             borderRadius: "var(--radius-control)",
             boxShadow: "inset 0 0 0 1px var(--border)"
           },
-          children: sections.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { style: { margin: 0, padding: "20px 12px", textAlign: "center", fontFamily: "var(--font-ui)", fontSize: "var(--fs-13)", color: "var(--text-muted)" }, children: [
-            "Nothing matches \u201C",
-            query2.trim(),
-            "\u201D."
-          ] }) : sections.map((section) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("section", { children: [
-            section.label && /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-              "h4",
-              {
-                style: {
-                  // Sticky so the heading is still there once a long section is
-                  // scrolled into — otherwise everything below the fold is
-                  // unlabelled and the grid reads as one undifferentiated mass.
-                  position: "sticky",
-                  top: 0,
-                  zIndex: 1,
-                  margin: 0,
-                  padding: "8px 8px 5px",
-                  background: "var(--surface-input)",
-                  fontFamily: "var(--font-ui)",
-                  fontSize: "var(--fs-10)",
-                  fontWeight: "var(--fw-black)",
-                  letterSpacing: "var(--ls-caps)",
-                  textTransform: "uppercase",
-                  // --text-muted, not --text-faint: at --fs-10 this is small text
-                  // needing 4.5:1, and faint on the input well measures 3.27 in
-                  // light and 2.99 in dark. Muted clears it in both.
-                  color: "var(--text-muted)"
-                },
-                children: section.label
-              }
-            ),
-            /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { style: { display: "grid", gridTemplateColumns: `repeat(auto-fill, minmax(${cell}px, 1fr))`, gap: 2 }, children: section.items.map((it) => {
-              const selected = it.id === value;
-              return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-                "button",
-                {
-                  type: "button",
-                  title: it.name,
-                  "aria-label": it.name,
-                  "aria-pressed": selected,
-                  onClick: () => onChange && onChange(selected ? null : it.id),
-                  style: {
-                    display: "grid",
-                    placeItems: "center",
-                    height: cell,
-                    padding: 0,
-                    border: "none",
-                    cursor: "pointer",
-                    borderRadius: "var(--radius-sm)",
-                    background: selected ? "var(--brand)" : "transparent",
-                    boxShadow: selected ? "var(--ring-focus)" : "none",
-                    transition: "background var(--dur-fast) var(--ease-standard)"
-                  },
-                  children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
-                    "img",
+          children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+            "div",
+            {
+              ref: scroller,
+              style: { height: "100%", overflowY: "auto", padding: "0 3px 8px" },
+              children: sections.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("p", { style: { margin: 0, padding: "20px 12px", textAlign: "center", fontFamily: "var(--font-ui)", fontSize: "var(--fs-13)", color: "var(--text-muted)" }, children: [
+                "Nothing matches \u201C",
+                query2.trim(),
+                "\u201D."
+              ] }) : sections.map((section) => /* @__PURE__ */ (0, import_jsx_runtime10.jsxs)("section", { children: [
+                section.label && /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+                  "h4",
+                  {
+                    style: {
+                      // Sticky so the heading is still there once a long section is
+                      // scrolled into — otherwise everything below the fold is
+                      // unlabelled and the grid reads as one undifferentiated mass.
+                      position: "sticky",
+                      top: 0,
+                      zIndex: 1,
+                      margin: 0,
+                      padding: "8px 8px 5px",
+                      background: "var(--surface-input)",
+                      fontFamily: "var(--font-ui)",
+                      fontSize: "var(--fs-10)",
+                      fontWeight: "var(--fw-black)",
+                      letterSpacing: "var(--ls-caps)",
+                      textTransform: "uppercase",
+                      // --text-muted, not --text-faint: at --fs-10 this is small text
+                      // needing 4.5:1, and faint on the input well measures 3.27 in
+                      // light and 2.99 in dark. Muted clears it in both.
+                      color: "var(--text-muted)"
+                    },
+                    children: section.label
+                  }
+                ),
+                /* @__PURE__ */ (0, import_jsx_runtime10.jsx)("div", { style: { display: "grid", gridTemplateColumns: `repeat(auto-fill, minmax(${cell}px, 1fr))`, gap: 2 }, children: section.items.map((it) => {
+                  const selected = it.id === value;
+                  return /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+                    "button",
                     {
-                      src: it.src,
-                      alt: "",
-                      loading: "lazy",
-                      decoding: "async",
-                      draggable: false,
-                      style: { width: glyphSize, height: glyphSize, display: "block" }
-                    }
-                  )
-                },
-                it.id
-              );
-            }) })
-          ] }, section.id || section.label))
+                      type: "button",
+                      title: it.name,
+                      "aria-label": it.name,
+                      "aria-pressed": selected,
+                      onClick: () => onChange && onChange(selected ? null : it.id),
+                      style: {
+                        display: "grid",
+                        placeItems: "center",
+                        height: cell,
+                        padding: 0,
+                        border: "none",
+                        cursor: "pointer",
+                        borderRadius: "var(--radius-sm)",
+                        background: selected ? "var(--brand)" : "transparent",
+                        boxShadow: selected ? "var(--ring-focus)" : "none",
+                        transition: "background var(--dur-fast) var(--ease-standard)"
+                      },
+                      children: /* @__PURE__ */ (0, import_jsx_runtime10.jsx)(
+                        "img",
+                        {
+                          src: it.src,
+                          alt: "",
+                          loading: "lazy",
+                          decoding: "async",
+                          draggable: false,
+                          style: { width: glyphSize, height: glyphSize, display: "block" }
+                        }
+                      )
+                    },
+                    it.id
+                  );
+                }) })
+              ] }, section.id || section.label))
+            }
+          )
         }
       ),
       hint && // --text-muted for the same reason as Input's hint: 12px is small text
@@ -1347,21 +1356,30 @@ var LingoToolboxDesignSystem_898611 = (() => {
         "div",
         {
           style: {
-            // --space-4 on a phone: 32px each side takes a sixth of a 375px screen
-            // away from a dialog that already caps at 100%.
             position: "fixed",
             inset: 0,
             display: "grid",
-            placeItems: "center",
-            padding: isMobile ? "var(--space-4)" : "var(--space-8)",
+            // minmax(0, 1fr), not the implicit `auto`. An auto column sizes to its
+            // item, so the panel's own `maxWidth: 100%` resolved against a column
+            // that had already grown to fit it — 460px of dialog sat on a 375px
+            // screen with 97 of it off the right edge, and the cap that was supposed
+            // to prevent exactly that was measuring itself.
+            gridTemplateColumns: "minmax(0, 1fr)",
+            // Full-bleed on a phone: a dialog this tall has nowhere to be inset to,
+            // and the scrim around it was only ever a hairline of blur.
+            placeItems: isMobile ? "stretch" : "center",
+            padding: isMobile ? 0 : "var(--space-8)",
+            // Above the app's own chrome — a bottom dock or tab bar sits in the 40s
+            // and was painting over the footer — and below tooltips at 50, so a
+            // tooltip raised from inside a dialog still lands on top of it.
             background: "var(--surface-overlay)",
             backdropFilter: "var(--blur-scrim)",
-            zIndex: 40,
+            zIndex: 48,
             animation: "lt-fade var(--dur-base) var(--ease-out)"
           },
           onClick: onClose,
           children: [
-            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("style", { children: "@keyframes lt-fade{from{opacity:0}to{opacity:1}}@keyframes lt-pop{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}" }),
+            /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("style", { children: "@keyframes lt-fade{from{opacity:0}to{opacity:1}}@keyframes lt-pop{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}@keyframes lt-sheet{from{transform:translateY(100%)}to{transform:none}}" }),
             /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
               "div",
               {
@@ -1369,29 +1387,61 @@ var LingoToolboxDesignSystem_898611 = (() => {
                 "aria-modal": "true",
                 onClick: (e) => e.stopPropagation(),
                 style: {
-                  width,
+                  width: isMobile ? "100%" : width,
                   maxWidth: "100%",
+                  height: isMobile ? "100%" : void 0,
                   maxHeight: "100%",
                   display: "flex",
                   flexDirection: "column",
                   background: "var(--surface-app)",
-                  borderRadius: "var(--radius-dialog)",
-                  boxShadow: "var(--shadow-xl)",
-                  animation: "lt-pop var(--dur-slow) var(--ease-spring)",
+                  borderRadius: isMobile ? 0 : "var(--radius-dialog)",
+                  boxShadow: isMobile ? "none" : "var(--shadow-xl)",
+                  animation: isMobile ? "lt-sheet var(--dur-slow) var(--ease-out)" : "lt-pop var(--dur-slow) var(--ease-spring)",
                   overflow: "hidden",
                   ...style
                 },
                 ...rest,
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { display: "flex", alignItems: "flex-start", gap: "var(--space-5)", padding: "var(--pad-dialog)", paddingBottom: "var(--space-4)" }, children: [
-                    /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { flex: 1, display: "flex", flexDirection: "column", gap: "var(--space-2)" }, children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h2", { style: { margin: 0, fontFamily: "var(--font-display)", fontSize: "var(--fs-24)", fontWeight: "var(--fw-black)", color: "var(--text-strong)", lineHeight: 1.15 }, children: title }),
-                      description && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: { margin: 0, fontFamily: "var(--font-ui)", fontSize: "var(--fs-14)", color: "var(--text-muted)", lineHeight: "var(--lh-relaxed)" }, children: description })
-                    ] }),
-                    onClose && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(IconButton, { label: "Close", onClick: onClose, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("path", { d: "M18 6 6 18M6 6l12 12" }) }) })
-                  ] }),
-                  children && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { padding: "0 var(--pad-dialog)", overflowY: "auto" }, children }),
-                  footer && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { display: "flex", justifyContent: "flex-end", gap: "var(--gap-inline)", padding: "var(--pad-dialog)", marginTop: "var(--space-4)", background: "var(--surface-sidebar)" }, children: footer })
+                  /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
+                    "div",
+                    {
+                      style: {
+                        display: "flex",
+                        alignItems: "flex-start",
+                        gap: "var(--space-5)",
+                        padding: "var(--pad-dialog)",
+                        paddingBottom: "var(--space-4)",
+                        // Full-bleed puts the title where the notch is. The scrim cannot
+                        // carry this: it is the panel that reaches the top edge.
+                        paddingTop: isMobile ? "calc(var(--pad-dialog) + env(safe-area-inset-top, 0px))" : void 0
+                      },
+                      children: [
+                        /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { flex: 1, display: "flex", flexDirection: "column", gap: "var(--space-2)" }, children: [
+                          /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("h2", { style: { margin: 0, fontFamily: "var(--font-display)", fontSize: "var(--fs-24)", fontWeight: "var(--fw-black)", color: "var(--text-strong)", lineHeight: 1.15 }, children: title }),
+                          description && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("p", { style: { margin: 0, fontFamily: "var(--font-ui)", fontSize: "var(--fs-14)", color: "var(--text-muted)", lineHeight: "var(--lh-relaxed)" }, children: description })
+                        ] }),
+                        onClose && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(IconButton, { label: "Close", onClick: onClose, children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round", children: /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("path", { d: "M18 6 6 18M6 6l12 12" }) }) })
+                      ]
+                    }
+                  ),
+                  children && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)("div", { style: { padding: "0 var(--pad-dialog)", overflowY: "auto", flex: isMobile ? 1 : void 0, minHeight: 0 }, children }),
+                  footer && /* @__PURE__ */ (0, import_jsx_runtime12.jsx)(
+                    "div",
+                    {
+                      style: {
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        gap: "var(--gap-inline)",
+                        padding: "var(--pad-dialog)",
+                        marginTop: "var(--space-4)",
+                        background: "var(--surface-sidebar)",
+                        // flex-none so the body scrolls and the actions stay reachable
+                        // rather than being pushed off a full-height sheet.
+                        flex: "none"
+                      },
+                      children: footer
+                    }
+                  )
                 ]
               }
             )

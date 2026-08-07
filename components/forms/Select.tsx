@@ -39,6 +39,9 @@ export function Select({ value, defaultValue, options = [], label, size = 'md', 
         }}
       >
         <select
+          // The shell around this paints the focus treatment; without this the
+          // global :focus-visible ring draws a second one inside it.
+          data-focus-ring="delegated"
           value={value}
           defaultValue={defaultValue}
           disabled={disabled}

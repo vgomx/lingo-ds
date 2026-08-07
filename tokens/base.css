@@ -12,6 +12,13 @@ a:hover{color:var(--text-strong);text-decoration:underline;text-underline-offset
 code,kbd,samp{font-family:var(--type-mono-font);font-size:var(--type-mono-size)}
 ::selection{background:var(--brand-subtle);color:var(--text-strong)}
 :focus-visible{outline:none;box-shadow:var(--ring-focus)}
+/* Opt-out for a control that paints focus on a wrapper around its real
+   focusable — a text field is a styled shell with a transparent <input>
+   inside it. Without this the rule above draws a second ring around that
+   inner element, which lands *inside* the shell and reads as a rectangle
+   floating in the field. The shell still gets its own treatment; only the
+   duplicate is suppressed. */
+[data-focus-ring='delegated']:focus-visible{box-shadow:none}
 *,*::before,*::after{box-sizing:border-box}
 ::-webkit-scrollbar{width:10px;height:10px}
 ::-webkit-scrollbar-thumb{background:var(--ink-900);border-radius:var(--radius-pill);border:2px solid transparent;background-clip:content-box}
