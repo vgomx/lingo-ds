@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: 4a2fa22d81be5876
+// source-hash: 39beb47e6625c1dd
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -1858,55 +1858,91 @@ var LingoToolboxDesignSystem_898611 = (() => {
 
   // components/feedback/Tooltip.tsx
   var React12 = __toESM(require_react_global(), 1);
+  var import_react_dom2 = __toESM(require_react_dom_global(), 1);
   var import_jsx_runtime22 = __toESM(require_react_jsx_runtime_global(), 1);
+  var GAP = 8;
   function Tooltip({ children, label, side = "top", shortcut, style, ...rest }) {
     const [open, setOpen] = React12.useState(false);
-    const pos = {
-      top: { bottom: "100%", left: "50%", transform: "translate(-50%,-8px)" },
-      bottom: { top: "100%", left: "50%", transform: "translate(-50%,8px)" },
-      left: { right: "100%", top: "50%", transform: "translate(-8px,-50%)" },
-      right: { left: "100%", top: "50%", transform: "translate(8px,-50%)" }
-    }[side];
+    const anchorRef = React12.useRef(null);
+    const [box, setBox] = React12.useState(null);
+    React12.useLayoutEffect(() => {
+      if (!open) return void 0;
+      const measure = () => {
+        const el = anchorRef.current;
+        if (el) setBox(el.getBoundingClientRect());
+      };
+      measure();
+      window.addEventListener("scroll", measure, true);
+      window.addEventListener("resize", measure);
+      return () => {
+        window.removeEventListener("scroll", measure, true);
+        window.removeEventListener("resize", measure);
+      };
+    }, [open]);
+    const place = (r) => ({
+      top: {
+        top: r.top - GAP,
+        left: r.left + r.width / 2,
+        transform: "translate(-50%,-100%)"
+      },
+      bottom: {
+        top: r.bottom + GAP,
+        left: r.left + r.width / 2,
+        transform: "translate(-50%,0)"
+      },
+      left: {
+        top: r.top + r.height / 2,
+        left: r.left - GAP,
+        transform: "translate(-100%,-50%)"
+      },
+      right: {
+        top: r.top + r.height / 2,
+        left: r.right + GAP,
+        transform: "translate(0,-50%)"
+      }
+    })[side];
+    const tip = box && /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(
+      "span",
+      {
+        role: "tooltip",
+        "data-theme": "dark",
+        style: {
+          position: "fixed",
+          ...place(box),
+          zIndex: 50,
+          whiteSpace: "nowrap",
+          pointerEvents: "none",
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 8,
+          padding: "6px 10px",
+          background: "var(--surface-rail)",
+          color: "var(--text-strong)",
+          borderRadius: "var(--radius-sm)",
+          boxShadow: "var(--shadow-md)",
+          fontFamily: "var(--font-ui)",
+          fontSize: "var(--fs-12)",
+          fontWeight: "var(--fw-bold)",
+          animation: "lt-tip var(--dur-fast) var(--ease-out)"
+        },
+        children: [
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("style", { children: "@keyframes lt-tip{from{opacity:0}to{opacity:1}}" }),
+          label,
+          shortcut && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("kbd", { style: { fontFamily: "var(--font-mono)", fontSize: "var(--fs-11)", color: "var(--text-muted)", background: "var(--surface-raised)", borderRadius: "var(--radius-xs)", padding: "1px 4px" }, children: shortcut })
+        ]
+      }
+    );
     return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(
       "span",
       {
+        ref: anchorRef,
         onMouseEnter: () => setOpen(true),
         onMouseLeave: () => setOpen(false),
         style: { position: "relative", display: "inline-flex", ...style },
         ...rest,
         children: [
           children,
-          open && /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(
-            "span",
-            {
-              role: "tooltip",
-              "data-theme": "dark",
-              style: {
-                position: "absolute",
-                ...pos,
-                zIndex: 50,
-                whiteSpace: "nowrap",
-                pointerEvents: "none",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-                padding: "6px 10px",
-                background: "var(--surface-rail)",
-                color: "var(--text-strong)",
-                borderRadius: "var(--radius-sm)",
-                boxShadow: "var(--shadow-md)",
-                fontFamily: "var(--font-ui)",
-                fontSize: "var(--fs-12)",
-                fontWeight: "var(--fw-bold)",
-                animation: "lt-tip var(--dur-fast) var(--ease-out)"
-              },
-              children: [
-                /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("style", { children: "@keyframes lt-tip{from{opacity:0}to{opacity:1}}" }),
-                label,
-                shortcut && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("kbd", { style: { fontFamily: "var(--font-mono)", fontSize: "var(--fs-11)", color: "var(--text-muted)", background: "var(--surface-raised)", borderRadius: "var(--radius-xs)", padding: "1px 4px" }, children: shortcut })
-              ]
-            }
-          )
+          open && tip && (0, import_react_dom2.createPortal)(tip, document.body)
         ]
       }
     );
