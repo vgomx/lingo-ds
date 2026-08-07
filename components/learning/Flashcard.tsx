@@ -42,13 +42,13 @@ export interface FlashcardOwnProps {
    */
   drag?: boolean;
   /**
-   * Leans the card once, shortly after it appears, to show that it answers being
-   * touched. A card is a rectangle with a word on it — nothing about it says it
-   * moves, and the affordance it has is the one you only find by trying.
+   * Drifts the card in a slow tilt, continuously, as if a pointer were tracing a
+   * circle on it. It says the card answers being touched — a rectangle with a
+   * word on it gives no sign of that, and both of its gestures are ones you only
+   * find by trying them.
    *
-   * The caller decides when it is worth saying: a review session opts in for its
-   * first card only, because a nudge on every card in a run of twenty is not a
-   * hint any more.
+   * It yields while the card is actually being touched, and picks up again
+   * after. Off under prefers-reduced-motion.
    */
   preview?: boolean;
   style?: React.CSSProperties;
@@ -69,10 +69,13 @@ const TAP_SLOP = 6;
 const FLICK_MS = 260;
 const FLICK_PX = 24;
 
-/** Long enough for the card to have arrived and been read as a card first. */
-const PREVIEW_DELAY = 700;
-/** Each beat of it, close to the hover's own settle. */
-const PREVIEW_BEAT = 380;
+/**
+ * One revolution of the idle tilt. Slow: this is a card drifting at the edge of
+ * your attention, not a thing spinning for it.
+ */
+const PREVIEW_PERIOD = 9000;
+/** How long the drift takes to reach the pointer's own angle, or to rejoin it. */
+const PREVIEW_RAMP = 900;
 
 /**
  * The product's hero object: a two-faced review card that flips on click.
@@ -102,75 +105,109 @@ export function Flashcard({
    * transform is work with nothing to show for it.
    */
   const tiltRef = React.useRef<HTMLDivElement>(null);
+  /** The last angle the pointer put the card at, for the drift to resume from. */
+  const lastTilt = React.useRef({ x: 0, y: 0 });
 
   const applyTilt = (e: React.PointerEvent<HTMLDivElement>) => {
     const node = tiltRef.current;
     if (!canTilt || !node) return;
-    cancelPreview();
+    holdPreview();
     const r = e.currentTarget.getBoundingClientRect();
     // Doubled to ±1, so MAX_TILT is the angle at the edge rather than half of it.
     const px = ((e.clientX - r.left) / r.width - 0.5) * 2;   // -1 (left) … 1 (right)
     const py = ((e.clientY - r.top) / r.height - 0.5) * 2;   // -1 (top)  … 1 (bottom)
     // Signs chosen so the card leans *toward* the cursor: the corner under the
     // pointer is the one that lifts. Flip both to make it lean away instead.
+    const x = py * MAX_TILT;
+    const y = -px * MAX_TILT;
+    lastTilt.current = { x, y };
     node.style.transition = 'transform var(--dur-fast) linear';
-    node.style.transform = `rotateX(${(py * MAX_TILT).toFixed(2)}deg) rotateY(${(-px * MAX_TILT).toFixed(2)}deg)`;
+    node.style.transform = `rotateX(${x.toFixed(2)}deg) rotateY(${y.toFixed(2)}deg)`;
   };
 
   /**
-   * The preview writes to the same node as the hover, with the same angles and
-   * the same settle — it is that interaction performed once, not an animation of
-   * its own. Which way it leans is the difference: on a pointer it lifts the
-   * corner a cursor would, and on touch it leans along the axis a finger drags.
+   * The idle drift: the card tilting in a slow circle, as if a pointer were
+   * tracing one on it. Same layer as the hover and the same MAX_TILT, so what it
+   * shows is the interaction happening rather than an impression of it — a card
+   * is a rectangle with a word on it, and nothing else about it says it moves.
    *
-   * Held in a ref so that touching the card stops it. A pending beat that landed
-   * after a real gesture began would take the card back off the finger.
+   * A loop rather than a CSS animation because the two have to share this
+   * transform. An animation outranks an inline style in the cascade, so it would
+   * have won every argument with the hover it is advertising.
    */
-  const previewTimers = React.useRef<ReturnType<typeof setTimeout>[]>([]);
-  const previewLeaning = React.useRef(false);
-  const cancelPreview = () => {
-    previewTimers.current.forEach(clearTimeout);
-    previewTimers.current = [];
-    if (!previewLeaning.current) return;
-    previewLeaning.current = false;
-    const node = tiltRef.current;
-    if (!node) return;
-    // Level again, and quickly. Dropping the pending beats alone would leave the
-    // card parked at the angle it happened to be passing through — on touch
-    // nothing else resets this layer, so it would stay askew under the finger
-    // that interrupted it.
-    node.style.transition = 'transform var(--dur-fast) var(--ease-out)';
-    node.style.transform = 'none';
-  };
+  const previewPaused = React.useRef(false);
+  /** Whether the drift is the thing currently in charge of this layer. */
+  const previewLive = React.useRef(false);
+  /**
+   * Where the drift picks up from. Zero at the start, so it grows out of level;
+   * the hover's last angle when the pointer leaves, so the card carries on from
+   * where the cursor left it instead of snapping onto the circle.
+   */
+  const previewFrom = React.useRef({ x: 0, y: 0 });
+  const previewRampAt = React.useRef(0);
+  /** When the current revolution began, adjusted when the drift is handed back. */
+  const previewT0 = React.useRef(0);
 
   React.useEffect(() => {
     const node = tiltRef.current;
     // Under prefers-reduced-motion the honest answer is the one applyTilt gives:
-    // do not move. A hint that has to move to be a hint is simply not shown.
+    // do not move. A hint that has to move to be a hint is not shown at all.
     if (!preview || reducedMotion || !node) return undefined;
 
-    const lean = (x: number, y: number) => {
-      previewLeaning.current = !!(x || y);
-      node.style.transition = 'transform var(--dur-base) var(--ease-spring)';
-      node.style.transform = previewLeaning.current ? `rotateX(${x}deg) rotateY(${y}deg)` : 'none';
-    };
-    const at = (ms: number, fn: () => void) => previewTimers.current.push(setTimeout(fn, ms));
+    previewLive.current = true;
+    let raf = 0;
+    const frame = (now: number) => {
+      raf = requestAnimationFrame(frame);
+      if (!previewT0.current) previewT0.current = now;
+      // While the pointer or a finger has the card, it is theirs. The ramp is
+      // cleared rather than stamped, so that the frame that gets the card back
+      // is the one that starts it — stamping it here left the ramp measuring
+      // from 0, which put k at 1 on the first frame and skipped the ease.
+      if (previewPaused.current) { previewRampAt.current = 0; return; }
 
-    if (isTouch) {
-      // Both ways along the drag's axis, so what it demonstrates is a turn.
-      at(PREVIEW_DELAY, () => lean(0, MAX_TILT));
-      at(PREVIEW_DELAY + PREVIEW_BEAT, () => lean(0, -MAX_TILT));
-      at(PREVIEW_DELAY + PREVIEW_BEAT * 2, () => lean(0, 0));
-    } else {
-      // The same lift a cursor in the top-right corner would produce: px = 1 and
-      // py = -1 through applyTilt's signs.
-      at(PREVIEW_DELAY, () => lean(-MAX_TILT, -MAX_TILT));
-      at(PREVIEW_DELAY + PREVIEW_BEAT, () => lean(0, 0));
-    }
-    return cancelPreview;
-  }, [preview, reducedMotion, isTouch]);
+      if (!previewRampAt.current) {
+        previewRampAt.current = now;
+        // Rejoin the circle at the angle the card was left at, by moving where
+        // this revolution started. Easing toward wherever the circle happened to
+        // have got to instead meant crossing the middle to reach it: the card
+        // flattened out and leaned back out again, when what it should do is
+        // carry on around from where the cursor was.
+        const { x, y } = previewFrom.current;
+        if (x || y) previewT0.current = now - (Math.atan2(x, y) / (Math.PI * 2)) * PREVIEW_PERIOD;
+      }
+
+      const a = ((now - previewT0.current) / PREVIEW_PERIOD) * Math.PI * 2;
+      const k = Math.min((now - previewRampAt.current) / PREVIEW_RAMP, 1);
+      const from = previewFrom.current;
+      const x = from.x + (Math.sin(a) * MAX_TILT - from.x) * k;
+      const y = from.y + (Math.cos(a) * MAX_TILT - from.y) * k;
+      // No transition: this loop already draws every intermediate frame, and an
+      // easing on top would be a second one chasing the first.
+      node.style.transition = 'none';
+      node.style.transform = `rotateX(${x.toFixed(2)}deg) rotateY(${y.toFixed(2)}deg)`;
+    };
+    raf = requestAnimationFrame(frame);
+    return () => {
+      previewLive.current = false;
+      cancelAnimationFrame(raf);
+      node.style.transform = 'none';
+    };
+  }, [preview, reducedMotion]);
+
+  /** Hands the card to whoever is touching it, and takes it back after. */
+  const holdPreview = () => { previewPaused.current = true; };
+  const releasePreview = (from = { x: 0, y: 0 }) => {
+    previewFrom.current = from;
+    previewRampAt.current = 0;
+    previewPaused.current = false;
+  };
 
   const resetTilt = () => {
+    releasePreview(lastTilt.current);
+    // When the drift is running it does the returning, easing out of the angle
+    // the pointer left the card at. Writing 'none' here first would put one
+    // frame of level in between the two.
+    if (previewLive.current) return;
     const node = tiltRef.current;
     if (!node) return;
     // Slower on the way out, so the card settles rather than snaps.
@@ -180,7 +217,6 @@ export function Flashcard({
   const [inner, setInner] = React.useState(defaultFlipped);
   const isFlipped = flipped === undefined ? inner : flipped;
   const flip = () => {
-    cancelPreview();
     if (flipped === undefined) setInner(!isFlipped);
     onFlip && onFlip(!isFlipped);
   };
@@ -211,7 +247,7 @@ export function Flashcard({
 
   const onDragStart = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!canDrag || !dragRef.current) return;
-    cancelPreview();
+    holdPreview();
     const r = e.currentTarget.getBoundingClientRect();
     gesture.current = { x: e.clientX, t: e.timeStamp, w: r.width, dx: 0, live: true };
     // Follows the finger exactly while it is down; nothing to ease toward.
@@ -250,6 +286,7 @@ export function Flashcard({
     // the finger's angle snapping back out from under it.
     node.style.transition = 'transform var(--dur-flip) var(--ease-spring)';
     node.style.transform = 'none';
+    releasePreview();
     if (committed) flip();
   };
 

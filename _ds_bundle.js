@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: 2efca79b3cdf3776
+// source-hash: c162aff20bf8ab5c
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -1920,8 +1920,8 @@ var LingoToolboxDesignSystem_898611 = (() => {
   var TAP_SLOP = 6;
   var FLICK_MS = 260;
   var FLICK_PX = 24;
-  var PREVIEW_DELAY = 700;
-  var PREVIEW_BEAT = 380;
+  var PREVIEW_PERIOD = 9e3;
+  var PREVIEW_RAMP = 900;
   function Flashcard({
     front,
     back,
@@ -1949,48 +1949,68 @@ var LingoToolboxDesignSystem_898611 = (() => {
     const canDrag = drag && isTouch;
     const hintText = hint ?? (isTouch ? "Tap or drag to turn" : "Click or press Space to flip");
     const tiltRef = React13.useRef(null);
+    const lastTilt = React13.useRef({ x: 0, y: 0 });
     const applyTilt = (e) => {
       const node = tiltRef.current;
       if (!canTilt || !node) return;
-      cancelPreview();
+      holdPreview();
       const r = e.currentTarget.getBoundingClientRect();
       const px = ((e.clientX - r.left) / r.width - 0.5) * 2;
       const py = ((e.clientY - r.top) / r.height - 0.5) * 2;
+      const x = py * MAX_TILT;
+      const y = -px * MAX_TILT;
+      lastTilt.current = { x, y };
       node.style.transition = "transform var(--dur-fast) linear";
-      node.style.transform = `rotateX(${(py * MAX_TILT).toFixed(2)}deg) rotateY(${(-px * MAX_TILT).toFixed(2)}deg)`;
+      node.style.transform = `rotateX(${x.toFixed(2)}deg) rotateY(${y.toFixed(2)}deg)`;
     };
-    const previewTimers = React13.useRef([]);
-    const previewLeaning = React13.useRef(false);
-    const cancelPreview = () => {
-      previewTimers.current.forEach(clearTimeout);
-      previewTimers.current = [];
-      if (!previewLeaning.current) return;
-      previewLeaning.current = false;
-      const node = tiltRef.current;
-      if (!node) return;
-      node.style.transition = "transform var(--dur-fast) var(--ease-out)";
-      node.style.transform = "none";
-    };
+    const previewPaused = React13.useRef(false);
+    const previewLive = React13.useRef(false);
+    const previewFrom = React13.useRef({ x: 0, y: 0 });
+    const previewRampAt = React13.useRef(0);
+    const previewT0 = React13.useRef(0);
     React13.useEffect(() => {
       const node = tiltRef.current;
       if (!preview || reducedMotion || !node) return void 0;
-      const lean = (x, y) => {
-        previewLeaning.current = !!(x || y);
-        node.style.transition = "transform var(--dur-base) var(--ease-spring)";
-        node.style.transform = previewLeaning.current ? `rotateX(${x}deg) rotateY(${y}deg)` : "none";
+      previewLive.current = true;
+      let raf = 0;
+      const frame = (now) => {
+        raf = requestAnimationFrame(frame);
+        if (!previewT0.current) previewT0.current = now;
+        if (previewPaused.current) {
+          previewRampAt.current = 0;
+          return;
+        }
+        if (!previewRampAt.current) {
+          previewRampAt.current = now;
+          const { x: x2, y: y2 } = previewFrom.current;
+          if (x2 || y2) previewT0.current = now - Math.atan2(x2, y2) / (Math.PI * 2) * PREVIEW_PERIOD;
+        }
+        const a = (now - previewT0.current) / PREVIEW_PERIOD * Math.PI * 2;
+        const k = Math.min((now - previewRampAt.current) / PREVIEW_RAMP, 1);
+        const from = previewFrom.current;
+        const x = from.x + (Math.sin(a) * MAX_TILT - from.x) * k;
+        const y = from.y + (Math.cos(a) * MAX_TILT - from.y) * k;
+        node.style.transition = "none";
+        node.style.transform = `rotateX(${x.toFixed(2)}deg) rotateY(${y.toFixed(2)}deg)`;
       };
-      const at = (ms, fn) => previewTimers.current.push(setTimeout(fn, ms));
-      if (isTouch) {
-        at(PREVIEW_DELAY, () => lean(0, MAX_TILT));
-        at(PREVIEW_DELAY + PREVIEW_BEAT, () => lean(0, -MAX_TILT));
-        at(PREVIEW_DELAY + PREVIEW_BEAT * 2, () => lean(0, 0));
-      } else {
-        at(PREVIEW_DELAY, () => lean(-MAX_TILT, -MAX_TILT));
-        at(PREVIEW_DELAY + PREVIEW_BEAT, () => lean(0, 0));
-      }
-      return cancelPreview;
-    }, [preview, reducedMotion, isTouch]);
+      raf = requestAnimationFrame(frame);
+      return () => {
+        previewLive.current = false;
+        cancelAnimationFrame(raf);
+        node.style.transform = "none";
+      };
+    }, [preview, reducedMotion]);
+    const holdPreview = () => {
+      previewPaused.current = true;
+    };
+    const releasePreview = (from = { x: 0, y: 0 }) => {
+      previewFrom.current = from;
+      previewRampAt.current = 0;
+      previewPaused.current = false;
+    };
     const resetTilt = () => {
+      releasePreview(lastTilt.current);
+      if (previewLive.current) return;
       const node = tiltRef.current;
       if (!node) return;
       node.style.transition = "transform var(--dur-base) var(--ease-spring)";
@@ -1999,7 +2019,6 @@ var LingoToolboxDesignSystem_898611 = (() => {
     const [inner, setInner] = React13.useState(defaultFlipped);
     const isFlipped = flipped === void 0 ? inner : flipped;
     const flip = () => {
-      cancelPreview();
       if (flipped === void 0) setInner(!isFlipped);
       onFlip && onFlip(!isFlipped);
     };
@@ -2009,7 +2028,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
     const turnDir = () => isFlipped ? -1 : 1;
     const onDragStart = (e) => {
       if (!canDrag || !dragRef.current) return;
-      cancelPreview();
+      holdPreview();
       const r = e.currentTarget.getBoundingClientRect();
       gesture.current = { x: e.clientX, t: e.timeStamp, w: r.width, dx: 0, live: true };
       dragRef.current.style.transition = "none";
@@ -2036,6 +2055,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
       swallowClick.current = dist > TAP_SLOP;
       node.style.transition = "transform var(--dur-flip) var(--ease-spring)";
       node.style.transform = "none";
+      releasePreview();
       if (committed) flip();
     };
     const face = {
