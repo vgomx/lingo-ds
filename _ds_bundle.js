@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: 39beb47e6625c1dd
+// source-hash: 66984705e683bd07
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -1861,12 +1861,26 @@ var LingoToolboxDesignSystem_898611 = (() => {
   var import_react_dom2 = __toESM(require_react_dom_global(), 1);
   var import_jsx_runtime22 = __toESM(require_react_jsx_runtime_global(), 1);
   var GAP = 8;
+  var MARGIN = 8;
+  var OPPOSITE = {
+    top: "bottom",
+    bottom: "top",
+    left: "right",
+    right: "left"
+  };
+  var clamp = (v, lo, hi) => Math.min(Math.max(v, lo), hi);
   function Tooltip({ children, label, side = "top", shortcut, style, ...rest }) {
     const [open, setOpen] = React12.useState(false);
     const anchorRef = React12.useRef(null);
+    const tipRef = React12.useRef(null);
     const [box, setBox] = React12.useState(null);
+    const [size, setSize] = React12.useState(null);
     React12.useLayoutEffect(() => {
-      if (!open) return void 0;
+      if (!open) {
+        setBox(null);
+        setSize(null);
+        return void 0;
+      }
       const measure = () => {
         const el = anchorRef.current;
         if (el) setBox(el.getBoundingClientRect());
@@ -1879,36 +1893,48 @@ var LingoToolboxDesignSystem_898611 = (() => {
         window.removeEventListener("resize", measure);
       };
     }, [open]);
-    const place = (r) => ({
-      top: {
-        top: r.top - GAP,
-        left: r.left + r.width / 2,
-        transform: "translate(-50%,-100%)"
-      },
-      bottom: {
-        top: r.bottom + GAP,
-        left: r.left + r.width / 2,
-        transform: "translate(-50%,0)"
-      },
-      left: {
-        top: r.top + r.height / 2,
-        left: r.left - GAP,
-        transform: "translate(-100%,-50%)"
-      },
-      right: {
-        top: r.top + r.height / 2,
-        left: r.right + GAP,
-        transform: "translate(0,-50%)"
+    React12.useLayoutEffect(() => {
+      if (!open) return;
+      const el = tipRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      setSize((prev) => prev && prev.w === r.width && prev.h === r.height ? prev : { w: r.width, h: r.height });
+    }, [open, box, label, shortcut]);
+    const placed = React12.useMemo(() => {
+      if (!box || !size) return null;
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const fits = {
+        top: box.top - GAP - size.h >= MARGIN,
+        bottom: box.bottom + GAP + size.h <= vh - MARGIN,
+        left: box.left - GAP - size.w >= MARGIN,
+        right: box.right + GAP + size.w <= vw - MARGIN
+      };
+      const s = fits[side] || !fits[OPPOSITE[side]] ? side : OPPOSITE[side];
+      if (s === "top" || s === "bottom") {
+        return {
+          left: clamp(box.left + box.width / 2 - size.w / 2, MARGIN, Math.max(MARGIN, vw - MARGIN - size.w)),
+          top: s === "top" ? box.top - GAP - size.h : box.bottom + GAP
+        };
       }
-    })[side];
-    const tip = box && /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(
+      return {
+        left: s === "left" ? box.left - GAP - size.w : box.right + GAP,
+        top: clamp(box.top + box.height / 2 - size.h / 2, MARGIN, Math.max(MARGIN, vh - MARGIN - size.h))
+      };
+    }, [box, size, side]);
+    const tip = /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(
       "span",
       {
+        ref: tipRef,
         role: "tooltip",
         "data-theme": "dark",
         style: {
           position: "fixed",
-          ...place(box),
+          left: placed ? placed.left : 0,
+          top: placed ? placed.top : 0,
+          // Hidden rather than unmounted for the frame it takes to measure itself,
+          // so it is never seen at the corner it was measured in.
+          visibility: placed ? "visible" : "hidden",
           zIndex: 50,
           whiteSpace: "nowrap",
           pointerEvents: "none",
@@ -1942,7 +1968,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
         ...rest,
         children: [
           children,
-          open && tip && (0, import_react_dom2.createPortal)(tip, document.body)
+          open && (0, import_react_dom2.createPortal)(tip, document.body)
         ]
       }
     );
