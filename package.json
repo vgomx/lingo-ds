@@ -29,6 +29,7 @@
   "scripts": {
     "build": "npm run check:theme && npm run check:palette && npm run check:faint && tsup && node scripts/write-ds-bundle.mjs",
     "dev": "tsup --watch",
+    "build:fonts": "node scripts/build-fonts.mjs",
     "typecheck": "tsc --noEmit",
     "check:theme": "node scripts/check-theme-parity.mjs",
     "check:palette": "node scripts/check-no-raw-palette.mjs",
