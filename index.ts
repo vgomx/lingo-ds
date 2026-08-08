@@ -13,7 +13,9 @@ export type { LogoProps, LogoOwnProps, LogoVariant } from './components/brand/Lo
 export { Input } from './components/forms/Input';
 export type { InputProps, InputOwnProps, InputSize } from './components/forms/Input';
 export { Select } from './components/forms/Select';
-export type { SelectProps, SelectOwnProps, SelectOption } from './components/forms/Select';
+// No SelectOwnProps any more: the split existed so native <select> attributes
+// could pass through, and there is no native element under it now.
+export type { SelectProps, SelectOption } from './components/forms/Select';
 export { Checkbox } from './components/forms/Checkbox';
 export type { CheckboxProps, CheckboxOwnProps } from './components/forms/Checkbox';
 export { Radio } from './components/forms/Radio';
