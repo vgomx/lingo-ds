@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: 5288cab16fbc1304
+// source-hash: d36fdf5cf7b57732
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -809,6 +809,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
   var GAP = 6;
   var MARGIN = 8;
   var MAX_MENU_H = 280;
+  var MAX_MENU_H_TOUCH = 380;
   var TYPEAHEAD_MS = 600;
   function Select({
     value,
@@ -827,6 +828,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
     );
     const [open, setOpen] = React5.useState(false);
     const [focus, setFocus] = React5.useState(false);
+    const touch = useIsTouch();
     const [active, setActive] = React5.useState(0);
     const [box, setBox] = React5.useState(null);
     const triggerRef = React5.useRef(null);
@@ -937,15 +939,16 @@ var LingoToolboxDesignSystem_898611 = (() => {
       const vh = window.innerHeight;
       const below = vh - box.bottom - GAP - MARGIN;
       const above = box.top - GAP - MARGIN;
-      const up = below < Math.min(MAX_MENU_H, above) && above > below;
+      const cap = touch ? MAX_MENU_H_TOUCH : MAX_MENU_H;
+      const up = below < Math.min(cap, above) && above > below;
       return {
         left: Math.max(MARGIN, Math.min(box.left, window.innerWidth - MARGIN - box.width)),
         top: up ? void 0 : box.bottom + GAP,
         bottom: up ? vh - box.top + GAP : void 0,
         width: box.width,
-        maxHeight: Math.max(96, Math.min(MAX_MENU_H, up ? above : below))
+        maxHeight: Math.max(96, Math.min(touch ? MAX_MENU_H_TOUCH : MAX_MENU_H, up ? above : below))
       };
-    }, [box]);
+    }, [box, touch]);
     const menu = placed && /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(
       "div",
       {
@@ -988,8 +991,8 @@ var LingoToolboxDesignSystem_898611 = (() => {
                   display: "flex",
                   alignItems: "center",
                   gap: "var(--space-3)",
-                  height: "var(--control-h-sm)",
-                  padding: "0 var(--space-4)",
+                  height: touch ? "var(--control-h-lg)" : "var(--control-h-sm)",
+                  padding: touch ? "0 var(--space-5)" : "0 var(--space-4)",
                   borderRadius: "var(--radius-sm)",
                   cursor: "pointer",
                   fontFamily: "var(--font-ui)",
