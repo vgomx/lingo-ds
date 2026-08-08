@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: edfe3c90f62717d6
+// source-hash: 5288cab16fbc1304
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -49,13 +49,13 @@ var LingoToolboxDesignSystem_898611 = (() => {
   var require_react_global = __commonJS({
     "scripts/react-global.cjs"(exports, module) {
       "use strict";
-      var React14 = globalThis.React;
-      if (!React14) {
+      var React15 = globalThis.React;
+      if (!React15) {
         throw new Error(
           "lingo-ds browser bundle: window.React is missing. Load React before this script \u2014 the bundle deliberately does not carry its own copy."
         );
       }
-      module.exports = React14;
+      module.exports = React15;
     }
   });
 
@@ -63,17 +63,17 @@ var LingoToolboxDesignSystem_898611 = (() => {
   var require_react_jsx_runtime_global = __commonJS({
     "scripts/react-jsx-runtime-global.cjs"(exports, module) {
       "use strict";
-      var React14 = globalThis.React;
-      if (!React14) {
+      var React15 = globalThis.React;
+      if (!React15) {
         throw new Error(
           "lingo-ds browser bundle: window.React is missing. Load React before this script \u2014 the bundle deliberately does not carry its own copy."
         );
       }
       function jsx26(type, props, key) {
-        return React14.createElement(type, key === void 0 || key === null ? props : { ...props, key });
+        return React15.createElement(type, key === void 0 || key === null ? props : { ...props, key });
       }
       module.exports = {
-        Fragment: React14.Fragment,
+        Fragment: React15.Fragment,
         jsx: jsx26,
         jsxs: jsx26,
         jsxDEV: jsx26
@@ -804,60 +804,265 @@ var LingoToolboxDesignSystem_898611 = (() => {
 
   // components/forms/Select.tsx
   var React5 = __toESM(require_react_global(), 1);
+  var import_react_dom = __toESM(require_react_dom_global(), 1);
   var import_jsx_runtime6 = __toESM(require_react_jsx_runtime_global(), 1);
-  function Select({ value, defaultValue, options = [], label, size = "md", disabled = false, block = true, onChange, style, ...rest }) {
+  var GAP = 6;
+  var MARGIN = 8;
+  var MAX_MENU_H = 280;
+  var TYPEAHEAD_MS = 600;
+  function Select({
+    value,
+    options = [],
+    label,
+    placeholder = "Select\u2026",
+    size = "md",
+    disabled = false,
+    block = true,
+    onChange,
+    style
+  }) {
+    const items = React5.useMemo(
+      () => options.map((o) => typeof o === "string" ? { value: o, label: o } : o),
+      [options]
+    );
+    const [open, setOpen] = React5.useState(false);
     const [focus, setFocus] = React5.useState(false);
+    const [active, setActive] = React5.useState(0);
+    const [box, setBox] = React5.useState(null);
+    const triggerRef = React5.useRef(null);
+    const listRef = React5.useRef(null);
+    const typed = React5.useRef({ text: "", at: 0 });
+    const uid = React5.useId();
+    const listId = `${uid}-list`;
+    const labelId = `${uid}-label`;
+    const selected = items.findIndex((o) => o.value === value);
     const height = size === "sm" ? "var(--control-h-sm)" : size === "lg" ? "var(--control-h-lg)" : "var(--control-h-md)";
-    return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("label", { style: { display: block ? "flex" : "inline-flex", flexDirection: "column", gap: "var(--space-3)", width: block ? "100%" : void 0 }, children: [
-      label && /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { style: { fontFamily: "var(--font-ui)", fontSize: "var(--fs-12)", fontWeight: "var(--fw-black)", letterSpacing: "var(--ls-caps)", textTransform: "uppercase", color: "var(--text-muted)" }, children: label }),
+    const fontSize = size === "sm" ? "var(--fs-13)" : "var(--fs-14)";
+    React5.useLayoutEffect(() => {
+      if (!open) {
+        setBox(null);
+        return void 0;
+      }
+      const measure = () => {
+        const el = triggerRef.current;
+        if (el) setBox(el.getBoundingClientRect());
+      };
+      measure();
+      window.addEventListener("scroll", measure, true);
+      window.addEventListener("resize", measure);
+      return () => {
+        window.removeEventListener("scroll", measure, true);
+        window.removeEventListener("resize", measure);
+      };
+    }, [open]);
+    React5.useEffect(() => {
+      if (!open) return void 0;
+      const onDown = (e) => {
+        const t = e.target;
+        if (triggerRef.current?.contains(t) || listRef.current?.contains(t)) return;
+        setOpen(false);
+      };
+      document.addEventListener("pointerdown", onDown, true);
+      return () => document.removeEventListener("pointerdown", onDown, true);
+    }, [open]);
+    React5.useLayoutEffect(() => {
+      if (!open) return;
+      listRef.current?.querySelector(`[data-i="${active}"]`)?.scrollIntoView({ block: "nearest" });
+    }, [open, active, box]);
+    const commit = (i) => {
+      const opt = items[i];
+      setOpen(false);
+      triggerRef.current?.focus();
+      if (opt && opt.value !== value) onChange?.(opt.value);
+    };
+    const openWith = (i) => {
+      setActive(Math.max(0, Math.min(items.length - 1, i)));
+      setOpen(true);
+    };
+    const onKeyDown = (e) => {
+      if (disabled || items.length === 0) return;
+      if (!open) {
+        if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          openWith(selected >= 0 ? selected : 0);
+        }
+        return;
+      }
+      switch (e.key) {
+        case "Escape":
+          e.preventDefault();
+          e.stopPropagation();
+          setOpen(false);
+          return;
+        case "Tab":
+          setOpen(false);
+          return;
+        case "Enter":
+        case " ":
+          e.preventDefault();
+          commit(active);
+          return;
+        case "ArrowDown":
+          e.preventDefault();
+          setActive((i) => Math.min(items.length - 1, i + 1));
+          return;
+        case "ArrowUp":
+          e.preventDefault();
+          setActive((i) => Math.max(0, i - 1));
+          return;
+        case "Home":
+          e.preventDefault();
+          setActive(0);
+          return;
+        case "End":
+          e.preventDefault();
+          setActive(items.length - 1);
+          return;
+        default:
+          break;
+      }
+      if (e.key.length === 1 && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        const now = e.timeStamp;
+        const text = now - typed.current.at < TYPEAHEAD_MS ? typed.current.text + e.key : e.key;
+        typed.current = { text, at: now };
+        const hit = items.findIndex((o) => o.label.toLowerCase().startsWith(text.toLowerCase()));
+        if (hit >= 0) {
+          e.preventDefault();
+          setActive(hit);
+        }
+      }
+    };
+    const placed = React5.useMemo(() => {
+      if (!box) return null;
+      const vh = window.innerHeight;
+      const below = vh - box.bottom - GAP - MARGIN;
+      const above = box.top - GAP - MARGIN;
+      const up = below < Math.min(MAX_MENU_H, above) && above > below;
+      return {
+        left: Math.max(MARGIN, Math.min(box.left, window.innerWidth - MARGIN - box.width)),
+        top: up ? void 0 : box.bottom + GAP,
+        bottom: up ? vh - box.top + GAP : void 0,
+        width: box.width,
+        maxHeight: Math.max(96, Math.min(MAX_MENU_H, up ? above : below))
+      };
+    }, [box]);
+    const menu = placed && /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(
+      "div",
+      {
+        ref: listRef,
+        id: listId,
+        role: "listbox",
+        "aria-labelledby": label ? labelId : void 0,
+        style: {
+          position: "fixed",
+          left: placed.left,
+          top: placed.top,
+          bottom: placed.bottom,
+          width: placed.width,
+          maxHeight: placed.maxHeight,
+          overflowY: "auto",
+          padding: "var(--space-2)",
+          background: "var(--surface-card)",
+          borderRadius: "var(--radius-md)",
+          boxShadow: "inset 0 0 0 1px var(--border), var(--shadow-xl)",
+          // Above a dialog's scrim at 48, since selects are used inside dialogs,
+          // and below tooltips at 50.
+          zIndex: 49,
+          animation: "lt-select-in var(--dur-fast) var(--ease-out)"
+        },
+        children: [
+          /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("style", { children: "@keyframes lt-select-in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}" }),
+          items.map((o, i) => {
+            const isSelected = i === selected;
+            const isActive = i === active;
+            return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(
+              "div",
+              {
+                id: `${listId}-${i}`,
+                "data-i": i,
+                role: "option",
+                "aria-selected": isSelected,
+                onPointerEnter: () => setActive(i),
+                onClick: () => commit(i),
+                style: {
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "var(--space-3)",
+                  height: "var(--control-h-sm)",
+                  padding: "0 var(--space-4)",
+                  borderRadius: "var(--radius-sm)",
+                  cursor: "pointer",
+                  fontFamily: "var(--font-ui)",
+                  fontSize,
+                  fontWeight: isSelected ? "var(--fw-black)" : "var(--fw-semibold)",
+                  color: isSelected ? "var(--text-strong)" : "var(--text-body)",
+                  /*
+                   * The brand tint, not --surface-hover.
+                   *
+                   * Hover was 4% black on white — invisible, which is survivable
+                   * for a pointer because the cursor is already telling you where
+                   * you are, and not survivable for the keyboard, where this
+                   * highlight is the only thing saying which row Enter will take.
+                   * --surface-selected is what the sidebar uses to mean "this is
+                   * the row in question", so it is the same idea in the same paint.
+                   */
+                  background: isActive ? "var(--surface-selected)" : "transparent"
+                },
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { style: { flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: o.label }),
+                  isSelected && /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3", strokeLinecap: "round", strokeLinejoin: "round", style: { flex: "none", color: "var(--brand)" }, children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("path", { d: "M20 6 9 17l-5-5" }) })
+                ]
+              },
+              o.value
+            );
+          })
+        ]
+      }
+    );
+    return /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)("div", { style: { display: block ? "flex" : "inline-flex", flexDirection: "column", gap: "var(--space-3)", width: block ? "100%" : void 0 }, children: [
+      label && /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { id: labelId, style: { fontFamily: "var(--font-ui)", fontSize: "var(--fs-12)", fontWeight: "var(--fw-black)", letterSpacing: "var(--ls-caps)", textTransform: "uppercase", color: "var(--text-muted)" }, children: label }),
       /* @__PURE__ */ (0, import_jsx_runtime6.jsxs)(
-        "span",
+        "button",
         {
+          ref: triggerRef,
+          type: "button",
+          role: "combobox",
+          "aria-haspopup": "listbox",
+          "aria-expanded": open,
+          "aria-controls": open ? listId : void 0,
+          "aria-labelledby": label ? labelId : void 0,
+          "aria-activedescendant": open ? `${listId}-${active}` : void 0,
+          disabled,
+          "data-focus-ring": "delegated",
+          onClick: () => open ? setOpen(false) : openWith(selected >= 0 ? selected : 0),
+          onKeyDown,
+          onFocus: () => setFocus(true),
+          onBlur: () => setFocus(false),
           style: {
             position: "relative",
             display: "flex",
             alignItems: "center",
+            gap: "var(--space-3)",
+            width: "100%",
             height,
+            padding: "0 10px 0 12px",
+            border: "none",
+            outline: "none",
+            textAlign: "left",
+            cursor: disabled ? "not-allowed" : "pointer",
             background: "var(--surface-input)",
             borderRadius: "var(--radius-control)",
-            boxShadow: focus ? "inset 0 0 0 1.5px var(--brand), var(--ring-focus)" : "inset 0 0 0 1px var(--border)",
+            boxShadow: focus || open ? "inset 0 0 0 1.5px var(--brand), var(--ring-focus)" : "inset 0 0 0 1px var(--border)",
             opacity: disabled ? 0.5 : 1,
             transition: "var(--transition-control)",
+            fontFamily: "var(--font-ui)",
+            fontSize,
+            fontWeight: "var(--fw-semibold)",
+            color: selected >= 0 ? "var(--text-strong)" : "var(--text-muted)",
             ...style
           },
           children: [
-            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
-              "select",
-              {
-                "data-focus-ring": "delegated",
-                value,
-                defaultValue,
-                disabled,
-                onChange,
-                onFocus: () => setFocus(true),
-                onBlur: () => setFocus(false),
-                style: {
-                  appearance: "none",
-                  WebkitAppearance: "none",
-                  border: "none",
-                  outline: "none",
-                  background: "transparent",
-                  width: "100%",
-                  height: "100%",
-                  padding: "0 34px 0 12px",
-                  cursor: disabled ? "not-allowed" : "pointer",
-                  fontFamily: "var(--font-ui)",
-                  fontSize: size === "sm" ? "var(--fs-13)" : "var(--fs-14)",
-                  fontWeight: "var(--fw-semibold)",
-                  color: "var(--text-strong)"
-                },
-                ...rest,
-                children: options.map((o) => {
-                  const opt = typeof o === "string" ? { value: o, label: o } : o;
-                  return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("option", { value: opt.value, children: opt.label }, opt.value);
-                })
-              }
-            ),
+            /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("span", { style: { flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, children: selected >= 0 ? items[selected].label : placeholder }),
             /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
               "svg",
               {
@@ -869,13 +1074,19 @@ var LingoToolboxDesignSystem_898611 = (() => {
                 strokeWidth: "2.5",
                 strokeLinecap: "round",
                 strokeLinejoin: "round",
-                style: { position: "absolute", right: 10, pointerEvents: "none", color: "var(--text-muted)" },
+                style: {
+                  flex: "none",
+                  color: "var(--text-muted)",
+                  transform: open ? "rotate(180deg)" : "none",
+                  transition: "transform var(--dur-fast) var(--ease-out)"
+                },
                 children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)("path", { d: "m6 9 6 6 6-6" })
               }
             )
           ]
         }
-      )
+      ),
+      open && typeof document !== "undefined" && (0, import_react_dom.createPortal)(menu, document.body)
     ] });
   }
 
@@ -1345,13 +1556,22 @@ var LingoToolboxDesignSystem_898611 = (() => {
   }
 
   // components/surfaces/Dialog.tsx
-  var import_react_dom = __toESM(require_react_dom_global(), 1);
+  var React10 = __toESM(require_react_global(), 1);
+  var import_react_dom2 = __toESM(require_react_dom_global(), 1);
   var import_jsx_runtime12 = __toESM(require_react_jsx_runtime_global(), 1);
   function Dialog({ open = true, title, description, children, footer, width = 440, onClose, style, ...rest }) {
     const isMobile = useIsMobile();
+    React10.useEffect(() => {
+      if (!open || !onClose) return void 0;
+      const onKey = (e) => {
+        if (e.key === "Escape") onClose();
+      };
+      document.addEventListener("keydown", onKey);
+      return () => document.removeEventListener("keydown", onKey);
+    }, [open, onClose]);
     if (!open) return null;
     if (typeof document === "undefined") return null;
-    return (0, import_react_dom.createPortal)(
+    return (0, import_react_dom2.createPortal)(
       /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)(
         "div",
         {
@@ -1411,9 +1631,14 @@ var LingoToolboxDesignSystem_898611 = (() => {
                         gap: "var(--space-5)",
                         padding: "var(--pad-dialog)",
                         paddingBottom: "var(--space-4)",
-                        // Full-bleed puts the title where the notch is. The scrim cannot
-                        // carry this: it is the panel that reaches the top edge.
-                        paddingTop: isMobile ? "calc(var(--pad-dialog) + env(safe-area-inset-top, 0px))" : void 0
+                        // Full-bleed puts the title where the notch is, and the scrim cannot
+                        // carry that: it is the panel that reaches the top edge.
+                        //
+                        // Both arms are spelled out. `undefined` here does not fall back to
+                        // the shorthand above — it replaces its top value in the object and
+                        // React then skips the property, so every dialog on a desktop lost
+                        // its top padding entirely and sat its title on the panel's edge.
+                        paddingTop: isMobile ? "calc(var(--pad-dialog) + env(safe-area-inset-top, 0px))" : "var(--pad-dialog)"
                       },
                       children: [
                         /* @__PURE__ */ (0, import_jsx_runtime12.jsxs)("div", { style: { flex: 1, display: "flex", flexDirection: "column", gap: "var(--space-2)" }, children: [
@@ -1710,10 +1935,10 @@ var LingoToolboxDesignSystem_898611 = (() => {
   }
 
   // components/navigation/SidebarItem.tsx
-  var React10 = __toESM(require_react_global(), 1);
+  var React11 = __toESM(require_react_global(), 1);
   var import_jsx_runtime19 = __toESM(require_react_jsx_runtime_global(), 1);
   function SidebarItem({ icon, label, meta, active = false, muted = false, badge, onClick, style, ...rest }) {
-    const [hover, setHover] = React10.useState(false);
+    const [hover, setHover] = React11.useState(false);
     return /* @__PURE__ */ (0, import_jsx_runtime19.jsxs)(
       "button",
       {
@@ -1753,10 +1978,10 @@ var LingoToolboxDesignSystem_898611 = (() => {
   }
 
   // components/navigation/RailTile.tsx
-  var React11 = __toESM(require_react_global(), 1);
+  var React12 = __toESM(require_react_global(), 1);
   var import_jsx_runtime20 = __toESM(require_react_jsx_runtime_global(), 1);
   function RailTile({ label, icon, flag, src, color = "var(--brand)", onColor = "var(--text-on-brand)", size = 46, quiet = false, active = false, unread = 0, showLabel = false, onClick, style, ...rest }) {
-    const [hover, setHover] = React11.useState(false);
+    const [hover, setHover] = React12.useState(false);
     const lit = active || hover;
     const isEmoji = flag && !/^[A-Za-z]{1,3}$/.test(flag);
     return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { style: { position: "relative", display: "flex", flexDirection: "column", alignItems: "center", gap: 4, width: "100%", ...style }, ...rest, children: [
@@ -1913,11 +2138,11 @@ var LingoToolboxDesignSystem_898611 = (() => {
   }
 
   // components/feedback/Tooltip.tsx
-  var React12 = __toESM(require_react_global(), 1);
-  var import_react_dom2 = __toESM(require_react_dom_global(), 1);
+  var React13 = __toESM(require_react_global(), 1);
+  var import_react_dom3 = __toESM(require_react_dom_global(), 1);
   var import_jsx_runtime22 = __toESM(require_react_jsx_runtime_global(), 1);
-  var GAP = 8;
-  var MARGIN = 8;
+  var GAP2 = 8;
+  var MARGIN2 = 8;
   var OPPOSITE = {
     top: "bottom",
     bottom: "top",
@@ -1926,12 +2151,12 @@ var LingoToolboxDesignSystem_898611 = (() => {
   };
   var clamp = (v, lo, hi) => Math.min(Math.max(v, lo), hi);
   function Tooltip({ children, label, side = "top", shortcut, style, ...rest }) {
-    const [open, setOpen] = React12.useState(false);
-    const anchorRef = React12.useRef(null);
-    const tipRef = React12.useRef(null);
-    const [box, setBox] = React12.useState(null);
-    const [size, setSize] = React12.useState(null);
-    React12.useLayoutEffect(() => {
+    const [open, setOpen] = React13.useState(false);
+    const anchorRef = React13.useRef(null);
+    const tipRef = React13.useRef(null);
+    const [box, setBox] = React13.useState(null);
+    const [size, setSize] = React13.useState(null);
+    React13.useLayoutEffect(() => {
       if (!open) {
         setBox(null);
         setSize(null);
@@ -1949,33 +2174,33 @@ var LingoToolboxDesignSystem_898611 = (() => {
         window.removeEventListener("resize", measure);
       };
     }, [open]);
-    React12.useLayoutEffect(() => {
+    React13.useLayoutEffect(() => {
       if (!open) return;
       const el = tipRef.current;
       if (!el) return;
       const r = el.getBoundingClientRect();
       setSize((prev) => prev && prev.w === r.width && prev.h === r.height ? prev : { w: r.width, h: r.height });
     }, [open, box, label, shortcut]);
-    const placed = React12.useMemo(() => {
+    const placed = React13.useMemo(() => {
       if (!box || !size) return null;
       const vw = window.innerWidth;
       const vh = window.innerHeight;
       const fits = {
-        top: box.top - GAP - size.h >= MARGIN,
-        bottom: box.bottom + GAP + size.h <= vh - MARGIN,
-        left: box.left - GAP - size.w >= MARGIN,
-        right: box.right + GAP + size.w <= vw - MARGIN
+        top: box.top - GAP2 - size.h >= MARGIN2,
+        bottom: box.bottom + GAP2 + size.h <= vh - MARGIN2,
+        left: box.left - GAP2 - size.w >= MARGIN2,
+        right: box.right + GAP2 + size.w <= vw - MARGIN2
       };
       const s = fits[side] || !fits[OPPOSITE[side]] ? side : OPPOSITE[side];
       if (s === "top" || s === "bottom") {
         return {
-          left: clamp(box.left + box.width / 2 - size.w / 2, MARGIN, Math.max(MARGIN, vw - MARGIN - size.w)),
-          top: s === "top" ? box.top - GAP - size.h : box.bottom + GAP
+          left: clamp(box.left + box.width / 2 - size.w / 2, MARGIN2, Math.max(MARGIN2, vw - MARGIN2 - size.w)),
+          top: s === "top" ? box.top - GAP2 - size.h : box.bottom + GAP2
         };
       }
       return {
-        left: s === "left" ? box.left - GAP - size.w : box.right + GAP,
-        top: clamp(box.top + box.height / 2 - size.h / 2, MARGIN, Math.max(MARGIN, vh - MARGIN - size.h))
+        left: s === "left" ? box.left - GAP2 - size.w : box.right + GAP2,
+        top: clamp(box.top + box.height / 2 - size.h / 2, MARGIN2, Math.max(MARGIN2, vh - MARGIN2 - size.h))
       };
     }, [box, size, side]);
     const tip = /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(
@@ -2024,14 +2249,14 @@ var LingoToolboxDesignSystem_898611 = (() => {
         ...rest,
         children: [
           children,
-          open && (0, import_react_dom2.createPortal)(tip, document.body)
+          open && (0, import_react_dom3.createPortal)(tip, document.body)
         ]
       }
     );
   }
 
   // components/learning/Flashcard.tsx
-  var React13 = __toESM(require_react_global(), 1);
+  var React14 = __toESM(require_react_global(), 1);
   var import_jsx_runtime23 = __toESM(require_react_jsx_runtime_global(), 1);
   var MAX_TILT = 7;
   var FLIP_AT = 0.25;
@@ -2066,8 +2291,8 @@ var LingoToolboxDesignSystem_898611 = (() => {
     const canTilt = tilt && !isTouch && !reducedMotion;
     const canDrag = drag && isTouch;
     const hintText = hint ?? (isTouch ? "Tap or drag to turn" : "Click or press Space to flip");
-    const tiltRef = React13.useRef(null);
-    const lastTilt = React13.useRef({ x: 0, y: 0 });
+    const tiltRef = React14.useRef(null);
+    const lastTilt = React14.useRef({ x: 0, y: 0 });
     const applyTilt = (e) => {
       const node = tiltRef.current;
       if (!canTilt || !node) return;
@@ -2081,12 +2306,12 @@ var LingoToolboxDesignSystem_898611 = (() => {
       node.style.transition = "transform var(--dur-fast) linear";
       node.style.transform = `rotateX(${x.toFixed(2)}deg) rotateY(${y.toFixed(2)}deg)`;
     };
-    const previewPaused = React13.useRef(false);
-    const previewLive = React13.useRef(false);
-    const previewFrom = React13.useRef({ x: 0, y: 0 });
-    const previewRampAt = React13.useRef(0);
-    const previewT0 = React13.useRef(0);
-    React13.useEffect(() => {
+    const previewPaused = React14.useRef(false);
+    const previewLive = React14.useRef(false);
+    const previewFrom = React14.useRef({ x: 0, y: 0 });
+    const previewRampAt = React14.useRef(0);
+    const previewT0 = React14.useRef(0);
+    React14.useEffect(() => {
       const node = tiltRef.current;
       if (!preview || reducedMotion || !node) return void 0;
       previewLive.current = true;
@@ -2134,17 +2359,17 @@ var LingoToolboxDesignSystem_898611 = (() => {
       node.style.transition = "transform var(--dur-base) var(--ease-spring)";
       node.style.transform = "none";
     };
-    const [landed, setLanded] = React13.useState(0);
-    const rungFor = React13.useRef(null);
-    const [inner, setInner] = React13.useState(defaultFlipped);
+    const [landed, setLanded] = React14.useState(0);
+    const rungFor = React14.useRef(null);
+    const [inner, setInner] = React14.useState(defaultFlipped);
     const isFlipped = flipped === void 0 ? inner : flipped;
     const flip = () => {
       if (flipped === void 0) setInner(!isFlipped);
       onFlip && onFlip(!isFlipped);
     };
-    const dragRef = React13.useRef(null);
-    const gesture = React13.useRef(null);
-    const swallowClick = React13.useRef(false);
+    const dragRef = React14.useRef(null);
+    const gesture = React14.useRef(null);
+    const swallowClick = React14.useRef(false);
     const turnDir = () => isFlipped ? -1 : 1;
     const onDragStart = (e) => {
       if (!canDrag || !dragRef.current) return;
@@ -2178,7 +2403,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
       releasePreview();
       if (committed) flip();
     };
-    React13.useEffect(() => {
+    React14.useEffect(() => {
       if (rungFor.current === null) {
         rungFor.current = isFlipped;
         return;

@@ -32,6 +32,27 @@ export interface DialogProps
  */
 export function Dialog({ open = true, title, description, children, footer, width = 440, onClose, style, ...rest }: DialogProps) {
   const isMobile = useIsMobile();
+
+  /*
+   * Escape closes it.
+   *
+   * This was missing for as long as the component existed, and the gap hid
+   * behind the mouse: clicking the scrim worked, so nobody pressed the key.
+   * A modal that takes the whole screen and cannot be dismissed from the
+   * keyboard is a trap for anyone not using a pointer.
+   *
+   * Above the early returns because it is a hook, and `keydown` rather than
+   * `keyup` so a control inside the dialog cannot swallow the key first.
+   * Anything that wants Escape for itself — an open Select menu — stops the
+   * event before it reaches here.
+   */
+  React.useEffect(() => {
+    if (!open || !onClose) return undefined;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [open, onClose]);
+
   if (!open) return null;
   if (typeof document === 'undefined') return null;
 
@@ -89,9 +110,16 @@ export function Dialog({ open = true, title, description, children, footer, widt
           style={{
             display: 'flex', alignItems: 'flex-start', gap: 'var(--space-5)',
             padding: 'var(--pad-dialog)', paddingBottom: 'var(--space-4)',
-            // Full-bleed puts the title where the notch is. The scrim cannot
-            // carry this: it is the panel that reaches the top edge.
-            paddingTop: isMobile ? 'calc(var(--pad-dialog) + env(safe-area-inset-top, 0px))' : undefined,
+            // Full-bleed puts the title where the notch is, and the scrim cannot
+            // carry that: it is the panel that reaches the top edge.
+            //
+            // Both arms are spelled out. `undefined` here does not fall back to
+            // the shorthand above — it replaces its top value in the object and
+            // React then skips the property, so every dialog on a desktop lost
+            // its top padding entirely and sat its title on the panel's edge.
+            paddingTop: isMobile
+              ? 'calc(var(--pad-dialog) + env(safe-area-inset-top, 0px))'
+              : 'var(--pad-dialog)',
           }}
         >
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
