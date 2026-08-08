@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { createPortal } from 'react-dom';
+import { useIsTouch } from '../../hooks/useBreakpoint';
 
 export interface SelectOption { value: string; label: string }
 
@@ -25,6 +26,8 @@ export interface SelectProps {
 const GAP = 6;
 const MARGIN = 8;
 const MAX_MENU_H = 280;
+/** Touch rows are 44px, so the same cap would show three of them. */
+const MAX_MENU_H_TOUCH = 380;
 
 /** How long a run of keystrokes counts as one word for type-ahead. */
 const TYPEAHEAD_MS = 600;
@@ -68,6 +71,16 @@ export function Select({
 
   const [open, setOpen] = React.useState(false);
   const [focus, setFocus] = React.useState(false);
+  /*
+   * Rows sized for a thumb rather than a cursor.
+   *
+   * --control-h-sm is 28px, which is fine to click and far under the 44px a
+   * finger needs — and in a list of stacked rows a near miss selects the wrong
+   * option rather than nothing, which is worse than a miss. The native control
+   * this replaced never had the problem: the platform picker was always sized
+   * for the hand holding it, and that is part of what was given up.
+   */
+  const touch = useIsTouch();
   const [active, setActive] = React.useState(0);
   const [box, setBox] = React.useState<DOMRect | null>(null);
 
@@ -200,15 +213,16 @@ export function Select({
     const vh = window.innerHeight;
     const below = vh - box.bottom - GAP - MARGIN;
     const above = box.top - GAP - MARGIN;
-    const up = below < Math.min(MAX_MENU_H, above) && above > below;
+    const cap = touch ? MAX_MENU_H_TOUCH : MAX_MENU_H;
+    const up = below < Math.min(cap, above) && above > below;
     return {
       left: Math.max(MARGIN, Math.min(box.left, window.innerWidth - MARGIN - box.width)),
       top: up ? undefined : box.bottom + GAP,
       bottom: up ? vh - box.top + GAP : undefined,
       width: box.width,
-      maxHeight: Math.max(96, Math.min(MAX_MENU_H, up ? above : below)),
+      maxHeight: Math.max(96, Math.min(touch ? MAX_MENU_H_TOUCH : MAX_MENU_H, up ? above : below)),
     };
-  }, [box]);
+  }, [box, touch]);
 
   const menu = placed && (
     <div
@@ -250,7 +264,8 @@ export function Select({
             onClick={() => commit(i)}
             style={{
               display: 'flex', alignItems: 'center', gap: 'var(--space-3)',
-              height: 'var(--control-h-sm)', padding: '0 var(--space-4)',
+              height: touch ? 'var(--control-h-lg)' : 'var(--control-h-sm)',
+              padding: touch ? '0 var(--space-5)' : '0 var(--space-4)',
               borderRadius: 'var(--radius-sm)', cursor: 'pointer',
               fontFamily: 'var(--font-ui)', fontSize,
               fontWeight: isSelected
