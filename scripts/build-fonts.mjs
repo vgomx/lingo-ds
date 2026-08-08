@@ -1,0 +1,120 @@
+// Downloads the webfonts and writes tokens/fonts.css against local copies.
+//
+//   npm run build:fonts
+//
+// The output is committed, so a clone with no network still builds — the same
+// bargain the illustration set makes in the product repo. Re-run this only to
+// add a weight or change a family.
+//
+// Why self-hosted at all: an @import from fonts.googleapis.com cannot be
+// precached, so the app rendered in a fallback face until the network answered,
+// and offline only worked from the second visit. It also made every reader's
+// browser announce itself to a third party on first paint, which is not
+// something a local-only app should be doing on anyone's behalf.
+
+import { mkdirSync, writeFileSync, readdirSync, rmSync, statSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
+
+const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+const outDir = join(root, 'assets/fonts');
+
+/**
+ * The families, as weight *ranges* rather than the discrete list the old
+ * @import used.
+ *
+ * All three are variable fonts, and the syntax decides what Google serves:
+ * `wght@600;700;800` gets three static instances, `wght@600..800` gets one
+ * variable file covering the range. Asked the old way, Nunito Sans alone came
+ * to 528 KB across ten files — five weights times two subsets — where the
+ * variable cut covers every weight in between as well, for less.
+ */
+const QUERY = [
+  'family=Baloo+2:wght@600..800',
+  // Upright only. The old @import asked for italic 400 as well, and nothing in
+  // either repo has ever set font-style: italic — 88 KB of a face no screen
+  // renders. A browser will synthesise a slant if some future <em> needs one.
+  'family=Nunito+Sans:opsz,wght@6..12,400..800',
+  'family=JetBrains+Mono:wght@400..700',
+  'display=swap',
+].join('&');
+
+/**
+ * Only the subsets these four languages need.
+ *
+ * Google offers Devanagari for Baloo 2 and Cyrillic for Nunito Sans; shipping
+ * them would be megabytes for glyphs no workspace can produce. latin-ext earns
+ * its place on Portuguese and Dutch alone.
+ */
+const KEEP = new Set(['latin', 'latin-ext']);
+
+/** Google serves woff2 only to a UA it believes supports it. */
+const UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36';
+
+/** The upstream licence for each family, carried beside the binaries. */
+const LICENCES = {
+  'Baloo 2': 'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/baloo2/OFL.txt',
+  'Nunito Sans': 'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/nunitosans/OFL.txt',
+  'JetBrains Mono': 'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/jetbrainsmono/OFL.txt',
+};
+
+const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+const css = await fetch(`https://fonts.googleapis.com/css2?${QUERY}`, { headers: { 'User-Agent': UA } })
+  .then((r) => {
+    if (!r.ok) throw new Error(`Google Fonts said ${r.status}`);
+    return r.text();
+  });
+
+// Each @font-face is preceded by a /* subset */ comment. Splitting on those
+// keeps the pairing without having to parse the CSS properly.
+const chunks = css.split(/\/\*\s*([a-z-]+)\s*\*\//i).slice(1);
+const blocks = [];
+for (let i = 0; i < chunks.length; i += 2) {
+  const subset = chunks[i].trim();
+  const body = (chunks[i + 1].match(/@font-face\s*{[^}]*}/) || [])[0];
+  if (body && KEEP.has(subset)) blocks.push({ subset, body });
+}
+if (blocks.length === 0) throw new Error('No @font-face blocks survived the subset filter');
+
+// Rebuilt from scratch each run, so a removed weight leaves no orphan behind.
+rmSync(outDir, { recursive: true, force: true });
+mkdirSync(outDir, { recursive: true });
+
+const field = (body, name) => (body.match(new RegExp(`${name}:\\s*([^;]+);`)) || [])[1]?.trim();
+
+const rules = [];
+for (const { subset, body } of blocks) {
+  const family = field(body, 'font-family').replace(/['"]/g, '');
+  const style = field(body, 'font-style') || 'normal';
+  const weight = (field(body, 'font-weight') || '400').replace(/\s+/g, '-');
+  const url = (body.match(/url\(([^)]+)\)/) || [])[1]?.replace(/['"]/g, '');
+  if (!url) continue;
+
+  const file = `${slug(family)}-${weight}-${style}-${subset}.woff2`;
+  const bytes = Buffer.from(await fetch(url).then((r) => r.arrayBuffer()));
+  writeFileSync(join(outDir, file), bytes);
+
+  // The block verbatim, with only the source swapped — so font-stretch,
+  // variation settings and the unicode-range Google worked out all survive.
+  rules.push(body.replace(/src:\s*url\([^;]+;/, `src: url('../assets/fonts/${file}') format('woff2');`).trim());
+}
+
+for (const [family, url] of Object.entries(LICENCES)) {
+  const text = await fetch(url).then((r) => (r.ok ? r.text() : null));
+  if (text) writeFileSync(join(outDir, `OFL-${slug(family)}.txt`), text);
+}
+
+const header = `/* Lingo Toolbox webfonts — GENERATED by scripts/build-fonts.mjs, do not edit.
+   Baloo 2 stands in for the heavy rounded wordmark face used in the logo.
+   Nunito Sans is the product UI face. JetBrains Mono is the phonetics face.
+   All three are SIL Open Font License 1.1; the licences ship in assets/fonts/
+   beside the binaries, which is what the OFL asks of anyone redistributing
+   them. Substituting a licensed face means replacing the files and re-running
+   the script, not editing this file. */\n\n`;
+
+writeFileSync(join(root, 'tokens/fonts.css'), header + rules.join('\n\n') + '\n');
+
+const woff2 = readdirSync(outDir).filter((f) => f.endsWith('.woff2'));
+const kb = woff2.reduce((n, f) => n + statSync(join(outDir, f)).size, 0) / 1024;
+console.log(`wrote ${rules.length} @font-face rules · ${woff2.length} woff2 files · ${Math.round(kb)} KB`);
