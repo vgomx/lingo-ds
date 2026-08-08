@@ -1,4 +1,24 @@
+<div align="center">
+
+<img src="assets/logo/stack-violet.svg" width="120" alt="" />
+
 # Lingo Toolbox — Design System
+
+**Tokens, components and the reasoning behind them.**
+
+The design system behind [Lingo Toolbox](https://github.com/vgomx/lingotoolbox): 25 React components, 48 themed tokens, 76 icons and a set of guards that fail the build when a rule here is broken.
+
+[**Browse the showcase →**](https://vgomx.github.io/lingo-ds/)
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-6A4CF0.svg)](LICENSE)
+![React](https://img.shields.io/badge/React-18-2E7D32.svg)
+![TypeScript](https://img.shields.io/badge/TypeScript-strict-C62828.svg)
+![Components](https://img.shields.io/badge/components-25-1565C0.svg)
+[![Consumed by](https://img.shields.io/badge/consumed_by-lingotoolbox-5A3BE0.svg)](https://github.com/vgomx/lingotoolbox)
+
+</div>
+
+## What this is
 
 Lingo Toolbox is an **open source** (MIT) language-learning platform built as a **set of tools rather than a single course**. There is no paid tier, so no pricing, plan or billing surface exists anywhere in this system — the marketing kit sells the project, not a subscription. Learners pick a language workspace and move between interactive tools that practise and consolidate what they've already met elsewhere: **Flashcards** (spaced repetition), the **Etymology Explorer** (word-origin chains), **Conjugation Drill**, **Phrasebook** and **Grammar Notes**. The product is a workspace people return to daily, not a lesson they finish.
 
@@ -33,7 +53,7 @@ import { Button, Flashcard, RailTile } from 'lingo-ds';
 | `npm run build` | Runs the checks, bundles `index.ts` to ESM + CJS + `.d.ts` via tsup, and regenerates `_ds_bundle.js` |
 | `npm run dev` | tsup in watch mode |
 | `npm run typecheck` | `tsc --noEmit` over `index.ts` and `components/` |
-| `npm run check` | All three guards below, without building |
+| `npm run check` | All four guards below, without building |
 
 ### Guards
 
@@ -234,7 +254,9 @@ Illustration is **OpenMoji** colour SVG (CC BY-SA 4.0) — never bespoke drawing
 
 ### Components
 
-Grouped by concern; each directory holds `<Name>.jsx`, `<Name>.d.ts`, `<Name>.prompt.md` and one card HTML.
+Grouped by concern; each directory holds `<Name>.tsx`, `<Name>.prompt.md` and one card HTML. The `.jsx`
+sources and their sibling `.d.ts` files are gone — the components are TypeScript now, so the types are
+the implementation rather than a description of it, and `dist/index.d.ts` is generated from them.
 
 - **`components/actions/`** — `Button`, `IconButton`
 - **`components/icon/`** — `Icon`
