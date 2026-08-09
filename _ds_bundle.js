@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: 32624539f221fc1c
+// source-hash: b1f52ffd0569e3ba
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -748,6 +748,8 @@ var LingoToolboxDesignSystem_898611 = (() => {
     ...rest
   }) {
     const [focus, setFocus] = React4.useState(false);
+    const touch = useIsTouch();
+    const effective = touch && size === "md" ? "lg" : size;
     return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)("label", { style: { display: block ? "flex" : "inline-flex", flexDirection: "column", gap: "var(--space-3)", width: block ? "100%" : void 0 }, children: [
       label && /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("span", { style: { fontFamily: "var(--font-ui)", fontSize: "var(--fs-12)", fontWeight: "var(--fw-black)", letterSpacing: "var(--ls-caps)", textTransform: "uppercase", color: "var(--text-muted)" }, children: label }),
       /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(
@@ -757,7 +759,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
             display: "flex",
             alignItems: "center",
             gap: "var(--space-3)",
-            height: HEIGHTS[size] || HEIGHTS.md,
+            height: HEIGHTS[effective] || HEIGHTS.md,
             padding: "0 12px",
             background: "var(--surface-input)",
             borderRadius: "var(--radius-control)",
@@ -790,7 +792,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
                   background: "transparent",
                   font: "inherit",
                   fontFamily: "var(--font-ui)",
-                  fontSize: size === "sm" ? "var(--fs-13)" : "var(--fs-14)",
+                  fontSize: effective === "sm" ? "var(--fs-13)" : "var(--fs-14)",
                   fontWeight: "var(--fw-medium)",
                   color: "var(--text-strong)"
                 },

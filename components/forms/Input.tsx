@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useIsTouch } from '../../hooks/useBreakpoint';
 
 export type InputSize = 'sm' | 'md' | 'lg';
 
@@ -37,6 +38,17 @@ export function Input({
   iconLeft = null, iconRight = null, disabled = false, block = true, onChange, style, ...rest
 }: InputProps) {
   const [focus, setFocus] = React.useState(false);
+  /*
+   * A default-size field is 36px, which is under the 44 a finger wants — so on
+   * touch the default steps up to lg. Only the default: `sm` and `lg` were
+   * chosen for a reason and are left where they were put.
+   *
+   * The same reasoning as the menu rows and the select's options, and the same
+   * signal: touch rather than width, because a narrow desktop window is still
+   * a mouse.
+   */
+  const touch = useIsTouch();
+  const effective: InputSize = touch && size === 'md' ? 'lg' : size;
   return (
     <label style={{ display: block ? 'flex' : 'inline-flex', flexDirection: 'column', gap: 'var(--space-3)', width: block ? '100%' : undefined }}>
       {label && (
@@ -47,7 +59,7 @@ export function Input({
       <span
         style={{
           display: 'flex', alignItems: 'center', gap: 'var(--space-3)',
-          height: HEIGHTS[size] || HEIGHTS.md, padding: '0 12px',
+          height: HEIGHTS[effective] || HEIGHTS.md, padding: '0 12px',
           background: 'var(--surface-input)', borderRadius: 'var(--radius-control)',
           boxShadow: error
             ? 'inset 0 0 0 1.5px var(--danger)'
@@ -71,7 +83,7 @@ export function Input({
           onBlur={() => setFocus(false)}
           style={{
             flex: 1, minWidth: 0, border: 'none', outline: 'none', background: 'transparent',
-            font: 'inherit', fontFamily: 'var(--font-ui)', fontSize: size === 'sm' ? 'var(--fs-13)' : 'var(--fs-14)',
+            font: 'inherit', fontFamily: 'var(--font-ui)', fontSize: effective === 'sm' ? 'var(--fs-13)' : 'var(--fs-14)',
             fontWeight: 'var(--fw-medium)' as React.CSSProperties['fontWeight'], color: 'var(--text-strong)',
           }}
           {...rest}
