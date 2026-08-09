@@ -7,7 +7,11 @@
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 <script src="../../_ds_bundle.js"></script>
 <script type="text/babel">
-const { Input, Textarea, Select, Checkbox, Radio, Switch, Icon } = window.LingoToolboxDesignSystem_898611;
+const { Input, Textarea, TagInput, Select, Checkbox, Radio, Switch, Icon } = window.LingoToolboxDesignSystem_898611;
+function TagsDemo(){const [tags,setTags]=React.useState(['noun']);
+ return (<TagInput label="Tags" value={tags} onChange={setTags}
+   suggestions={['verb','particle','adj','phrase','idiom']}
+   hint="What decides which cards offer this note."/>);}
 function Demo(){const [mode,setMode]=React.useState('srs');return (<>
  <div className="row" style={{alignItems:'flex-start',gap:16}}>
   <div style={{width:210}}><Input label="Word or phrase" placeholder="e.g. sobremesa" iconLeft={<Icon name="search" size={16}/>}/></div>
@@ -15,6 +19,7 @@ function Demo(){const [mode,setMode]=React.useState('srs');return (<>
    <div style={{width:280}}><Textarea label="Explanation" rows={3}
      hint="A few sentences. Leave a blank line between paragraphs."
      defaultValue={"Roughly two thirds of nouns take de.\n\nEvery plural takes de, and every diminutive takes het."}/></div>
+   <div style={{width:280}}><TagsDemo/></div>
   <div style={{width:180}}><Select label="Language" options={['Spanish','Japanese','Turkish']}/></div>
  </div>
  <div className="row" style={{gap:28,alignItems:'flex-start'}}>
