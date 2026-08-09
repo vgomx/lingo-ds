@@ -47,6 +47,7 @@ export { Tabs } from './components/navigation/Tabs';
 export type { TabsProps, TabsOwnProps, TabItem } from './components/navigation/Tabs';
 export { SidebarItem } from './components/navigation/SidebarItem';
 export type { SidebarItemProps, SidebarItemOwnProps } from './components/navigation/SidebarItem';
+export { MenuItem } from './components/navigation/MenuItem';
 export { RailTile } from './components/navigation/RailTile';
 export type { RailTileProps, RailTileOwnProps } from './components/navigation/RailTile';
 

@@ -1,4 +1,4 @@
-<!-- @dsCard group="Components" viewport="700x400" name="Navigation" subtitle="Tool rail, deck list, tabs" -->
+<!-- @dsCard group="Components" viewport="700x480" name="Navigation" subtitle="Tool rail, deck list, tabs, menu rows" -->
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Navigation</title><link rel="stylesheet" href="../../styles.css">
 <style>body{background:var(--surface-app);margin:0;padding:20px;font-family:var(--font-ui)}#root{display:flex;flex-direction:column;gap:14px}.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.lbl{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint)}.col{display:flex;flex-direction:column;gap:8px}</style>
 </head><body><div id="root"></div>
@@ -7,7 +7,7 @@
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 <script src="../../_ds_bundle.js"></script>
 <script type="text/babel">
-const { Tabs, SidebarItem, RailTile, Icon, Badge } = window.LingoToolboxDesignSystem_898611;
+const { Tabs, SidebarItem, RailTile, MenuItem, Icon, Badge } = window.LingoToolboxDesignSystem_898611;
 function Demo(){const [tab,setTab]=React.useState('due');const [range,setRange]=React.useState('Week');const [rail,setRail]=React.useState('home');
  const TOOLS=[{id:'home',short:'Home',icon:'house'},{id:'review',short:'Cards',icon:'layers'},{id:'etymology',short:'Roots',icon:'git-branch'},{id:'conjugation',short:'Verbs',icon:'spell-check'}];
  const DECKS=[{name:'Kitchen Spanish',due:'12',accent:'var(--violet-500)'},{name:'At the market',due:'4',accent:'var(--cyan-500)'},{name:'Idioms that lie',due:'',accent:'var(--coral-500)'},{name:'Irregular verbs',due:'26',accent:'var(--pink-500)'}];
@@ -24,6 +24,14 @@ function Demo(){const [tab,setTab]=React.useState('due');const [range,setRange]=
   <div className="col" style={{gap:18}}>
    <Tabs items={[{value:'due',label:'Due',count:12},{value:'all',label:'All cards',count:420},{value:'new',label:'New'}]} value={tab} onChange={setTab}/>
    <Tabs variant="pill" items={['Week','Month','All time']} value={range} onChange={setRange}/>
+   <div className="col" style={{gap:2,background:'var(--surface-raised)',padding:8,borderRadius:'var(--radius-lg)',maxWidth:240}}>
+    <span className="lbl" style={{padding:'2px 8px 6px'}}>Menu</span>
+    {[['Spanish','flag'],['Dutch','flag'],['Settings','settings']].map(([name,icon],i)=>(
+      <MenuItem key={name} selected={i===1} onClick={()=>{}}>
+        <Icon name={icon==='flag'?'globe':'settings'} size={18} style={{color:'var(--text-muted)',flex:'none'}}/>
+        <span style={{flex:1,minWidth:0}}>{name}</span>
+      </MenuItem>))}
+   </div>
   </div>
  </div>);}
 ReactDOM.createRoot(document.getElementById('root')).render(<Demo />);
