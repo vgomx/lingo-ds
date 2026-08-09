@@ -1,4 +1,4 @@
-<!-- @dsCard group="Components" viewport="700x240" name="Logo" subtitle="The component that serves the lockups — variant + height, in context" -->
+<!-- @dsCard group="Components" viewport="700x240" name="Logo" subtitle="The component that serves the lockups — mark, wordmark, horizontal, stack" -->
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Logo</title><link rel="stylesheet" href="../../styles.css">
 <style>body{background:var(--surface-app);margin:0;padding:20px;font-family:var(--font-ui)}#root{display:flex;flex-direction:column;gap:14px}.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.lbl{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint)}.col{display:flex;flex-direction:column;gap:8px}</style>
 </head><body><div id="root"></div>
@@ -17,6 +17,7 @@ function Demo(){return (<>
   </div>
   <div style={{flex:1,background:'var(--paper-0)',borderRadius:'var(--radius-lg)',height:52,display:'flex',alignItems:'center',padding:'0 16px'}}>
    <Logo variant="wordmark-black" height={30} base="../.."/>
+   <Logo variant="horizontal-violet" height={26} base="../.."/>
   </div>
  </div>
  <span className="lbl" style={{marginTop:8}}>Height scale — 24 / 34 / 48 / 64</span>

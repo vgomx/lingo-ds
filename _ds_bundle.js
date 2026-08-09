@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: b1f52ffd0569e3ba
+// source-hash: 9232aaac1e98bd1b
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -706,7 +706,25 @@ var LingoToolboxDesignSystem_898611 = (() => {
     "stack-dark": "stack-dark.svg",
     "stack-light": "stack-light.svg",
     "stack-violet": "stack-violet.svg",
-    "stack-brand": "stack-brand.svg"
+    "stack-brand": "stack-brand.svg",
+    /*
+     * The logotype beside TOOLBOX on one line, for a wide, short space — a page
+     * header, a mobile home screen — where the stack would have to shrink to fit
+     * the height and take the lettering with it.
+     *
+     * 5.4:1, so it wants width rather than height: comfortable from about 120px
+     * wide, and below 96px the TOOLBOX lettering closes up. Use stack-* when the
+     * space is squarer, and mark-* when it is small.
+     *
+     * `horizontal-brand` takes currentColor, which only helps where the file is
+     * inlined — through an <img>, as this component renders it, there is no
+     * inherited colour to take and it falls back to black. Pick a baked variant
+     * for an <img>.
+     */
+    "horizontal-dark": "horizontal-dark.svg",
+    "horizontal-light": "horizontal-light.svg",
+    "horizontal-violet": "horizontal-violet.svg",
+    "horizontal-brand": "horizontal-brand.svg"
   };
   function Logo({ variant = "wordmark-white", height = 40, base = "", title = "Lingo Toolbox", style, ...rest }) {
     const file = FILES[variant] || FILES["wordmark-white"];
