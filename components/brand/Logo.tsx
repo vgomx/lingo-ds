@@ -4,7 +4,8 @@ export type LogoVariant =
   | 'wordmark-white' | 'wordmark-black' | 'wordmark-violet'
   | 'icon-dark' | 'icon-light' | 'icon-violet'
   | 'mark-dark' | 'mark-light' | 'mark-violet'
-  | 'stack-dark' | 'stack-light' | 'stack-violet' | 'stack-brand';
+  | 'stack-dark' | 'stack-light' | 'stack-violet' | 'stack-brand'
+  | 'horizontal-dark' | 'horizontal-light' | 'horizontal-violet' | 'horizontal-brand';
 
 const FILES: Record<LogoVariant, string> = {
   'wordmark-white': 'logo-wordmark-white.svg',
@@ -25,6 +26,24 @@ const FILES: Record<LogoVariant, string> = {
   'stack-light': 'stack-light.svg',
   'stack-violet': 'stack-violet.svg',
   'stack-brand': 'stack-brand.svg',
+  /*
+   * The logotype beside TOOLBOX on one line, for a wide, short space — a page
+   * header, a mobile home screen — where the stack would have to shrink to fit
+   * the height and take the lettering with it.
+   *
+   * 5.4:1, so it wants width rather than height: comfortable from about 120px
+   * wide, and below 96px the TOOLBOX lettering closes up. Use stack-* when the
+   * space is squarer, and mark-* when it is small.
+   *
+   * `horizontal-brand` takes currentColor, which only helps where the file is
+   * inlined — through an <img>, as this component renders it, there is no
+   * inherited colour to take and it falls back to black. Pick a baked variant
+   * for an <img>.
+   */
+  'horizontal-dark': 'horizontal-dark.svg',
+  'horizontal-light': 'horizontal-light.svg',
+  'horizontal-violet': 'horizontal-violet.svg',
+  'horizontal-brand': 'horizontal-brand.svg',
 };
 
 export interface LogoOwnProps {
