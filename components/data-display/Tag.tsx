@@ -1,7 +1,18 @@
 import * as React from 'react';
 
+export type TagSize = 'sm' | 'md';
+
 export interface TagOwnProps {
   children?: React.ReactNode;
+  /**
+   * `md` is the touch size, for a chip you are meant to hit rather than read.
+   *
+   * Added because three callers had reached past the component and set `height`
+   * through `style` — a tag input's chips, its suggestions, and the cognate
+   * chips in the product. Three overrides of the same property is the component
+   * missing a prop.
+   */
+  size?: TagSize;
   /** Any CSS colour — pass a --tool-* or accent token, not a raw hex. */
   color?: string;
   variant?: 'soft' | 'solid';
@@ -16,13 +27,15 @@ export interface TagProps
     Omit<React.ComponentPropsWithoutRef<'span'>, keyof TagOwnProps> {}
 
 /** Content label — deck topics, part of speech, source language. Removable when interactive. */
-export function Tag({ children, color = 'var(--brand)', variant = 'soft', icon = null, onRemove, style, ...rest }: TagProps) {
+export function Tag({ children, size = 'sm', color = 'var(--brand)', variant = 'soft', icon = null, onRemove, style, ...rest }: TagProps) {
   const solid = variant === 'solid';
+  const big = size === 'md';
   return (
     <span
       style={{
-        display: 'inline-flex', alignItems: 'center', gap: 6, height: 24, padding: onRemove ? '0 6px 0 10px' : '0 10px',
-        borderRadius: 'var(--radius-tag)', fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-12)',
+        display: 'inline-flex', alignItems: 'center', gap: 6, height: big ? 32 : 24,
+        padding: big ? (onRemove ? '0 8px 0 12px' : '0 12px') : (onRemove ? '0 6px 0 10px' : '0 10px'),
+        borderRadius: 'var(--radius-tag)', fontFamily: 'var(--font-ui)', fontSize: big ? 'var(--fs-13)' : 'var(--fs-12)',
         fontWeight: 'var(--fw-bold)' as React.CSSProperties['fontWeight'], whiteSpace: 'nowrap',
         background: solid ? color : 'color-mix(in oklab, ' + color + ' 18%, transparent)',
         // The accent is tuned to read on a dark surface. On a light one the same

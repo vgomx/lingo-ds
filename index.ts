@@ -39,7 +39,7 @@ export type { DialogProps, DialogOwnProps } from './components/surfaces/Dialog';
 export { Badge } from './components/data-display/Badge';
 export type { BadgeProps, BadgeOwnProps, BadgeTone } from './components/data-display/Badge';
 export { Tag } from './components/data-display/Tag';
-export type { TagProps, TagOwnProps } from './components/data-display/Tag';
+export type { TagProps, TagOwnProps, TagSize } from './components/data-display/Tag';
 export { ProgressBar } from './components/data-display/ProgressBar';
 export type { ProgressBarProps, ProgressBarOwnProps, ProgressSegment } from './components/data-display/ProgressBar';
 export { StreakPill } from './components/data-display/StreakPill';
