@@ -12,6 +12,8 @@ export type { LogoProps, LogoOwnProps, LogoVariant } from './components/brand/Lo
 
 export { Input } from './components/forms/Input';
 export type { InputProps, InputOwnProps, InputSize } from './components/forms/Input';
+export { Textarea } from './components/forms/Textarea';
+export type { TextareaProps, TextareaOwnProps } from './components/forms/Textarea';
 export { Select } from './components/forms/Select';
 // No SelectOwnProps any more: the split existed so native <select> attributes
 // could pass through, and there is no native element under it now.
