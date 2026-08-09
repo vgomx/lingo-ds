@@ -116,9 +116,8 @@ export function TagInput({
             key={`${t}-${i}`}
             color={color}
             onRemove={disabled ? undefined : () => removeAt(i)}
-            // A 24px chip carries a 14px x, which is not a target. Taller under
-            // a thumb, the same everywhere else.
-            style={touch ? { height: 32, fontSize: 'var(--fs-13)' } : undefined}
+            // A 24px chip carries a 14px x, which is not a target.
+            size={touch ? 'md' : 'sm'}
           >
             {t}
           </Tag>
@@ -157,9 +156,7 @@ export function TagInput({
               disabled={disabled}
               style={{ border: 'none', background: 'transparent', padding: 0, cursor: 'pointer', borderRadius: 'var(--radius-tag)' }}
             >
-              <Tag color="var(--text-muted)" style={touch ? { height: 32, fontSize: 'var(--fs-13)' } : undefined}>
-                {s}
-              </Tag>
+              <Tag color="var(--text-muted)" size={touch ? 'md' : 'sm'}>{s}</Tag>
             </button>
           ))}
         </div>

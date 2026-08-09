@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: 9232aaac1e98bd1b
+// source-hash: 50f3bbe39fc83680
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -918,8 +918,9 @@ var LingoToolboxDesignSystem_898611 = (() => {
 
   // components/data-display/Tag.tsx
   var import_jsx_runtime7 = __toESM(require_react_jsx_runtime_global(), 1);
-  function Tag({ children, color = "var(--brand)", variant = "soft", icon = null, onRemove, style, ...rest }) {
+  function Tag({ children, size = "sm", color = "var(--brand)", variant = "soft", icon = null, onRemove, style, ...rest }) {
     const solid = variant === "solid";
+    const big = size === "md";
     return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(
       "span",
       {
@@ -927,11 +928,11 @@ var LingoToolboxDesignSystem_898611 = (() => {
           display: "inline-flex",
           alignItems: "center",
           gap: 6,
-          height: 24,
-          padding: onRemove ? "0 6px 0 10px" : "0 10px",
+          height: big ? 32 : 24,
+          padding: big ? onRemove ? "0 8px 0 12px" : "0 12px" : onRemove ? "0 6px 0 10px" : "0 10px",
           borderRadius: "var(--radius-tag)",
           fontFamily: "var(--font-ui)",
-          fontSize: "var(--fs-12)",
+          fontSize: big ? "var(--fs-13)" : "var(--fs-12)",
           fontWeight: "var(--fw-bold)",
           whiteSpace: "nowrap",
           background: solid ? color : "color-mix(in oklab, " + color + " 18%, transparent)",
@@ -1036,7 +1037,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
               {
                 color,
                 onRemove: disabled ? void 0 : () => removeAt(i),
-                style: touch ? { height: 32, fontSize: "var(--fs-13)" } : void 0,
+                size: touch ? "md" : "sm",
                 children: t
               },
               `${t}-${i}`
@@ -1083,7 +1084,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
             onClick: () => add(s),
             disabled,
             style: { border: "none", background: "transparent", padding: 0, cursor: "pointer", borderRadius: "var(--radius-tag)" },
-            children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Tag, { color: "var(--text-muted)", style: touch ? { height: 32, fontSize: "var(--fs-13)" } : void 0, children: s })
+            children: /* @__PURE__ */ (0, import_jsx_runtime8.jsx)(Tag, { color: "var(--text-muted)", size: touch ? "md" : "sm", children: s })
           },
           s
         ))
