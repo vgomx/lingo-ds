@@ -23,3 +23,17 @@ code,kbd,samp{font-family:var(--type-mono-font);font-size:var(--type-mono-size)}
 ::-webkit-scrollbar{width:10px;height:10px}
 ::-webkit-scrollbar-thumb{background:var(--ink-900);border-radius:var(--radius-pill);border:2px solid transparent;background-clip:content-box}
 ::-webkit-scrollbar-track{background:transparent}
+
+/* WebKit draws its own clear button inside every input[type=search] that has
+   text in it, in the system's style rather than ours — the blue ✕ that turned
+   up next to the illustration picker's own. Two clear buttons, a pixel apart,
+   doing the same thing and looking nothing alike.
+
+   The custom one stays and this one goes, rather than the other way round: the
+   native button is unstyled, cannot be sized for a finger, and Firefox does not
+   draw one at all, so relying on it would mean a field that has a clear button
+   in some browsers and none in others.
+
+   The type stays `search` — it is what the field is, and on iOS it is what puts
+   a Search key on the keyboard. */
+::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none;display:none}
