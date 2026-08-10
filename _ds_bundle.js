@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: f2823a1ec97d159b
+// source-hash: 939721ae54764e34
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -1647,8 +1647,15 @@ var LingoToolboxDesignSystem_898611 = (() => {
             display: "flex",
             alignItems: "center",
             gap: "var(--space-3)",
-            height: "var(--control-h-sm)",
-            padding: "0 10px",
+            /*
+             * The same height as an Input, because that is what it sits beside.
+             * It was --control-h-sm: 28px in a card editor whose other four
+             * fields are 36, reading as a thinner, lesser kind of field for no
+             * reason anyone could act on. On touch it stayed 28 while they
+             * stepped to 44, which is a search box a finger cannot reliably hit.
+             */
+            height: touch ? "var(--control-h-lg)" : "var(--control-h-md)",
+            padding: "0 12px",
             background: "var(--surface-input)",
             borderRadius: "var(--radius-control)",
             boxShadow: focus ? "inset 0 0 0 1.5px var(--brand), var(--ring-focus)" : "inset 0 0 0 1px var(--border)",
@@ -1675,7 +1682,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
                   outline: "none",
                   background: "transparent",
                   fontFamily: "var(--font-ui)",
-                  fontSize: fieldFontSize(touch, true),
+                  fontSize: fieldFontSize(touch),
                   fontWeight: "var(--fw-medium)",
                   color: "var(--text-strong)"
                 }

@@ -110,7 +110,14 @@ export function IllustrationPicker({
       <span
         style={{
           display: 'flex', alignItems: 'center', gap: 'var(--space-3)',
-          height: 'var(--control-h-sm)', padding: '0 10px',
+          /*
+           * The same height as an Input, because that is what it sits beside.
+           * It was --control-h-sm: 28px in a card editor whose other four
+           * fields are 36, reading as a thinner, lesser kind of field for no
+           * reason anyone could act on. On touch it stayed 28 while they
+           * stepped to 44, which is a search box a finger cannot reliably hit.
+           */
+          height: touch ? 'var(--control-h-lg)' : 'var(--control-h-md)', padding: '0 12px',
           background: 'var(--surface-input)', borderRadius: 'var(--radius-control)',
           boxShadow: focus ? 'inset 0 0 0 1.5px var(--brand), var(--ring-focus)' : 'inset 0 0 0 1px var(--border)',
           color: 'var(--text-faint)', /* faint-ok: inherited by the search Icon; the input sets its own colour */ transition: 'var(--transition-control)',
@@ -129,7 +136,7 @@ export function IllustrationPicker({
           onBlur={() => setFocus(false)}
           style={{
             flex: 1, minWidth: 0, border: 'none', outline: 'none', background: 'transparent',
-            fontFamily: 'var(--font-ui)', fontSize: fieldFontSize(touch, true),
+            fontFamily: 'var(--font-ui)', fontSize: fieldFontSize(touch),
             fontWeight: 'var(--fw-medium)' as React.CSSProperties['fontWeight'], color: 'var(--text-strong)',
           }}
         />
