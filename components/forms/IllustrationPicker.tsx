@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { Icon } from '../icon/Icon';
+import { useIsTouch } from '../../hooks/useBreakpoint';
+import { fieldFontSize } from './fieldFont';
 
 export interface IllustrationItem {
   /** Stable identity — this is what `value` and `onChange` speak in. */
@@ -59,6 +61,7 @@ export function IllustrationPicker({
 }: IllustrationPickerProps) {
   const [query, setQuery] = React.useState('');
   const [focus, setFocus] = React.useState(false);
+  const touch = useIsTouch();
   const scroller = React.useRef<HTMLDivElement>(null);
 
   const q = query.trim().toLowerCase();
@@ -126,7 +129,7 @@ export function IllustrationPicker({
           onBlur={() => setFocus(false)}
           style={{
             flex: 1, minWidth: 0, border: 'none', outline: 'none', background: 'transparent',
-            fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-13)',
+            fontFamily: 'var(--font-ui)', fontSize: fieldFontSize(touch, true),
             fontWeight: 'var(--fw-medium)' as React.CSSProperties['fontWeight'], color: 'var(--text-strong)',
           }}
         />

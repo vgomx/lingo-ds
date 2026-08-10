@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useIsTouch } from '../../hooks/useBreakpoint';
+import { fieldFontSize } from './fieldFont';
 
 export type InputSize = 'sm' | 'md' | 'lg';
 
@@ -83,7 +84,7 @@ export function Input({
           onBlur={() => setFocus(false)}
           style={{
             flex: 1, minWidth: 0, border: 'none', outline: 'none', background: 'transparent',
-            font: 'inherit', fontFamily: 'var(--font-ui)', fontSize: effective === 'sm' ? 'var(--fs-13)' : 'var(--fs-14)',
+            font: 'inherit', fontFamily: 'var(--font-ui)', fontSize: fieldFontSize(touch, effective === 'sm'),
             fontWeight: 'var(--fw-medium)' as React.CSSProperties['fontWeight'], color: 'var(--text-strong)',
           }}
           {...rest}

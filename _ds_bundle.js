@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: e2ca27e92c959061
+// source-hash: f2823a1ec97d159b
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -743,6 +743,11 @@ var LingoToolboxDesignSystem_898611 = (() => {
 
   // components/forms/Input.tsx
   var React4 = __toESM(require_react_global(), 1);
+
+  // components/forms/fieldFont.ts
+  var fieldFontSize = (touch, small = false) => touch ? "var(--fs-16)" : small ? "var(--fs-13)" : "var(--fs-14)";
+
+  // components/forms/Input.tsx
   var import_jsx_runtime5 = __toESM(require_react_jsx_runtime_global(), 1);
   var HEIGHTS = {
     sm: "var(--control-h-sm)",
@@ -811,7 +816,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
                   background: "transparent",
                   font: "inherit",
                   fontFamily: "var(--font-ui)",
-                  fontSize: effective === "sm" ? "var(--fs-13)" : "var(--fs-14)",
+                  fontSize: fieldFontSize(touch, effective === "sm"),
                   fontWeight: "var(--fw-medium)",
                   color: "var(--text-strong)"
                 },
@@ -849,6 +854,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
   }) {
     const [focus, setFocus] = React5.useState(false);
     const ref = React5.useRef(null);
+    const touch = useIsTouch();
     const fit = React5.useCallback(() => {
       const el = ref.current;
       if (!el || !autoGrow) return;
@@ -895,7 +901,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
                 background: "transparent",
                 font: "inherit",
                 fontFamily: "var(--font-ui)",
-                fontSize: "var(--fs-14)",
+                fontSize: fieldFontSize(touch),
                 fontWeight: "var(--fw-medium)",
                 color: "var(--text-strong)",
                 lineHeight: `${LINE}px`,
@@ -1066,7 +1072,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
                   background: "transparent",
                   font: "inherit",
                   fontFamily: "var(--font-ui)",
-                  fontSize: "var(--fs-14)",
+                  fontSize: fieldFontSize(touch),
                   fontWeight: "var(--fw-medium)",
                   color: "var(--text-strong)",
                   height: touch ? 32 : 24
@@ -1603,6 +1609,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
   }) {
     const [query2, setQuery] = React10.useState("");
     const [focus, setFocus] = React10.useState(false);
+    const touch = useIsTouch();
     const scroller = React10.useRef(null);
     const q = query2.trim().toLowerCase();
     const matches = React10.useMemo(() => {
@@ -1668,7 +1675,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
                   outline: "none",
                   background: "transparent",
                   fontFamily: "var(--font-ui)",
-                  fontSize: "var(--fs-13)",
+                  fontSize: fieldFontSize(touch, true),
                   fontWeight: "var(--fw-medium)",
                   color: "var(--text-strong)"
                 }
