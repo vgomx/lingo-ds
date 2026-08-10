@@ -1,7 +1,7 @@
 // Lingo Toolbox icon set — Lucide 0.x, copied from lucide-icons/lucide@main.
 // Inner markup only; stroke/fill inherit currentColor from the <svg> wrapper written by <Icon>.
 //
-// Licence: ISC (Lucide Icons and Contributors). 22 of these 76 glyphs are derived
+// Licence: ISC (Lucide Icons and Contributors). 22 of these 77 glyphs are derived
 // from Feather and additionally carry the MIT licence of Cole Bemis. Both notices
 // must travel with any copy — the full text is vendored at assets/icons/LICENSE.txt,
 // and consuming apps are expected to surface it (lingotoolbox does so in Settings).
@@ -25,6 +25,7 @@ export const ICON_PATHS: Record<string, string> = {
   "clock": "<circle cx=\"12\" cy=\"12\" r=\"10\"></circle>  <path d=\"M12 6v6l4 2\"></path>",
   "download": "<path d=\"M12 15V3\"></path>  <path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"></path>  <path d=\"m7 10 5 5 5-5\"></path>",
   "ellipsis": "<circle cx=\"12\" cy=\"12\" r=\"1\"></circle>  <circle cx=\"19\" cy=\"12\" r=\"1\"></circle>  <circle cx=\"5\" cy=\"12\" r=\"1\"></circle>",
+  "external-link": "<path d=\"M15 3h6v6\"></path>  <path d=\"M10 14 21 3\"></path>  <path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6\"></path>",
   "eye": "<path d=\"M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0\"></path>  <circle cx=\"12\" cy=\"12\" r=\"3\"></circle>",
   "eye-off": "<path d=\"M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49\"></path>  <path d=\"M14.084 14.158a3 3 0 0 1-4.242-4.242\"></path>  <path d=\"M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143\"></path>  <path d=\"m2 2 20 20\"></path>",
   "flame": "<path d=\"M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4\"></path>",

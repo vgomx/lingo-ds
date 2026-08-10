@@ -8,6 +8,15 @@ export interface EtymologyNodeOwnProps {
   language?: string;
   /** Makes the language stamp a link out to a description of that language. */
   languageHref?: string | null;
+  /**
+   * Handles a plain click on the language stamp — for showing the description
+   * in place rather than sending the reader away.
+   *
+   * The stamp stays a real anchor with a real href even when this is set, so
+   * cmd-click, middle-click and "open in new tab" keep working and the status
+   * bar still shows where it goes. Only an unmodified left click is taken.
+   */
+  onLanguageActivate?: () => void;
   /** How the word got here — "inherited from", "borrowed from". Sits before the language. */
   relation?: React.ReactNode;
   gloss?: React.ReactNode;
@@ -55,7 +64,7 @@ const SIZES = {
  * chain gives you no column of words to scan down.
  */
 export function EtymologyNode({
-  word, language, languageHref, relation, gloss, era, size = 'md',
+  word, language, languageHref, onLanguageActivate, relation, gloss, era, size = 'md',
   color = 'var(--tool-etymology)', current = false, connector = true, style, ...rest
 }: EtymologyNodeProps) {
   const s = SIZES[size];
@@ -143,6 +152,19 @@ export function EtymologyNode({
                     ? {
                       onMouseEnter: (e: React.MouseEvent<HTMLElement>) => { e.currentTarget.style.borderBottomColor = 'currentColor'; },
                       onMouseLeave: (e: React.MouseEvent<HTMLElement>) => { e.currentTarget.style.borderBottomColor = 'transparent'; },
+                    }
+                    : null),
+                  ...(onLanguageActivate
+                    ? {
+                      onClick: (e: React.MouseEvent<HTMLElement>) => {
+                        // Leave every modified click to the browser: cmd, ctrl
+                        // and shift all mean "somewhere else", and middle-click
+                        // never reaches onClick as button 0. Taking them would
+                        // make an anchor that lies about being one.
+                        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+                        e.preventDefault();
+                        onLanguageActivate();
+                      },
                     }
                     : null),
                 },

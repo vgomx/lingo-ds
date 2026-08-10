@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: b6246b9f22cc6c3c
+// source-hash: e2ca27e92c959061
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -591,6 +591,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
     "clock": '<circle cx="12" cy="12" r="10"></circle>  <path d="M12 6v6l4 2"></path>',
     "download": '<path d="M12 15V3"></path>  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>  <path d="m7 10 5 5 5-5"></path>',
     "ellipsis": '<circle cx="12" cy="12" r="1"></circle>  <circle cx="19" cy="12" r="1"></circle>  <circle cx="5" cy="12" r="1"></circle>',
+    "external-link": '<path d="M15 3h6v6"></path>  <path d="M10 14 21 3"></path>  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6"></path>',
     "eye": '<path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path>  <circle cx="12" cy="12" r="3"></circle>',
     "eye-off": '<path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"></path>  <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"></path>  <path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"></path>  <path d="m2 2 20 20"></path>',
     "flame": '<path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"></path>',
@@ -1853,8 +1854,9 @@ var LingoToolboxDesignSystem_898611 = (() => {
   var React12 = __toESM(require_react_global(), 1);
   var import_react_dom2 = __toESM(require_react_dom_global(), 1);
   var import_jsx_runtime15 = __toESM(require_react_jsx_runtime_global(), 1);
-  function Dialog({ open = true, title, description, children, footer, width = 440, onClose, style, ...rest }) {
+  function Dialog({ open = true, title, description, children, footer, width = 440, placement = "center", onClose, style, ...rest }) {
     const isMobile = useIsMobile();
+    const docked = placement === "end" && !isMobile;
     React12.useEffect(() => {
       if (!open || !onClose) return void 0;
       const onKey = (e) => {
@@ -1881,8 +1883,9 @@ var LingoToolboxDesignSystem_898611 = (() => {
             gridTemplateColumns: "minmax(0, 1fr)",
             // Full-bleed on a phone: a dialog this tall has nowhere to be inset to,
             // and the scrim around it was only ever a hairline of blur.
-            placeItems: isMobile ? "stretch" : "center",
-            padding: isMobile ? 0 : "var(--space-8)",
+            // Docked, the panel stretches to full height and sits against the end.
+            placeItems: isMobile ? "stretch" : docked ? "stretch end" : "center",
+            padding: isMobile ? 0 : docked ? 0 : "var(--space-8)",
             // Above the app's own chrome — a bottom dock or tab bar sits in the 40s
             // and was painting over the footer — and below tooltips at 50, so a
             // tooltip raised from inside a dialog still lands on top of it.
@@ -1893,7 +1896,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
           },
           onClick: onClose,
           children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("style", { children: "@keyframes lt-fade{from{opacity:0}to{opacity:1}}@keyframes lt-pop{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}@keyframes lt-sheet{from{transform:translateY(100%)}to{transform:none}}" }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("style", { children: "@keyframes lt-fade{from{opacity:0}to{opacity:1}}@keyframes lt-pop{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}@keyframes lt-sheet{from{transform:translateY(100%)}to{transform:none}}@keyframes lt-dock{from{transform:translateX(100%)}to{transform:none}}" }),
             /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
               "div",
               {
@@ -1903,14 +1906,16 @@ var LingoToolboxDesignSystem_898611 = (() => {
                 style: {
                   width: isMobile ? "100%" : width,
                   maxWidth: "100%",
-                  height: isMobile ? "100%" : void 0,
+                  height: isMobile || docked ? "100%" : void 0,
                   maxHeight: "100%",
                   display: "flex",
                   flexDirection: "column",
                   background: "var(--surface-app)",
-                  borderRadius: isMobile ? 0 : "var(--radius-dialog)",
+                  // Docked, only the leading corners are free to round — the other two
+                  // are against the edge of the screen.
+                  borderRadius: isMobile ? 0 : docked ? "var(--radius-dialog) 0 0 var(--radius-dialog)" : "var(--radius-dialog)",
                   boxShadow: isMobile ? "none" : "var(--shadow-xl)",
-                  animation: isMobile ? "lt-sheet var(--dur-slow) var(--ease-out)" : "lt-pop var(--dur-slow) var(--ease-spring)",
+                  animation: isMobile ? "lt-sheet var(--dur-slow) var(--ease-out)" : docked ? "lt-dock var(--dur-slow) var(--ease-out)" : "lt-pop var(--dur-slow) var(--ease-spring)",
                   overflow: "hidden",
                   ...style
                 },
@@ -1943,7 +1948,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
                       ]
                     }
                   ),
-                  children && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { style: { padding: "0 var(--pad-dialog)", overflowY: "auto", flex: isMobile ? 1 : void 0, minHeight: 0 }, children }),
+                  children && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { style: { padding: "0 var(--pad-dialog)", overflowY: "auto", flex: isMobile || docked ? 1 : void 0, minHeight: 0 }, children }),
                   footer && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
                     "div",
                     {
@@ -2887,6 +2892,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
     word,
     language,
     languageHref,
+    onLanguageActivate,
     relation,
     gloss,
     era,
@@ -2969,6 +2975,13 @@ var LingoToolboxDesignSystem_898611 = (() => {
                   },
                   onMouseLeave: (e) => {
                     e.currentTarget.style.borderBottomColor = "transparent";
+                  }
+                } : null,
+                ...onLanguageActivate ? {
+                  onClick: (e) => {
+                    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+                    e.preventDefault();
+                    onLanguageActivate();
                   }
                 } : null
               },

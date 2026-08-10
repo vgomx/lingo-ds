@@ -34,7 +34,7 @@ export type {
 export { Card } from './components/surfaces/Card';
 export type { CardProps, CardOwnProps } from './components/surfaces/Card';
 export { Dialog } from './components/surfaces/Dialog';
-export type { DialogProps, DialogOwnProps } from './components/surfaces/Dialog';
+export type { DialogProps, DialogOwnProps, DialogPlacement } from './components/surfaces/Dialog';
 
 export { Badge } from './components/data-display/Badge';
 export type { BadgeProps, BadgeOwnProps, BadgeTone } from './components/data-display/Badge';
