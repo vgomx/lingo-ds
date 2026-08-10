@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: 50f3bbe39fc83680
+// source-hash: b6246b9f22cc6c3c
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -49,13 +49,13 @@ var LingoToolboxDesignSystem_898611 = (() => {
   var require_react_global = __commonJS({
     "scripts/react-global.cjs"(exports, module) {
       "use strict";
-      var React18 = globalThis.React;
-      if (!React18) {
+      var React19 = globalThis.React;
+      if (!React19) {
         throw new Error(
           "lingo-ds browser bundle: window.React is missing. Load React before this script \u2014 the bundle deliberately does not carry its own copy."
         );
       }
-      module.exports = React18;
+      module.exports = React19;
     }
   });
 
@@ -63,17 +63,17 @@ var LingoToolboxDesignSystem_898611 = (() => {
   var require_react_jsx_runtime_global = __commonJS({
     "scripts/react-jsx-runtime-global.cjs"(exports, module) {
       "use strict";
-      var React18 = globalThis.React;
-      if (!React18) {
+      var React19 = globalThis.React;
+      if (!React19) {
         throw new Error(
           "lingo-ds browser bundle: window.React is missing. Load React before this script \u2014 the bundle deliberately does not carry its own copy."
         );
       }
       function jsx29(type, props, key) {
-        return React18.createElement(type, key === void 0 || key === null ? props : { ...props, key });
+        return React19.createElement(type, key === void 0 || key === null ? props : { ...props, key });
       }
       module.exports = {
-        Fragment: React18.Fragment,
+        Fragment: React19.Fragment,
         jsx: jsx29,
         jsxs: jsx29,
         jsxDEV: jsx29
@@ -2877,20 +2877,108 @@ var LingoToolboxDesignSystem_898611 = (() => {
   }
 
   // components/learning/EtymologyNode.tsx
+  var React18 = __toESM(require_react_global(), 1);
   var import_jsx_runtime28 = __toESM(require_react_jsx_runtime_global(), 1);
-  function EtymologyNode({ word, language, gloss, era, color = "var(--tool-etymology)", current = false, connector = true, style, ...rest }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { style: { display: "flex", gap: "var(--space-5)", ...style }, ...rest, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { style: { display: "flex", flexDirection: "column", alignItems: "center", flex: "none", width: 14 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { style: { width: 12, height: 12, borderRadius: "50%", background: current ? color : "var(--surface-raised)", boxShadow: current ? "0 0 0 4px color-mix(in oklab," + color + " 22%, transparent)" : "inset 0 0 0 1.5px var(--border-strong)", marginTop: 6, flex: "none" } }),
-        connector && /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { style: { flex: 1, width: 2, background: "linear-gradient(to bottom,var(--border-strong),transparent)", marginTop: 4 } })
+  var SIZES5 = {
+    md: { rail: 14, dot: 12, dotTop: 6, gap: "var(--space-5)", pad: "var(--space-7)", word: "var(--fs-24)", stamp: "var(--fs-11)", relation: "var(--fs-13)", gloss: "var(--fs-14)", line: 2 },
+    sm: { rail: 10, dot: 8, dotTop: 5, gap: "var(--space-4)", pad: "var(--space-5)", word: "var(--fs-15)", stamp: "var(--fs-10)", relation: "var(--fs-12)", gloss: "var(--fs-13)", line: 1.5 }
+  };
+  function EtymologyNode({
+    word,
+    language,
+    languageHref,
+    relation,
+    gloss,
+    era,
+    size = "md",
+    color = "var(--tool-etymology)",
+    current = false,
+    connector = true,
+    style,
+    ...rest
+  }) {
+    const s = SIZES5[size];
+    return /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { style: { display: "flex", gap: s.gap, ...style }, ...rest, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { style: { display: "flex", flexDirection: "column", alignItems: "center", flex: "none", width: s.rail }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+          "span",
+          {
+            style: {
+              width: s.dot,
+              height: s.dot,
+              borderRadius: "50%",
+              marginTop: s.dotTop,
+              flex: "none",
+              background: current ? color : "var(--surface-raised)",
+              // A ring rather than a filled dot for the steps, so the word being
+              // looked up is the only solid mark on the line and you can find it
+              // without reading anything.
+              boxShadow: current ? `0 0 0 4px color-mix(in oklab, ${color} 22%, transparent)` : "inset 0 0 0 1.5px var(--border-strong)"
+            }
+          }
+        ),
+        connector && // Fading rather than flat: the chain runs out of evidence as it goes
+        // back, and a line that stops being certain says so.
+        /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { style: { flex: 1, width: s.line, background: "linear-gradient(to bottom,var(--border-strong),transparent)", marginTop: 4 } })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { style: { paddingBottom: connector ? "var(--space-7)" : 0, minWidth: 0 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { style: { display: "flex", alignItems: "baseline", gap: "var(--space-4)", flexWrap: "wrap" }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { style: { fontFamily: "var(--font-display)", fontSize: "var(--fs-24)", fontWeight: "var(--fw-black)", color: current ? "var(--text-strong)" : "var(--text-body)", lineHeight: 1.1 }, children: word }),
-          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { style: { fontFamily: "var(--font-ui)", fontSize: "var(--fs-11)", fontWeight: "var(--fw-black)", letterSpacing: "var(--ls-caps)", textTransform: "uppercase", color }, children: language }),
-          era && /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { style: { fontFamily: "var(--font-mono)", fontSize: "var(--fs-11)", color: "var(--text-muted)" }, children: era })
+      /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { style: { paddingBottom: connector ? s.pad : 0, minWidth: 0 }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { style: { display: "flex", alignItems: "baseline", gap: "var(--space-3)", flexWrap: "wrap" }, children: [
+          word && /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+            "span",
+            {
+              style: {
+                fontFamily: "var(--font-display)",
+                fontSize: s.word,
+                fontWeight: "var(--fw-black)",
+                color: current ? "var(--text-strong)" : "var(--text-body)",
+                lineHeight: 1.15,
+                wordBreak: "break-word",
+                minWidth: 0
+              },
+              children: word
+            }
+          ),
+          word && (relation || language || era) ? " " : null,
+          (relation || language || era) && /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("span", { style: { minWidth: 0 }, children: [
+            relation && /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { style: { fontFamily: "var(--font-ui)", fontSize: s.relation, color: "var(--text-muted)" }, children: relation }),
+            relation && language ? " " : null,
+            language && React18.createElement(
+              languageHref ? "a" : "span",
+              {
+                ...languageHref ? { href: languageHref, target: "_blank", rel: "noopener noreferrer" } : null,
+                style: {
+                  fontFamily: "var(--font-ui)",
+                  fontSize: s.stamp,
+                  fontWeight: "var(--fw-black)",
+                  letterSpacing: "var(--ls-caps)",
+                  textTransform: "uppercase",
+                  color,
+                  // Underlined on hover only. A chain five steps deep would
+                  // otherwise be five underlined stamps, which reads as the
+                  // links being the content rather than the words.
+                  textDecoration: "none",
+                  borderBottom: languageHref ? "1px solid transparent" : void 0,
+                  cursor: languageHref ? "pointer" : void 0,
+                  // The phrase may wrap; the language name itself should not
+                  // be split down the middle when it does.
+                  whiteSpace: "nowrap"
+                },
+                ...languageHref ? {
+                  onMouseEnter: (e) => {
+                    e.currentTarget.style.borderBottomColor = "currentColor";
+                  },
+                  onMouseLeave: (e) => {
+                    e.currentTarget.style.borderBottomColor = "transparent";
+                  }
+                } : null
+              },
+              language
+            ),
+            (relation || language) && era ? " " : null,
+            era && /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { style: { fontFamily: "var(--font-mono)", fontSize: s.stamp, color: "var(--text-muted)" }, children: era })
+          ] })
         ] }),
-        gloss && /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("p", { style: { margin: "4px 0 0", fontFamily: "var(--font-ui)", fontSize: "var(--fs-14)", color: "var(--text-muted)", lineHeight: "var(--lh-relaxed)" }, children: gloss })
+        gloss && /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("p", { style: { margin: "4px 0 0", fontFamily: "var(--font-ui)", fontSize: s.gloss, color: "var(--text-muted)", lineHeight: "var(--lh-relaxed)" }, children: gloss })
       ] })
     ] });
   }

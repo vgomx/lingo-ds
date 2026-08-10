@@ -75,4 +75,4 @@ export type {
 export { ReviewRating, DEFAULT_GRADES } from './components/learning/ReviewRating';
 export type { ReviewRatingProps, ReviewRatingOwnProps, ReviewGrade } from './components/learning/ReviewRating';
 export { EtymologyNode } from './components/learning/EtymologyNode';
-export type { EtymologyNodeProps, EtymologyNodeOwnProps } from './components/learning/EtymologyNode';
+export type { EtymologyNodeProps, EtymologyNodeOwnProps, EtymologyNodeSize } from './components/learning/EtymologyNode';
