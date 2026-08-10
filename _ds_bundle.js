@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: 939721ae54764e34
+// source-hash: 4a7df184d78de5ae
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -1639,7 +1639,27 @@ var LingoToolboxDesignSystem_898611 = (() => {
     }, [q]);
     const cell = glyphSize + 12;
     return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: { display: "flex", flexDirection: "column", gap: "var(--space-3)", ...style }, ...rest, children: [
-      label && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { style: { fontFamily: "var(--font-ui)", fontSize: "var(--fs-12)", fontWeight: "var(--fw-black)", letterSpacing: "var(--ls-caps)", textTransform: "uppercase", color: "var(--text-muted)" }, children: label }),
+      (label || value) && /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { style: { display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: "var(--space-4)" }, children: [
+        label && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { style: { fontFamily: "var(--font-ui)", fontSize: "var(--fs-12)", fontWeight: "var(--fw-black)", letterSpacing: "var(--ls-caps)", textTransform: "uppercase", color: "var(--text-muted)" }, children: label }),
+        value && onChange && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+          "button",
+          {
+            type: "button",
+            onClick: () => onChange(null),
+            style: {
+              border: "none",
+              background: "transparent",
+              cursor: "pointer",
+              padding: "2px 0",
+              fontFamily: "var(--font-ui)",
+              fontSize: "var(--fs-12)",
+              fontWeight: "var(--fw-semibold)",
+              color: "var(--text-link)"
+            },
+            children: clearLabel
+          }
+        )
+      ] }),
       /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
         "span",
         {
@@ -1688,26 +1708,26 @@ var LingoToolboxDesignSystem_898611 = (() => {
                 }
               }
             ),
-            value && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+            query2 && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
               "button",
               {
                 type: "button",
-                onClick: () => onChange && onChange(null),
-                title: clearLabel,
-                "aria-label": clearLabel,
+                onClick: () => setQuery(""),
+                title: "Clear search",
+                "aria-label": "Clear search",
                 style: {
                   display: "grid",
                   placeItems: "center",
-                  width: 22,
-                  height: 22,
                   flex: "none",
+                  width: touch ? 32 : 26,
+                  height: touch ? 32 : 26,
                   border: "none",
                   borderRadius: "var(--radius-pill)",
                   cursor: "pointer",
                   background: "var(--surface-raised)",
                   color: "var(--text-muted)"
                 },
-                children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Icon, { name: "x", size: 13 })
+                children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Icon, { name: "x", size: touch ? 16 : 14 })
               }
             )
           ]

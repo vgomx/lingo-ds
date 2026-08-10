@@ -101,9 +101,41 @@ export function IllustrationPicker({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)', ...style }} {...rest}>
-      {label && (
-        <span style={{ fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-12)', fontWeight: 'var(--fw-black)' as React.CSSProperties['fontWeight'], letterSpacing: 'var(--ls-caps)', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
-          {label}
+      {(label || value) && (
+        <span style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 'var(--space-4)' }}>
+          {label && (
+            <span style={{ fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-12)', fontWeight: 'var(--fw-black)' as React.CSSProperties['fontWeight'], letterSpacing: 'var(--ls-caps)', textTransform: 'uppercase', color: 'var(--text-muted)' }}>
+              {label}
+            </span>
+          )}
+          {/*
+            * Clearing the selection belongs up here with the thing it clears,
+            * not inside the search box.
+            *
+            * It used to be a ✕ at the end of the search field, which is the one
+            * place that glyph already means something else: inside a search
+            * input it means "clear what I typed". It also appeared and
+            * disappeared with the *selection*, so the usual sight of it was a ✕
+            * sitting in an empty box next to placeholder text — and pressing it
+            * to clear a search threw away the illustration instead.
+            *
+            * Words rather than a glyph, because this is the rarer action and it
+            * is worth being unambiguous about which of the two things it drops.
+            */}
+          {value && onChange && (
+            <button
+              type="button"
+              onClick={() => onChange(null)}
+              style={{
+                border: 'none', background: 'transparent', cursor: 'pointer', padding: '2px 0',
+                fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-12)',
+                fontWeight: 'var(--fw-semibold)' as React.CSSProperties['fontWeight'],
+                color: 'var(--text-link)',
+              }}
+            >
+              {clearLabel}
+            </button>
+          )}
         </span>
       )}
 
@@ -140,19 +172,24 @@ export function IllustrationPicker({
             fontWeight: 'var(--fw-medium)' as React.CSSProperties['fontWeight'], color: 'var(--text-strong)',
           }}
         />
-        {value && (
+        {/* Now what a ✕ in a search field is expected to be: it clears the
+            query, and it is only here when there is a query to clear. Bigger
+            than the 22px it was, which was a small target in a field that is
+            44px tall on touch. */}
+        {query && (
           <button
             type="button"
-            onClick={() => onChange && onChange(null)}
-            title={clearLabel}
-            aria-label={clearLabel}
+            onClick={() => setQuery('')}
+            title="Clear search"
+            aria-label="Clear search"
             style={{
-              display: 'grid', placeItems: 'center', width: 22, height: 22, flex: 'none',
+              display: 'grid', placeItems: 'center', flex: 'none',
+              width: touch ? 32 : 26, height: touch ? 32 : 26,
               border: 'none', borderRadius: 'var(--radius-pill)', cursor: 'pointer',
               background: 'var(--surface-raised)', color: 'var(--text-muted)',
             }}
           >
-            <Icon name="x" size={13} />
+            <Icon name="x" size={touch ? 16 : 14} />
           </button>
         )}
       </span>
