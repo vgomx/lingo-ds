@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Tag } from '../data-display/Tag';
 import { useIsTouch } from '../../hooks/useBreakpoint';
+import { fieldFontSize } from './fieldFont';
 
 export interface TagInputOwnProps {
   value?: string[];
@@ -136,7 +137,7 @@ export function TagInput({
           onBlur={() => { setFocus(false); add(draft); }}
           style={{
             flex: 1, minWidth: 80, border: 'none', outline: 'none', background: 'transparent',
-            font: 'inherit', fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-14)',
+            font: 'inherit', fontFamily: 'var(--font-ui)', fontSize: fieldFontSize(touch),
             fontWeight: 'var(--fw-medium)' as React.CSSProperties['fontWeight'],
             color: 'var(--text-strong)', height: touch ? 32 : 24,
           }}

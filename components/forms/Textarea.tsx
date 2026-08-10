@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useIsTouch } from '../../hooks/useBreakpoint';
+import { fieldFontSize } from './fieldFont';
 
 export interface TextareaOwnProps {
   value?: string;
@@ -53,6 +55,7 @@ export function Textarea({
 }: TextareaProps) {
   const [focus, setFocus] = React.useState(false);
   const ref = React.useRef<HTMLTextAreaElement>(null);
+  const touch = useIsTouch();
 
   /*
    * Grow to fit, measured rather than counted.
@@ -105,7 +108,7 @@ export function Textarea({
           onBlur={() => setFocus(false)}
           style={{
             flex: 1, minWidth: 0, border: 'none', outline: 'none', background: 'transparent',
-            font: 'inherit', fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-14)',
+            font: 'inherit', fontFamily: 'var(--font-ui)', fontSize: fieldFontSize(touch),
             fontWeight: 'var(--fw-medium)' as React.CSSProperties['fontWeight'], color: 'var(--text-strong)',
             lineHeight: `${LINE}px`,
             // Height comes from `rows` and then from the content; the handle is

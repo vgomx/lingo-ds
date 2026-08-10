@@ -146,8 +146,25 @@ export function Tooltip({ children, label, side = 'top', shortcut, style, ...res
   return (
     <span
       ref={anchorRef}
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
+      /*
+       * Pointer events gated on the kind of pointer, rather than mouse events.
+       *
+       * A touch fires mouseenter too, so on an iPhone every tap on a control
+       * wearing one of these left a dark label hanging over the screen until
+       * something else was tapped — on a device that cannot hover, showing a
+       * hover hint, for an action the tap had already carried out.
+       *
+       * The pointer type rather than a touch-capability check, because a laptop
+       * with a touchscreen is both: it should still show these to the mouse and
+       * still stay quiet under a finger. `pen` counts as hovering — a stylus
+       * reports position before it lands.
+       */
+      onPointerEnter={(e) => { if (e.pointerType !== 'touch') setOpen(true); }}
+      onPointerLeave={() => setOpen(false)}
+      // A tap that becomes a click on a hybrid device, or a mouse press on the
+      // control itself: either way the label has served its purpose and the
+      // thing it labelled is happening.
+      onPointerDown={() => setOpen(false)}
       style={{ position: 'relative', display: 'inline-flex', ...style }}
       {...rest}
     >

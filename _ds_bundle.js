@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: 50f3bbe39fc83680
+// source-hash: c2ffdd092c8c9928
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -49,13 +49,13 @@ var LingoToolboxDesignSystem_898611 = (() => {
   var require_react_global = __commonJS({
     "scripts/react-global.cjs"(exports, module) {
       "use strict";
-      var React18 = globalThis.React;
-      if (!React18) {
+      var React19 = globalThis.React;
+      if (!React19) {
         throw new Error(
           "lingo-ds browser bundle: window.React is missing. Load React before this script \u2014 the bundle deliberately does not carry its own copy."
         );
       }
-      module.exports = React18;
+      module.exports = React19;
     }
   });
 
@@ -63,17 +63,17 @@ var LingoToolboxDesignSystem_898611 = (() => {
   var require_react_jsx_runtime_global = __commonJS({
     "scripts/react-jsx-runtime-global.cjs"(exports, module) {
       "use strict";
-      var React18 = globalThis.React;
-      if (!React18) {
+      var React19 = globalThis.React;
+      if (!React19) {
         throw new Error(
           "lingo-ds browser bundle: window.React is missing. Load React before this script \u2014 the bundle deliberately does not carry its own copy."
         );
       }
       function jsx29(type, props, key) {
-        return React18.createElement(type, key === void 0 || key === null ? props : { ...props, key });
+        return React19.createElement(type, key === void 0 || key === null ? props : { ...props, key });
       }
       module.exports = {
-        Fragment: React18.Fragment,
+        Fragment: React19.Fragment,
         jsx: jsx29,
         jsxs: jsx29,
         jsxDEV: jsx29
@@ -591,6 +591,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
     "clock": '<circle cx="12" cy="12" r="10"></circle>  <path d="M12 6v6l4 2"></path>',
     "download": '<path d="M12 15V3"></path>  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>  <path d="m7 10 5 5 5-5"></path>',
     "ellipsis": '<circle cx="12" cy="12" r="1"></circle>  <circle cx="19" cy="12" r="1"></circle>  <circle cx="5" cy="12" r="1"></circle>',
+    "external-link": '<path d="M15 3h6v6"></path>  <path d="M10 14 21 3"></path>  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h6"></path>',
     "eye": '<path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path>  <circle cx="12" cy="12" r="3"></circle>',
     "eye-off": '<path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"></path>  <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"></path>  <path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"></path>  <path d="m2 2 20 20"></path>',
     "flame": '<path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"></path>',
@@ -742,6 +743,11 @@ var LingoToolboxDesignSystem_898611 = (() => {
 
   // components/forms/Input.tsx
   var React4 = __toESM(require_react_global(), 1);
+
+  // components/forms/fieldFont.ts
+  var fieldFontSize = (touch, small = false) => touch ? "var(--fs-16)" : small ? "var(--fs-13)" : "var(--fs-14)";
+
+  // components/forms/Input.tsx
   var import_jsx_runtime5 = __toESM(require_react_jsx_runtime_global(), 1);
   var HEIGHTS = {
     sm: "var(--control-h-sm)",
@@ -810,7 +816,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
                   background: "transparent",
                   font: "inherit",
                   fontFamily: "var(--font-ui)",
-                  fontSize: effective === "sm" ? "var(--fs-13)" : "var(--fs-14)",
+                  fontSize: fieldFontSize(touch, effective === "sm"),
                   fontWeight: "var(--fw-medium)",
                   color: "var(--text-strong)"
                 },
@@ -848,6 +854,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
   }) {
     const [focus, setFocus] = React5.useState(false);
     const ref = React5.useRef(null);
+    const touch = useIsTouch();
     const fit = React5.useCallback(() => {
       const el = ref.current;
       if (!el || !autoGrow) return;
@@ -894,7 +901,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
                 background: "transparent",
                 font: "inherit",
                 fontFamily: "var(--font-ui)",
-                fontSize: "var(--fs-14)",
+                fontSize: fieldFontSize(touch),
                 fontWeight: "var(--fw-medium)",
                 color: "var(--text-strong)",
                 lineHeight: `${LINE}px`,
@@ -1065,7 +1072,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
                   background: "transparent",
                   font: "inherit",
                   fontFamily: "var(--font-ui)",
-                  fontSize: "var(--fs-14)",
+                  fontSize: fieldFontSize(touch),
                   fontWeight: "var(--fw-medium)",
                   color: "var(--text-strong)",
                   height: touch ? 32 : 24
@@ -1602,6 +1609,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
   }) {
     const [query2, setQuery] = React10.useState("");
     const [focus, setFocus] = React10.useState(false);
+    const touch = useIsTouch();
     const scroller = React10.useRef(null);
     const q = query2.trim().toLowerCase();
     const matches = React10.useMemo(() => {
@@ -1631,7 +1639,27 @@ var LingoToolboxDesignSystem_898611 = (() => {
     }, [q]);
     const cell = glyphSize + 12;
     return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { style: { display: "flex", flexDirection: "column", gap: "var(--space-3)", ...style }, ...rest, children: [
-      label && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { style: { fontFamily: "var(--font-ui)", fontSize: "var(--fs-12)", fontWeight: "var(--fw-black)", letterSpacing: "var(--ls-caps)", textTransform: "uppercase", color: "var(--text-muted)" }, children: label }),
+      (label || value) && /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("span", { style: { display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: "var(--space-4)" }, children: [
+        label && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("span", { style: { fontFamily: "var(--font-ui)", fontSize: "var(--fs-12)", fontWeight: "var(--fw-black)", letterSpacing: "var(--ls-caps)", textTransform: "uppercase", color: "var(--text-muted)" }, children: label }),
+        value && onChange && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+          "button",
+          {
+            type: "button",
+            onClick: () => onChange(null),
+            style: {
+              border: "none",
+              background: "transparent",
+              cursor: "pointer",
+              padding: "2px 0",
+              fontFamily: "var(--font-ui)",
+              fontSize: "var(--fs-12)",
+              fontWeight: "var(--fw-semibold)",
+              color: "var(--text-link)"
+            },
+            children: clearLabel
+          }
+        )
+      ] }),
       /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
         "span",
         {
@@ -1639,8 +1667,15 @@ var LingoToolboxDesignSystem_898611 = (() => {
             display: "flex",
             alignItems: "center",
             gap: "var(--space-3)",
-            height: "var(--control-h-sm)",
-            padding: "0 10px",
+            /*
+             * The same height as an Input, because that is what it sits beside.
+             * It was --control-h-sm: 28px in a card editor whose other four
+             * fields are 36, reading as a thinner, lesser kind of field for no
+             * reason anyone could act on. On touch it stayed 28 while they
+             * stepped to 44, which is a search box a finger cannot reliably hit.
+             */
+            height: touch ? "var(--control-h-lg)" : "var(--control-h-md)",
+            padding: "0 12px",
             background: "var(--surface-input)",
             borderRadius: "var(--radius-control)",
             boxShadow: focus ? "inset 0 0 0 1.5px var(--brand), var(--ring-focus)" : "inset 0 0 0 1px var(--border)",
@@ -1667,32 +1702,32 @@ var LingoToolboxDesignSystem_898611 = (() => {
                   outline: "none",
                   background: "transparent",
                   fontFamily: "var(--font-ui)",
-                  fontSize: "var(--fs-13)",
+                  fontSize: fieldFontSize(touch),
                   fontWeight: "var(--fw-medium)",
                   color: "var(--text-strong)"
                 }
               }
             ),
-            value && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+            query2 && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
               "button",
               {
                 type: "button",
-                onClick: () => onChange && onChange(null),
-                title: clearLabel,
-                "aria-label": clearLabel,
+                onClick: () => setQuery(""),
+                title: touch ? void 0 : "Clear search",
+                "aria-label": "Clear search",
                 style: {
                   display: "grid",
                   placeItems: "center",
-                  width: 22,
-                  height: 22,
                   flex: "none",
+                  width: touch ? 32 : 26,
+                  height: touch ? 32 : 26,
                   border: "none",
                   borderRadius: "var(--radius-pill)",
                   cursor: "pointer",
                   background: "var(--surface-raised)",
                   color: "var(--text-muted)"
                 },
-                children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Icon, { name: "x", size: 13 })
+                children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(Icon, { name: "x", size: touch ? 16 : 14 })
               }
             )
           ]
@@ -1751,7 +1786,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
                     "button",
                     {
                       type: "button",
-                      title: it.name,
+                      title: touch ? void 0 : it.name,
                       "aria-label": it.name,
                       "aria-pressed": selected,
                       onClick: () => onChange && onChange(selected ? null : it.id),
@@ -1853,8 +1888,9 @@ var LingoToolboxDesignSystem_898611 = (() => {
   var React12 = __toESM(require_react_global(), 1);
   var import_react_dom2 = __toESM(require_react_dom_global(), 1);
   var import_jsx_runtime15 = __toESM(require_react_jsx_runtime_global(), 1);
-  function Dialog({ open = true, title, description, children, footer, width = 440, onClose, style, ...rest }) {
+  function Dialog({ open = true, title, description, children, footer, width = 440, placement = "center", onClose, style, ...rest }) {
     const isMobile = useIsMobile();
+    const docked = placement === "end" && !isMobile;
     React12.useEffect(() => {
       if (!open || !onClose) return void 0;
       const onKey = (e) => {
@@ -1881,8 +1917,9 @@ var LingoToolboxDesignSystem_898611 = (() => {
             gridTemplateColumns: "minmax(0, 1fr)",
             // Full-bleed on a phone: a dialog this tall has nowhere to be inset to,
             // and the scrim around it was only ever a hairline of blur.
-            placeItems: isMobile ? "stretch" : "center",
-            padding: isMobile ? 0 : "var(--space-8)",
+            // Docked, the panel stretches to full height and sits against the end.
+            placeItems: isMobile ? "stretch" : docked ? "stretch end" : "center",
+            padding: isMobile ? 0 : docked ? 0 : "var(--space-8)",
             // Above the app's own chrome — a bottom dock or tab bar sits in the 40s
             // and was painting over the footer — and below tooltips at 50, so a
             // tooltip raised from inside a dialog still lands on top of it.
@@ -1893,7 +1930,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
           },
           onClick: onClose,
           children: [
-            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("style", { children: "@keyframes lt-fade{from{opacity:0}to{opacity:1}}@keyframes lt-pop{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}@keyframes lt-sheet{from{transform:translateY(100%)}to{transform:none}}" }),
+            /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("style", { children: "@keyframes lt-fade{from{opacity:0}to{opacity:1}}@keyframes lt-pop{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}@keyframes lt-sheet{from{transform:translateY(100%)}to{transform:none}}@keyframes lt-dock{from{transform:translateX(100%)}to{transform:none}}" }),
             /* @__PURE__ */ (0, import_jsx_runtime15.jsxs)(
               "div",
               {
@@ -1903,14 +1940,16 @@ var LingoToolboxDesignSystem_898611 = (() => {
                 style: {
                   width: isMobile ? "100%" : width,
                   maxWidth: "100%",
-                  height: isMobile ? "100%" : void 0,
+                  height: isMobile || docked ? "100%" : void 0,
                   maxHeight: "100%",
                   display: "flex",
                   flexDirection: "column",
                   background: "var(--surface-app)",
-                  borderRadius: isMobile ? 0 : "var(--radius-dialog)",
+                  // Docked, only the leading corners are free to round — the other two
+                  // are against the edge of the screen.
+                  borderRadius: isMobile ? 0 : docked ? "var(--radius-dialog) 0 0 var(--radius-dialog)" : "var(--radius-dialog)",
                   boxShadow: isMobile ? "none" : "var(--shadow-xl)",
-                  animation: isMobile ? "lt-sheet var(--dur-slow) var(--ease-out)" : "lt-pop var(--dur-slow) var(--ease-spring)",
+                  animation: isMobile ? "lt-sheet var(--dur-slow) var(--ease-out)" : docked ? "lt-dock var(--dur-slow) var(--ease-out)" : "lt-pop var(--dur-slow) var(--ease-spring)",
                   overflow: "hidden",
                   ...style
                 },
@@ -1943,7 +1982,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
                       ]
                     }
                   ),
-                  children && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { style: { padding: "0 var(--pad-dialog)", overflowY: "auto", flex: isMobile ? 1 : void 0, minHeight: 0 }, children }),
+                  children && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)("div", { style: { padding: "0 var(--pad-dialog)", overflowY: "auto", flex: isMobile || docked ? 1 : void 0, minHeight: 0 }, children }),
                   footer && /* @__PURE__ */ (0, import_jsx_runtime15.jsx)(
                     "div",
                     {
@@ -2537,8 +2576,11 @@ var LingoToolboxDesignSystem_898611 = (() => {
       "span",
       {
         ref: anchorRef,
-        onMouseEnter: () => setOpen(true),
-        onMouseLeave: () => setOpen(false),
+        onPointerEnter: (e) => {
+          if (e.pointerType !== "touch") setOpen(true);
+        },
+        onPointerLeave: () => setOpen(false),
+        onPointerDown: () => setOpen(false),
         style: { position: "relative", display: "inline-flex", ...style },
         ...rest,
         children: [
@@ -2877,20 +2919,116 @@ var LingoToolboxDesignSystem_898611 = (() => {
   }
 
   // components/learning/EtymologyNode.tsx
+  var React18 = __toESM(require_react_global(), 1);
   var import_jsx_runtime28 = __toESM(require_react_jsx_runtime_global(), 1);
-  function EtymologyNode({ word, language, gloss, era, color = "var(--tool-etymology)", current = false, connector = true, style, ...rest }) {
-    return /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { style: { display: "flex", gap: "var(--space-5)", ...style }, ...rest, children: [
-      /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { style: { display: "flex", flexDirection: "column", alignItems: "center", flex: "none", width: 14 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { style: { width: 12, height: 12, borderRadius: "50%", background: current ? color : "var(--surface-raised)", boxShadow: current ? "0 0 0 4px color-mix(in oklab," + color + " 22%, transparent)" : "inset 0 0 0 1.5px var(--border-strong)", marginTop: 6, flex: "none" } }),
-        connector && /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { style: { flex: 1, width: 2, background: "linear-gradient(to bottom,var(--border-strong),transparent)", marginTop: 4 } })
+  var SIZES5 = {
+    md: { rail: 14, dot: 12, dotTop: 6, gap: "var(--space-5)", pad: "var(--space-7)", word: "var(--fs-24)", stamp: "var(--fs-11)", relation: "var(--fs-13)", gloss: "var(--fs-14)", line: 2 },
+    sm: { rail: 10, dot: 8, dotTop: 5, gap: "var(--space-4)", pad: "var(--space-5)", word: "var(--fs-15)", stamp: "var(--fs-10)", relation: "var(--fs-12)", gloss: "var(--fs-13)", line: 1.5 }
+  };
+  function EtymologyNode({
+    word,
+    language,
+    languageHref,
+    onLanguageActivate,
+    relation,
+    gloss,
+    era,
+    size = "md",
+    color = "var(--tool-etymology)",
+    current = false,
+    connector = true,
+    style,
+    ...rest
+  }) {
+    const s = SIZES5[size];
+    return /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { style: { display: "flex", gap: s.gap, ...style }, ...rest, children: [
+      /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { style: { display: "flex", flexDirection: "column", alignItems: "center", flex: "none", width: s.rail }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+          "span",
+          {
+            style: {
+              width: s.dot,
+              height: s.dot,
+              borderRadius: "50%",
+              marginTop: s.dotTop,
+              flex: "none",
+              background: current ? color : "var(--surface-raised)",
+              // A ring rather than a filled dot for the steps, so the word being
+              // looked up is the only solid mark on the line and you can find it
+              // without reading anything.
+              boxShadow: current ? `0 0 0 4px color-mix(in oklab, ${color} 22%, transparent)` : "inset 0 0 0 1.5px var(--border-strong)"
+            }
+          }
+        ),
+        connector && // Fading rather than flat: the chain runs out of evidence as it goes
+        // back, and a line that stops being certain says so.
+        /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { style: { flex: 1, width: s.line, background: "linear-gradient(to bottom,var(--border-strong),transparent)", marginTop: 4 } })
       ] }),
-      /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { style: { paddingBottom: connector ? "var(--space-7)" : 0, minWidth: 0 }, children: [
-        /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { style: { display: "flex", alignItems: "baseline", gap: "var(--space-4)", flexWrap: "wrap" }, children: [
-          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { style: { fontFamily: "var(--font-display)", fontSize: "var(--fs-24)", fontWeight: "var(--fw-black)", color: current ? "var(--text-strong)" : "var(--text-body)", lineHeight: 1.1 }, children: word }),
-          /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { style: { fontFamily: "var(--font-ui)", fontSize: "var(--fs-11)", fontWeight: "var(--fw-black)", letterSpacing: "var(--ls-caps)", textTransform: "uppercase", color }, children: language }),
-          era && /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { style: { fontFamily: "var(--font-mono)", fontSize: "var(--fs-11)", color: "var(--text-muted)" }, children: era })
+      /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { style: { paddingBottom: connector ? s.pad : 0, minWidth: 0 }, children: [
+        /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("div", { style: { display: "flex", alignItems: "baseline", gap: "var(--space-3)", flexWrap: "wrap" }, children: [
+          word && /* @__PURE__ */ (0, import_jsx_runtime28.jsx)(
+            "span",
+            {
+              style: {
+                fontFamily: "var(--font-display)",
+                fontSize: s.word,
+                fontWeight: "var(--fw-black)",
+                color: current ? "var(--text-strong)" : "var(--text-body)",
+                lineHeight: 1.15,
+                wordBreak: "break-word",
+                minWidth: 0
+              },
+              children: word
+            }
+          ),
+          word && (relation || language || era) ? " " : null,
+          (relation || language || era) && /* @__PURE__ */ (0, import_jsx_runtime28.jsxs)("span", { style: { minWidth: 0 }, children: [
+            relation && /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { style: { fontFamily: "var(--font-ui)", fontSize: s.relation, color: "var(--text-muted)" }, children: relation }),
+            relation && language ? " " : null,
+            language && React18.createElement(
+              languageHref ? "a" : "span",
+              {
+                ...languageHref ? { href: languageHref, target: "_blank", rel: "noopener noreferrer" } : null,
+                style: {
+                  fontFamily: "var(--font-ui)",
+                  fontSize: s.stamp,
+                  fontWeight: "var(--fw-black)",
+                  letterSpacing: "var(--ls-caps)",
+                  textTransform: "uppercase",
+                  color,
+                  // Underlined on hover only. A chain five steps deep would
+                  // otherwise be five underlined stamps, which reads as the
+                  // links being the content rather than the words.
+                  textDecoration: "none",
+                  borderBottom: languageHref ? "1px solid transparent" : void 0,
+                  cursor: languageHref ? "pointer" : void 0,
+                  // The phrase may wrap; the language name itself should not
+                  // be split down the middle when it does.
+                  whiteSpace: "nowrap"
+                },
+                ...languageHref ? {
+                  onMouseEnter: (e) => {
+                    e.currentTarget.style.borderBottomColor = "currentColor";
+                  },
+                  onMouseLeave: (e) => {
+                    e.currentTarget.style.borderBottomColor = "transparent";
+                  }
+                } : null,
+                ...onLanguageActivate ? {
+                  onClick: (e) => {
+                    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+                    e.preventDefault();
+                    onLanguageActivate();
+                  }
+                } : null
+              },
+              language
+            ),
+            (relation || language) && era ? " " : null,
+            era && /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("span", { style: { fontFamily: "var(--font-mono)", fontSize: s.stamp, color: "var(--text-muted)" }, children: era })
+          ] })
         ] }),
-        gloss && /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("p", { style: { margin: "4px 0 0", fontFamily: "var(--font-ui)", fontSize: "var(--fs-14)", color: "var(--text-muted)", lineHeight: "var(--lh-relaxed)" }, children: gloss })
+        gloss && /* @__PURE__ */ (0, import_jsx_runtime28.jsx)("p", { style: { margin: "4px 0 0", fontFamily: "var(--font-ui)", fontSize: s.gloss, color: "var(--text-muted)", lineHeight: "var(--lh-relaxed)" }, children: gloss })
       ] })
     ] });
   }

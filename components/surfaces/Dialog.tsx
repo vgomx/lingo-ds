@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom';
 import { useIsMobile } from '../../hooks/useBreakpoint';
 import { IconButton } from '../actions/IconButton';
 
+export type DialogPlacement = 'center' | 'end';
+
 export interface DialogOwnProps {
   open?: boolean;
   title?: React.ReactNode;
@@ -11,6 +13,15 @@ export interface DialogOwnProps {
   /** Footer actions, right-aligned on the darker footer bar. */
   footer?: React.ReactNode;
   width?: number;
+  /**
+   * `center` is a modal; `end` docks it to the trailing edge, full height, for
+   * reference material you read *against* the page rather than instead of it.
+   *
+   * No effect on a phone. A 375px screen has no trailing edge worth docking
+   * to, and the sheet coming up from the bottom is already the right gesture
+   * there — so both placements stay the sheet they always were.
+   */
+  placement?: DialogPlacement;
   onClose?: () => void;
   style?: React.CSSProperties;
 }
@@ -30,8 +41,10 @@ export interface DialogProps
  * backdrop-filter, and that makes a containing block for fixed descendants too.
  * A modal should not be positioned by whatever happens to contain its trigger.
  */
-export function Dialog({ open = true, title, description, children, footer, width = 440, onClose, style, ...rest }: DialogProps) {
+export function Dialog({ open = true, title, description, children, footer, width = 440, placement = 'center', onClose, style, ...rest }: DialogProps) {
   const isMobile = useIsMobile();
+  // Docking is a desktop idea; a phone gets the sheet either way.
+  const docked = placement === 'end' && !isMobile;
 
   /*
    * Escape closes it.
@@ -68,8 +81,9 @@ export function Dialog({ open = true, title, description, children, footer, widt
         gridTemplateColumns: 'minmax(0, 1fr)',
         // Full-bleed on a phone: a dialog this tall has nowhere to be inset to,
         // and the scrim around it was only ever a hairline of blur.
-        placeItems: isMobile ? 'stretch' : 'center',
-        padding: isMobile ? 0 : 'var(--space-8)',
+        // Docked, the panel stretches to full height and sits against the end.
+        placeItems: isMobile ? 'stretch' : docked ? 'stretch end' : 'center',
+        padding: isMobile ? 0 : docked ? 0 : 'var(--space-8)',
         // Above the app's own chrome — a bottom dock or tab bar sits in the 40s
         // and was painting over the footer — and below tooltips at 50, so a
         // tooltip raised from inside a dialog still lands on top of it.
@@ -83,7 +97,9 @@ export function Dialog({ open = true, title, description, children, footer, widt
           + '@keyframes lt-pop{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}'
           // Full-bleed, so it comes up from the edge it is attached to
           // rather than growing out of the middle of the screen.
-          + '@keyframes lt-sheet{from{transform:translateY(100%)}to{transform:none}}'}
+          + '@keyframes lt-sheet{from{transform:translateY(100%)}to{transform:none}}'
+          // Same idea sideways, for the docked panel.
+          + '@keyframes lt-dock{from{transform:translateX(100%)}to{transform:none}}'}
       </style>
       <div
         role="dialog"
@@ -92,15 +108,19 @@ export function Dialog({ open = true, title, description, children, footer, widt
         style={{
           width: isMobile ? '100%' : width,
           maxWidth: '100%',
-          height: isMobile ? '100%' : undefined,
+          height: isMobile || docked ? '100%' : undefined,
           maxHeight: '100%',
           display: 'flex', flexDirection: 'column',
           background: 'var(--surface-app)',
-          borderRadius: isMobile ? 0 : 'var(--radius-dialog)',
+          // Docked, only the leading corners are free to round — the other two
+          // are against the edge of the screen.
+          borderRadius: isMobile ? 0 : docked ? 'var(--radius-dialog) 0 0 var(--radius-dialog)' : 'var(--radius-dialog)',
           boxShadow: isMobile ? 'none' : 'var(--shadow-xl)',
           animation: isMobile
             ? 'lt-sheet var(--dur-slow) var(--ease-out)'
-            : 'lt-pop var(--dur-slow) var(--ease-spring)',
+            : docked
+              ? 'lt-dock var(--dur-slow) var(--ease-out)'
+              : 'lt-pop var(--dur-slow) var(--ease-spring)',
           overflow: 'hidden',
           ...style,
         }}
@@ -132,8 +152,11 @@ export function Dialog({ open = true, title, description, children, footer, widt
             </IconButton>
           )}
         </div>
+        {/* The body grows to fill anything with a fixed height — the mobile
+            sheet and the docked panel both have one. A centred modal is sized
+            by its content, so growing there would stretch it to the screen. */}
         {children && (
-          <div style={{ padding: '0 var(--pad-dialog)', overflowY: 'auto', flex: isMobile ? 1 : undefined, minHeight: 0 }}>
+          <div style={{ padding: '0 var(--pad-dialog)', overflowY: 'auto', flex: isMobile || docked ? 1 : undefined, minHeight: 0 }}>
             {children}
           </div>
         )}
