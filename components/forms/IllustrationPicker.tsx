@@ -180,7 +180,10 @@ export function IllustrationPicker({
           <button
             type="button"
             onClick={() => setQuery('')}
-            title="Clear search"
+            // Kept off touch: iOS raises a `title` as a long-press callout,
+            // which is the same hover-hint-on-a-device-that-cannot-hover
+            // problem the Tooltip had. aria-label carries the name regardless.
+            title={touch ? undefined : 'Clear search'}
             aria-label="Clear search"
             style={{
               display: 'grid', placeItems: 'center', flex: 'none',
@@ -250,7 +253,11 @@ export function IllustrationPicker({
                   <button
                     key={it.id}
                     type="button"
-                    title={it.name}
+                    // See the clear button. Dropping `title` outright would
+                    // cost a mouse the name of 500-odd glyphs it can only
+                    // otherwise guess at, so it goes on the pointer that can
+                    // hover and off the one that cannot.
+                    title={touch ? undefined : it.name}
                     aria-label={it.name}
                     aria-pressed={selected}
                     onClick={() => onChange && onChange(selected ? null : it.id)}

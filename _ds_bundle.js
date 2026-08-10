@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: 4a7df184d78de5ae
+// source-hash: c2ffdd092c8c9928
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -1713,7 +1713,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
               {
                 type: "button",
                 onClick: () => setQuery(""),
-                title: "Clear search",
+                title: touch ? void 0 : "Clear search",
                 "aria-label": "Clear search",
                 style: {
                   display: "grid",
@@ -1786,7 +1786,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
                     "button",
                     {
                       type: "button",
-                      title: it.name,
+                      title: touch ? void 0 : it.name,
                       "aria-label": it.name,
                       "aria-pressed": selected,
                       onClick: () => onChange && onChange(selected ? null : it.id),
@@ -2576,8 +2576,11 @@ var LingoToolboxDesignSystem_898611 = (() => {
       "span",
       {
         ref: anchorRef,
-        onMouseEnter: () => setOpen(true),
-        onMouseLeave: () => setOpen(false),
+        onPointerEnter: (e) => {
+          if (e.pointerType !== "touch") setOpen(true);
+        },
+        onPointerLeave: () => setOpen(false),
+        onPointerDown: () => setOpen(false),
         style: { position: "relative", display: "inline-flex", ...style },
         ...rest,
         children: [
