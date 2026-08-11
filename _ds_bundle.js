@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: c2ffdd092c8c9928
+// source-hash: b834d176fc879b7c
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -725,7 +725,15 @@ var LingoToolboxDesignSystem_898611 = (() => {
     "horizontal-dark": "horizontal-dark.svg",
     "horizontal-light": "horizontal-light.svg",
     "horizontal-violet": "horizontal-violet.svg",
-    "horizontal-brand": "horizontal-brand.svg"
+    "horizontal-brand": "horizontal-brand.svg",
+    /*
+     * Two-tone: the logotype takes currentColor and TOOLBOX stays brand violet,
+     * so the lockup follows the page's text colour on one half and holds the
+     * brand on the other. Inline-only for the same reason as horizontal-brand,
+     * and doubly so — an <img> resolves neither the inherited colour nor
+     * --brand.
+     */
+    "horizontal-duo": "horizontal-duo.svg"
   };
   function Logo({ variant = "wordmark-white", height = 40, base = "", title = "Lingo Toolbox", style, ...rest }) {
     const file = FILES[variant] || FILES["wordmark-white"];
