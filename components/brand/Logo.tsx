@@ -5,7 +5,8 @@ export type LogoVariant =
   | 'icon-dark' | 'icon-light' | 'icon-violet'
   | 'mark-dark' | 'mark-light' | 'mark-violet'
   | 'stack-dark' | 'stack-light' | 'stack-violet' | 'stack-brand'
-  | 'horizontal-dark' | 'horizontal-light' | 'horizontal-violet' | 'horizontal-brand';
+  | 'horizontal-dark' | 'horizontal-light' | 'horizontal-violet' | 'horizontal-brand'
+  | 'horizontal-duo';
 
 const FILES: Record<LogoVariant, string> = {
   'wordmark-white': 'logo-wordmark-white.svg',
@@ -44,6 +45,14 @@ const FILES: Record<LogoVariant, string> = {
   'horizontal-light': 'horizontal-light.svg',
   'horizontal-violet': 'horizontal-violet.svg',
   'horizontal-brand': 'horizontal-brand.svg',
+  /*
+   * Two-tone: the logotype takes currentColor and TOOLBOX stays brand violet,
+   * so the lockup follows the page's text colour on one half and holds the
+   * brand on the other. Inline-only for the same reason as horizontal-brand,
+   * and doubly so — an <img> resolves neither the inherited colour nor
+   * --brand.
+   */
+  'horizontal-duo': 'horizontal-duo.svg',
 };
 
 export interface LogoOwnProps {
