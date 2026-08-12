@@ -98,7 +98,10 @@ export function RailTile({ label, icon, flag, src, color = 'var(--brand)', onCol
       {showLabel && (
         <span
           style={{
-            maxWidth: 60, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+            // 64, not 60: a 72px rail has the room, and 60 was cutting a single
+            // pixel off eleven-character labels — "Conjugation" measures 61 —
+            // which spends an ellipsis to save nothing.
+            maxWidth: 64, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
             fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-10)', fontWeight: 'var(--fw-bold)' as React.CSSProperties['fontWeight'],
             letterSpacing: 'var(--ls-wide)', textAlign: 'center',
             // --text-muted, not --text-faint: at --fs-10 this is small text needing
