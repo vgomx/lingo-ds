@@ -31,8 +31,8 @@ const WHEN = {
   sessionComplete: 'Session finished — the only rise',
   cardAdded: 'Card saved',
   cardRemoved: 'Card deleted',
-  tap: 'Any button — the default, and the smallest',
-  toggle: 'Panel or switch',
+  tap: 'Anything you press to go somewhere — the default, and the smallest',
+  toggle: 'Anything that flips a state — a switch, a panel',
 };
 
 function Demo(){
@@ -42,7 +42,7 @@ function Demo(){
   const play=(n)=>{unlockSound();playSound(n);setLast(n);};
   return (<>
     <h1>Sound palette</h1>
-    <p className="lede">Synthesised with <b>ZzFX</b> — no audio files, no network. Sounds fire only on a real interaction. <b>tap</b> is the default for every Button and IconButton, which is why it is the shortest thing here at 34ms — a click you hear a hundred times a session has to be one you stop noticing. Nothing here scolds: <b>gradeAgain</b> is the quietest and lowest, because forgetting is what spaced repetition is for.</p>
+    <p className="lede">Synthesised with <b>ZzFX</b> — no audio files, no network. Sounds fire only on a real interaction. <b>tap</b> is the default for everything you press to get somewhere — Button, IconButton, RailTile, SidebarItem, MenuItem, Tabs, an interactive Card — and <b>toggle</b> for everything that flips a state: Switch, Checkbox, Radio, Select. Every one of them takes <code>sound</code>, so a caller with its own voice passes <code>sound={'{'}false{'}'}</code> rather than playing two things on one press. <b>tap</b> is the shortest thing here at 34ms, because a click you hear a hundred times a session has to be one you stop noticing. Nothing here scolds: <b>gradeAgain</b> is the quietest and lowest, because forgetting is what spaced repetition is for.</p>
     <div className="grid">
       {SOUND_NAMES.map(n=>(
         <button key={n} className="snd" onClick={()=>play(n)}>

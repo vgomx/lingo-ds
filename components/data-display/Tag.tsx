@@ -1,8 +1,12 @@
 import * as React from 'react';
+import { playSound } from '../../sound/sounds';
+import type { SoundName } from '../../sound/sounds';
 
 export type TagSize = 'sm' | 'md';
 
 export interface TagOwnProps {
+  /** What the trailing x sounds like, where there is one. Defaults to `tap`. */
+  sound?: SoundName | false;
   children?: React.ReactNode;
   /**
    * `md` is the touch size, for a chip you are meant to hit rather than read.
@@ -27,7 +31,7 @@ export interface TagProps
     Omit<React.ComponentPropsWithoutRef<'span'>, keyof TagOwnProps> {}
 
 /** Content label — deck topics, part of speech, source language. Removable when interactive. */
-export function Tag({ children, size = 'sm', color = 'var(--brand)', variant = 'soft', icon = null, onRemove, style, ...rest }: TagProps) {
+export function Tag({ children, size = 'sm', color = 'var(--brand)', variant = 'soft', icon = null, sound = 'tap', onRemove, style, ...rest }: TagProps) {
   const solid = variant === 'solid';
   const big = size === 'md';
   return (
@@ -53,7 +57,7 @@ export function Tag({ children, size = 'sm', color = 'var(--brand)', variant = '
       {onRemove && (
         <button
           type="button"
-          onClick={onRemove}
+          onClick={(e) => { if (sound) playSound(sound); onRemove(e); }}
           aria-label="Remove"
           style={{ display: 'grid', placeItems: 'center', width: 16, height: 16, border: 'none', padding: 0, cursor: 'pointer', borderRadius: '50%', background: 'transparent', color: 'inherit', opacity: 0.7 }}
         >

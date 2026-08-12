@@ -1,7 +1,15 @@
 import * as React from 'react';
 import { useIsTouch } from '../../hooks/useBreakpoint';
+import { playSound } from '../../sound/sounds';
+import type { SoundName } from '../../sound/sounds';
 
 export interface SwitchOwnProps {
+  /**
+   * What the flip sounds like. `toggle` rather than `tap` — the same click a
+   * little lower and longer, which is what the palette keeps for a control that
+   * changes state rather than one that goes somewhere.
+   */
+  sound?: SoundName | false;
   checked?: boolean;
   defaultChecked?: boolean;
   /** Settings-row label; the switch right-aligns itself against it. */
@@ -24,7 +32,7 @@ export interface SwitchProps
  * label it was unreachable by keyboard and absent from the accessibility tree
  * entirely — a settings control that only a mouse could find.
  */
-export function Switch({ checked, defaultChecked, label, hint, size = 'md', disabled = false, onChange, style, ...rest }: SwitchProps) {
+export function Switch({ checked, defaultChecked, label, hint, size = 'md', disabled = false, sound = 'toggle', onChange, style, ...rest }: SwitchProps) {
   const isTouch = useIsTouch();
   const [inner, setInner] = React.useState(!!defaultChecked);
   const isOn = checked === undefined ? inner : checked;
@@ -33,6 +41,11 @@ export function Switch({ checked, defaultChecked, label, hint, size = 'md', disa
   const knob = h - 8;
   const toggle = () => {
     if (disabled) return;
+    // Before the handler, which is what the sound switch in the app depends on:
+    // turning sound *off* still gets the click that confirms the press, because
+    // it plays while sound is still on. Turning it on is silent here and is the
+    // caller's to answer — playSound is a no-op while the setting is off.
+    if (sound) playSound(sound);
     if (checked === undefined) setInner(!isOn);
     onChange && onChange(!isOn);
   };

@@ -1,6 +1,10 @@
 import * as React from 'react';
+import { playSound } from '../../sound/sounds';
+import type { SoundName } from '../../sound/sounds';
 
 export interface RailTileOwnProps {
+  /** What the press sounds like. Defaults to `tap`; `false` where the caller has its own. */
+  sound?: SoundName | false;
   label: string;
   /** Icon element, e.g. <Icon name="layers" size={20} /> — use for tool tiles. */
   icon?: React.ReactNode;
@@ -39,7 +43,7 @@ export interface RailTileProps
  * Squircle at rest, rounds toward a squarer radius and grows a left pip when active.
  * `showLabel` puts the language name in small type underneath.
  */
-export function RailTile({ label, icon, flag, src, color = 'var(--brand)', onColor = 'var(--text-on-brand)', size = 46, quiet = false, active = false, unread = 0, showLabel = false, onClick, style, ...rest }: RailTileProps) {
+export function RailTile({ label, icon, flag, src, color = 'var(--brand)', onColor = 'var(--text-on-brand)', size = 46, quiet = false, active = false, unread = 0, showLabel = false, sound = 'tap', onClick, style, ...rest }: RailTileProps) {
   const [hover, setHover] = React.useState(false);
   const lit = active || hover;
   const isEmoji = flag && !/^[A-Za-z]{1,3}$/.test(flag);
@@ -72,7 +76,10 @@ export function RailTile({ label, icon, flag, src, color = 'var(--brand)', onCol
         type="button"
         title={label}
         aria-label={label}
-        onClick={onClick}
+        // Before the handler, which navigates away — the same order Button uses,
+        // and for the same reason: the press is acknowledged even if the screen
+        // it was on is already gone. playSound is a no-op when sound is off.
+        onClick={() => { if (sound) playSound(sound); onClick && onClick(); }}
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
         style={{

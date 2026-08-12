@@ -1,8 +1,12 @@
 import * as React from 'react';
+import { playSound } from '../../sound/sounds';
+import type { SoundName } from '../../sound/sounds';
 
 export interface TabItem { value: string; label: React.ReactNode; icon?: React.ReactNode; count?: number }
 
 export interface TabsOwnProps {
+  /** What a tab press sounds like. Defaults to `tap`; `false` where the caller has its own. */
+  sound?: SoundName | false;
   items?: (string | TabItem)[];
   value?: string;
   onChange?: (value: string) => void;
@@ -16,7 +20,7 @@ export interface TabsProps
     Omit<React.ComponentPropsWithoutRef<'div'>, keyof TabsOwnProps> {}
 
 /** Underline tab bar for switching views inside a pane. */
-export function Tabs({ items = [], value, onChange, variant = 'underline', style, ...rest }: TabsProps) {
+export function Tabs({ items = [], value, onChange, variant = 'underline', sound = 'tap', style, ...rest }: TabsProps) {
   const pill = variant === 'pill';
   return (
     <div
@@ -38,7 +42,10 @@ export function Tabs({ items = [], value, onChange, variant = 'underline', style
             key={item.value}
             role="tab"
             aria-selected={on}
-            onClick={() => onChange && onChange(item.value)}
+            // On the press, not on the change: pressing the tab you are already
+            // on is still a press, and a control that answers only sometimes
+            // reads as one that missed.
+            onClick={() => { if (sound) playSound(sound); onChange && onChange(item.value); }}
             style={{
               display: 'inline-flex', alignItems: 'center', gap: 6, border: 'none', cursor: 'pointer',
               background: pill && on ? 'var(--surface-raised)' : 'transparent',

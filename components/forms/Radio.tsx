@@ -1,6 +1,10 @@
 import * as React from 'react';
+import { playSound } from '../../sound/sounds';
+import type { SoundName } from '../../sound/sounds';
 
 export interface RadioOwnProps {
+  /** What the choice sounds like. `toggle`, like every control that flips a state. */
+  sound?: SoundName | false;
   checked?: boolean;
   label?: React.ReactNode;
   hint?: string;
@@ -22,14 +26,18 @@ export interface RadioProps
  * no keyboard could reach. Unchecked radios stay focusable: a group where only
  * the selected option can be tabbed to is a group you cannot change by keyboard.
  */
-export function Radio({ checked = false, label, hint, name, value, disabled = false, onChange, style, ...rest }: RadioProps) {
+export function Radio({ checked = false, label, hint, name, value, disabled = false, sound = 'toggle', onChange, style, ...rest }: RadioProps) {
   return (
     <button
       type="button"
       role="radio"
       aria-checked={checked}
       disabled={disabled}
-      onClick={() => !disabled && onChange && onChange(value)}
+      onClick={() => {
+        if (disabled) return;
+        if (sound) playSound(sound);
+        onChange && onChange(value);
+      }}
       style={{
         display: 'inline-flex', alignItems: hint ? 'flex-start' : 'center', gap: 'var(--space-4)',
         padding: 0, border: 'none', background: 'transparent', textAlign: 'left', font: 'inherit',
