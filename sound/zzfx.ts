@@ -28,8 +28,49 @@ let volume = 0.3; // ZzFX's own default (zzfxV)
 
 type Ctor = typeof AudioContext;
 
+/**
+ * Whether a context is still worth keeping.
+ *
+ * `running` and `suspended` are the two the spec defines and the two that can
+ * be played through — a suspended one resumes on the next gesture. `closed` is
+ * final. WebKit adds a third, `interrupted`, which is not in the spec or in the
+ * DOM types: iOS hands the audio session to whatever wants it more — a call,
+ * Siri, another app, or simply the app going to the background — and the
+ * context is parked. Read as a plain string so the non-standard state does not
+ * have to be lied about in the type.
+ */
+const usable = (c: AudioContext) => {
+  const state: string = c.state;
+  return state === 'running' || state === 'suspended';
+};
+
+/** Drops the current context so the next call builds a fresh one. */
+function discard(): void {
+  const old = ctx;
+  ctx = null;
+  master = null;
+  // A context that has already been taken away can throw on close; there is
+  // nothing to do about it and nothing that needs doing.
+  try { void old?.close(); } catch { /* already gone */ }
+}
+
+/**
+ * The audio context, built on demand and thrown away when iOS takes it.
+ *
+ * One context for the life of the page is what ZzFX assumes and what a desktop
+ * browser makes true. iOS does not: an interrupted context can come back
+ * reporting a state it cannot play in, and — the case this is really for — an
+ * app run from the home screen is backgrounded every time the reader leaves it
+ * and is never reloaded, so it accumulates interruptions that a browser tab
+ * mostly escapes by being reloaded. Holding one context forever means the app
+ * goes quiet for good the first time that happens.
+ *
+ * Rebuilding is cheap and the alternative is silence, so anything not plainly
+ * usable is discarded rather than nursed.
+ */
 function audio(): AudioContext | null {
-  if (ctx) return ctx;
+  if (ctx && usable(ctx)) return ctx;
+  if (ctx) discard();
   if (typeof window === 'undefined') return null;
   const Ctx: Ctor | undefined =
     window.AudioContext ?? (window as unknown as { webkitAudioContext?: Ctor }).webkitAudioContext;
@@ -57,9 +98,14 @@ export function setSoundVolume(next: number): void {
 }
 
 /**
- * Resumes the audio context. Browsers start it suspended until a real gesture,
- * so call this from a click or keypress — anywhere else it is a no-op that
- * leaves the context suspended and the first sound silent.
+ * Readies the audio context, rebuilding it first if iOS has taken it away.
+ *
+ * Browsers start a context suspended until a real gesture, so call this from a
+ * click or keypress — anywhere else it is a no-op that leaves the context
+ * suspended and the first sound silent. Safe and cheap to call on every
+ * gesture rather than only the first: a running context returns immediately,
+ * and a context lost to an interruption can only be replaced from a gesture,
+ * so the first tap after coming back is the one chance to do it.
  */
 export function unlockSound(): void {
   const c = audio();

@@ -202,8 +202,22 @@ var LingoToolboxDesignSystem_898611 = (() => {
   var master = null;
   var enabled = true;
   var volume = 0.3;
+  var usable = (c) => {
+    const state = c.state;
+    return state === "running" || state === "suspended";
+  };
+  function discard() {
+    const old = ctx;
+    ctx = null;
+    master = null;
+    try {
+      void old?.close();
+    } catch {
+    }
+  }
   function audio() {
-    if (ctx) return ctx;
+    if (ctx && usable(ctx)) return ctx;
+    if (ctx) discard();
     if (typeof window === "undefined") return null;
     const Ctx = window.AudioContext ?? window.webkitAudioContext;
     if (!Ctx) return null;
