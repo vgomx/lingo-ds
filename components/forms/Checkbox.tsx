@@ -1,6 +1,10 @@
 import * as React from 'react';
+import { playSound } from '../../sound/sounds';
+import type { SoundName } from '../../sound/sounds';
 
 export interface CheckboxOwnProps {
+  /** What the tick sounds like. `toggle`, like every control that flips a state. */
+  sound?: SoundName | false;
   /** Controlled state; omit to let the component own it. */
   checked?: boolean;
   defaultChecked?: boolean;
@@ -21,11 +25,12 @@ export interface CheckboxProps
  * A `<button role="checkbox">` rather than a `<label>` with a click handler —
  * the label form was unreachable by keyboard and invisible to screen readers.
  */
-export function Checkbox({ checked, defaultChecked, label, hint, disabled = false, onChange, style, ...rest }: CheckboxProps) {
+export function Checkbox({ checked, defaultChecked, label, hint, disabled = false, sound = 'toggle', onChange, style, ...rest }: CheckboxProps) {
   const [inner, setInner] = React.useState(!!defaultChecked);
   const isOn = checked === undefined ? inner : checked;
   const toggle = (e: React.MouseEvent) => {
     if (disabled) return;
+    if (sound) playSound(sound);
     if (checked === undefined) setInner(!isOn);
     onChange && onChange(e, !isOn);
   };

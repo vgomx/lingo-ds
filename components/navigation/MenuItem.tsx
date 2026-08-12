@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { useIsTouch } from '../../hooks/useBreakpoint';
+import { playSound } from '../../sound/sounds';
+import type { SoundName } from '../../sound/sounds';
 
 export interface MenuItemProps {
+  /** What the press sounds like. Defaults to `tap`; `false` where the caller has its own. */
+  sound?: SoundName | false;
   children: React.ReactNode;
   /** Marks the current choice — the language you are in, not the one under the cursor. */
   selected?: boolean;
@@ -33,7 +37,7 @@ export interface MenuItemProps {
  * `SidebarItem` is the same idea in a different context — a persistent list you
  * navigate — where this is a transient list you pick from and dismiss.
  */
-export function MenuItem({ children, selected = false, onClick, opensMenu = false, expanded, label }: MenuItemProps) {
+export function MenuItem({ children, selected = false, sound = 'tap', onClick, opensMenu = false, expanded, label }: MenuItemProps) {
   const [active, setActive] = React.useState(false);
   /*
    * Bigger under a thumb than under a cursor.
@@ -56,7 +60,7 @@ export function MenuItem({ children, selected = false, onClick, opensMenu = fals
       aria-expanded={opensMenu ? expanded : undefined}
       aria-label={label}
       aria-current={selected || undefined}
-      onClick={onClick}
+      onClick={() => { if (sound) playSound(sound); onClick && onClick(); }}
       onMouseEnter={() => setActive(true)}
       onMouseLeave={() => setActive(false)}
       onFocus={() => setActive(true)}

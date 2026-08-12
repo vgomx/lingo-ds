@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: a2f0d6ddd66199db
+// source-hash: edd528df7ad78311
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -947,7 +947,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
 
   // components/data-display/Tag.tsx
   var import_jsx_runtime7 = __toESM(require_react_jsx_runtime_global(), 1);
-  function Tag({ children, size = "sm", color = "var(--brand)", variant = "soft", icon = null, onRemove, style, ...rest }) {
+  function Tag({ children, size = "sm", color = "var(--brand)", variant = "soft", icon = null, sound = "tap", onRemove, style, ...rest }) {
     const solid = variant === "solid";
     const big = size === "md";
     return /* @__PURE__ */ (0, import_jsx_runtime7.jsxs)(
@@ -981,7 +981,10 @@ var LingoToolboxDesignSystem_898611 = (() => {
             "button",
             {
               type: "button",
-              onClick: onRemove,
+              onClick: (e) => {
+                if (sound) playSound(sound);
+                onRemove(e);
+              },
               "aria-label": "Remove",
               style: { display: "grid", placeItems: "center", width: 16, height: 16, border: "none", padding: 0, cursor: "pointer", borderRadius: "50%", background: "transparent", color: "inherit", opacity: 0.7 },
               children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("svg", { width: "10", height: "10", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "3.5", strokeLinecap: "round", children: /* @__PURE__ */ (0, import_jsx_runtime7.jsx)("path", { d: "M18 6 6 18M6 6l12 12" }) })
@@ -1139,6 +1142,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
     size = "md",
     disabled = false,
     block = true,
+    sound = "toggle",
     onChange,
     style
   }) {
@@ -1193,6 +1197,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
     }, [open, active, box]);
     const commit = (i) => {
       const opt = items[i];
+      if (sound) playSound("tap");
       setOpen(false);
       triggerRef.current?.focus();
       if (opt && opt.value !== value) onChange?.(opt.value);
@@ -1357,7 +1362,11 @@ var LingoToolboxDesignSystem_898611 = (() => {
           "aria-activedescendant": open ? `${listId}-${active}` : void 0,
           disabled,
           "data-focus-ring": "delegated",
-          onClick: () => open ? setOpen(false) : openWith(selected >= 0 ? selected : 0),
+          onClick: () => {
+            if (sound) playSound(sound);
+            if (open) setOpen(false);
+            else openWith(selected >= 0 ? selected : 0);
+          },
           onKeyDown,
           onFocus: () => setFocus(true),
           onBlur: () => setFocus(false),
@@ -1416,11 +1425,12 @@ var LingoToolboxDesignSystem_898611 = (() => {
   // components/forms/Checkbox.tsx
   var React8 = __toESM(require_react_global(), 1);
   var import_jsx_runtime10 = __toESM(require_react_jsx_runtime_global(), 1);
-  function Checkbox({ checked, defaultChecked, label, hint, disabled = false, onChange, style, ...rest }) {
+  function Checkbox({ checked, defaultChecked, label, hint, disabled = false, sound = "toggle", onChange, style, ...rest }) {
     const [inner, setInner] = React8.useState(!!defaultChecked);
     const isOn = checked === void 0 ? inner : checked;
     const toggle = (e) => {
       if (disabled) return;
+      if (sound) playSound(sound);
       if (checked === void 0) setInner(!isOn);
       onChange && onChange(e, !isOn);
     };
@@ -1477,7 +1487,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
 
   // components/forms/Radio.tsx
   var import_jsx_runtime11 = __toESM(require_react_jsx_runtime_global(), 1);
-  function Radio({ checked = false, label, hint, name, value, disabled = false, onChange, style, ...rest }) {
+  function Radio({ checked = false, label, hint, name, value, disabled = false, sound = "toggle", onChange, style, ...rest }) {
     return /* @__PURE__ */ (0, import_jsx_runtime11.jsxs)(
       "button",
       {
@@ -1485,7 +1495,11 @@ var LingoToolboxDesignSystem_898611 = (() => {
         role: "radio",
         "aria-checked": checked,
         disabled,
-        onClick: () => !disabled && onChange && onChange(value),
+        onClick: () => {
+          if (disabled) return;
+          if (sound) playSound(sound);
+          onChange && onChange(value);
+        },
         style: {
           display: "inline-flex",
           alignItems: hint ? "flex-start" : "center",
@@ -1532,7 +1546,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
   // components/forms/Switch.tsx
   var React9 = __toESM(require_react_global(), 1);
   var import_jsx_runtime12 = __toESM(require_react_jsx_runtime_global(), 1);
-  function Switch({ checked, defaultChecked, label, hint, size = "md", disabled = false, onChange, style, ...rest }) {
+  function Switch({ checked, defaultChecked, label, hint, size = "md", disabled = false, sound = "toggle", onChange, style, ...rest }) {
     const isTouch = useIsTouch();
     const [inner, setInner] = React9.useState(!!defaultChecked);
     const isOn = checked === void 0 ? inner : checked;
@@ -1541,6 +1555,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
     const knob = h - 8;
     const toggle = () => {
       if (disabled) return;
+      if (sound) playSound(sound);
       if (checked === void 0) setInner(!isOn);
       onChange && onChange(!isOn);
     };
@@ -1626,6 +1641,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
     glyphSize = 34,
     searchPlaceholder = "Search illustrations",
     clearLabel = "No illustration",
+    sound = "tap",
     style,
     ...rest
   }) {
@@ -1667,7 +1683,10 @@ var LingoToolboxDesignSystem_898611 = (() => {
           "button",
           {
             type: "button",
-            onClick: () => onChange(null),
+            onClick: () => {
+              if (sound) playSound(sound);
+              onChange(null);
+            },
             style: {
               border: "none",
               background: "transparent",
@@ -1811,7 +1830,10 @@ var LingoToolboxDesignSystem_898611 = (() => {
                       title: touch ? void 0 : it.name,
                       "aria-label": it.name,
                       "aria-pressed": selected,
-                      onClick: () => onChange && onChange(selected ? null : it.id),
+                      onClick: () => {
+                        if (sound) playSound(sound);
+                        onChange && onChange(selected ? null : it.id);
+                      },
                       style: {
                         display: "grid",
                         placeItems: "center",
@@ -1862,6 +1884,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
     padding = "var(--pad-card)",
     interactive = false,
     selected = false,
+    sound = "tap",
     onClick,
     style,
     ...rest
@@ -1872,7 +1895,12 @@ var LingoToolboxDesignSystem_898611 = (() => {
     return /* @__PURE__ */ (0, import_jsx_runtime14.jsxs)(
       "div",
       {
-        onClick,
+        onClick: (e) => {
+          const control = e.target.closest('button, a, [role="button"]');
+          const nested = !!control && e.currentTarget.contains(control);
+          if (interactive && sound && !nested) playSound(sound);
+          onClick && onClick(e);
+        },
         onMouseEnter: () => setHover(true),
         onMouseLeave: () => setHover(false),
         style: {
@@ -2187,7 +2215,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
 
   // components/navigation/Tabs.tsx
   var import_jsx_runtime20 = __toESM(require_react_jsx_runtime_global(), 1);
-  function Tabs({ items = [], value, onChange, variant = "underline", style, ...rest }) {
+  function Tabs({ items = [], value, onChange, variant = "underline", sound = "tap", style, ...rest }) {
     const pill = variant === "pill";
     return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
       "div",
@@ -2212,7 +2240,10 @@ var LingoToolboxDesignSystem_898611 = (() => {
             {
               role: "tab",
               "aria-selected": on,
-              onClick: () => onChange && onChange(item.value),
+              onClick: () => {
+                if (sound) playSound(sound);
+                onChange && onChange(item.value);
+              },
               style: {
                 display: "inline-flex",
                 alignItems: "center",
@@ -2246,13 +2277,16 @@ var LingoToolboxDesignSystem_898611 = (() => {
   // components/navigation/SidebarItem.tsx
   var React13 = __toESM(require_react_global(), 1);
   var import_jsx_runtime21 = __toESM(require_react_jsx_runtime_global(), 1);
-  function SidebarItem({ icon, label, meta, active = false, muted = false, badge, onClick, style, ...rest }) {
+  function SidebarItem({ icon, label, meta, active = false, muted = false, badge, sound = "tap", onClick, style, ...rest }) {
     const [hover, setHover] = React13.useState(false);
     return /* @__PURE__ */ (0, import_jsx_runtime21.jsxs)(
       "button",
       {
         type: "button",
-        onClick,
+        onClick: () => {
+          if (sound) playSound(sound);
+          onClick && onClick();
+        },
         onMouseEnter: () => setHover(true),
         onMouseLeave: () => setHover(false),
         style: {
@@ -2289,7 +2323,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
   // components/navigation/MenuItem.tsx
   var React14 = __toESM(require_react_global(), 1);
   var import_jsx_runtime22 = __toESM(require_react_jsx_runtime_global(), 1);
-  function MenuItem({ children, selected = false, onClick, opensMenu = false, expanded, label }) {
+  function MenuItem({ children, selected = false, sound = "tap", onClick, opensMenu = false, expanded, label }) {
     const [active, setActive] = React14.useState(false);
     const touch = useIsTouch();
     return /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
@@ -2301,7 +2335,10 @@ var LingoToolboxDesignSystem_898611 = (() => {
         "aria-expanded": opensMenu ? expanded : void 0,
         "aria-label": label,
         "aria-current": selected || void 0,
-        onClick,
+        onClick: () => {
+          if (sound) playSound(sound);
+          onClick && onClick();
+        },
         onMouseEnter: () => setActive(true),
         onMouseLeave: () => setActive(false),
         onFocus: () => setActive(true),
@@ -2335,7 +2372,7 @@ var LingoToolboxDesignSystem_898611 = (() => {
   // components/navigation/RailTile.tsx
   var React15 = __toESM(require_react_global(), 1);
   var import_jsx_runtime23 = __toESM(require_react_jsx_runtime_global(), 1);
-  function RailTile({ label, icon, flag, src, color = "var(--brand)", onColor = "var(--text-on-brand)", size = 46, quiet = false, active = false, unread = 0, showLabel = false, onClick, style, ...rest }) {
+  function RailTile({ label, icon, flag, src, color = "var(--brand)", onColor = "var(--text-on-brand)", size = 46, quiet = false, active = false, unread = 0, showLabel = false, sound = "tap", onClick, style, ...rest }) {
     const [hover, setHover] = React15.useState(false);
     const lit = active || hover;
     const isEmoji = flag && !/^[A-Za-z]{1,3}$/.test(flag);
@@ -2368,7 +2405,10 @@ var LingoToolboxDesignSystem_898611 = (() => {
           type: "button",
           title: label,
           "aria-label": label,
-          onClick,
+          onClick: () => {
+            if (sound) playSound(sound);
+            onClick && onClick();
+          },
           onMouseEnter: () => setHover(true),
           onMouseLeave: () => setHover(false),
           style: {

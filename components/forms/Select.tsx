@@ -1,10 +1,18 @@
 import * as React from 'react';
 import { createPortal } from 'react-dom';
 import { useIsTouch } from '../../hooks/useBreakpoint';
+import { playSound } from '../../sound/sounds';
+import type { SoundName } from '../../sound/sounds';
 
 export interface SelectOption { value: string; label: string }
 
 export interface SelectProps {
+  /**
+   * What the trigger sounds like — a panel opening and closing, so `toggle`.
+   * Choosing a row is always a `tap`, the same as any other row you press.
+   * `false` silences both.
+   */
+  sound?: SoundName | false;
   value?: string;
   /** Strings or {value,label} pairs. */
   options?: (string | SelectOption)[];
@@ -61,6 +69,7 @@ export function Select({
   size = 'md',
   disabled = false,
   block = true,
+  sound = 'toggle',
   onChange,
   style,
 }: SelectProps) {
@@ -137,6 +146,9 @@ export function Select({
 
   const commit = (i: number) => {
     const opt = items[i];
+    // Here rather than on the row's onClick, so the keyboard commit sounds the
+    // same as the pointer one — Enter on a row is the same act as pressing it.
+    if (sound) playSound('tap');
     setOpen(false);
     triggerRef.current?.focus();
     if (opt && opt.value !== value) onChange?.(opt.value);
@@ -325,7 +337,11 @@ export function Select({
         // This paints its own focus treatment; without this the global
         // :focus-visible ring draws a second one inside it.
         data-focus-ring="delegated"
-        onClick={() => (open ? setOpen(false) : openWith(selected >= 0 ? selected : 0))}
+        onClick={() => {
+          if (sound) playSound(sound);
+          if (open) setOpen(false);
+          else openWith(selected >= 0 ? selected : 0);
+        }}
         onKeyDown={onKeyDown}
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(false)}

@@ -1,6 +1,13 @@
 import * as React from 'react';
+import { playSound } from '../../sound/sounds';
+import type { SoundName } from '../../sound/sounds';
 
 export interface CardOwnProps {
+  /**
+   * What a press sounds like, for an `interactive` card only — a card that is
+   * just a container is not a control and does not click. Defaults to `tap`.
+   */
+  sound?: SoundName | false;
   children?: React.ReactNode;
   /** Display-font heading rendered inside the card. */
   title?: React.ReactNode;
@@ -24,7 +31,7 @@ export interface CardProps
 /** Raised content container: 12px radius, flat fill, hairline inset, no glow. */
 export function Card({
   children, title, subtitle, accent, actions, padding = 'var(--pad-card)',
-  interactive = false, selected = false, onClick, style, ...rest
+  interactive = false, selected = false, sound = 'tap', onClick, style, ...rest
 }: CardProps) {
   const [hover, setHover] = React.useState(false);
 
@@ -39,7 +46,22 @@ export function Card({
 
   return (
     <div
-      onClick={onClick}
+      onClick={(e) => {
+        /*
+         * The card's own press, not one on its way past.
+         *
+         * An interactive card is usually wrapped in a Link rather than given an
+         * onClick, so the sound cannot hang off the handler — it hangs off the
+         * card being declared interactive at all. But a Button inside the card
+         * bubbles through here too, and it has already spoken: `contains` is
+         * what separates a control the card holds from the anchor that holds
+         * the card, which `closest` alone would find and silence everything.
+         */
+        const control = (e.target as HTMLElement).closest('button, a, [role="button"]');
+        const nested = !!control && e.currentTarget.contains(control);
+        if (interactive && sound && !nested) playSound(sound);
+        onClick && onClick(e);
+      }}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       style={{

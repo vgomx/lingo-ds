@@ -1,6 +1,10 @@
 import * as React from 'react';
+import { playSound } from '../../sound/sounds';
+import type { SoundName } from '../../sound/sounds';
 
 export interface SidebarItemOwnProps {
+  /** What the press sounds like. Defaults to `tap`; `false` where the caller has its own. */
+  sound?: SoundName | false;
   icon?: React.ReactNode;
   label?: React.ReactNode;
   /** Right-aligned count or timestamp. */
@@ -17,12 +21,12 @@ export interface SidebarItemProps
     Omit<React.ComponentPropsWithoutRef<'button'>, keyof SidebarItemOwnProps> {}
 
 /** Row in the tool sidebar: icon + label, violet-tinted when selected. */
-export function SidebarItem({ icon, label, meta, active = false, muted = false, badge, onClick, style, ...rest }: SidebarItemProps) {
+export function SidebarItem({ icon, label, meta, active = false, muted = false, badge, sound = 'tap', onClick, style, ...rest }: SidebarItemProps) {
   const [hover, setHover] = React.useState(false);
   return (
     <button
       type="button"
-      onClick={onClick}
+      onClick={() => { if (sound) playSound(sound); onClick && onClick(); }}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       style={{

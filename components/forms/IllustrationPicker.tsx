@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Icon } from '../icon/Icon';
 import { useIsTouch } from '../../hooks/useBreakpoint';
 import { fieldFontSize } from './fieldFont';
+import { playSound } from '../../sound/sounds';
+import type { SoundName } from '../../sound/sounds';
 
 export interface IllustrationItem {
   /** Stable identity — this is what `value` and `onChange` speak in. */
@@ -21,6 +23,8 @@ export interface IllustrationPickerGroup {
 }
 
 export interface IllustrationPickerOwnProps {
+  /** What picking or clearing a glyph sounds like. Defaults to `tap`. */
+  sound?: SoundName | false;
   items: IllustrationItem[];
   /** Section headings, in order. Items whose `group` matches are filed under one. */
   groups?: IllustrationPickerGroup[];
@@ -57,7 +61,7 @@ export interface IllustrationPickerProps
  */
 export function IllustrationPicker({
   items, groups, value = null, onChange, label, hint, height = 236, glyphSize = 34,
-  searchPlaceholder = 'Search illustrations', clearLabel = 'No illustration', style, ...rest
+  searchPlaceholder = 'Search illustrations', clearLabel = 'No illustration', sound = 'tap', style, ...rest
 }: IllustrationPickerProps) {
   const [query, setQuery] = React.useState('');
   const [focus, setFocus] = React.useState(false);
@@ -125,7 +129,7 @@ export function IllustrationPicker({
           {value && onChange && (
             <button
               type="button"
-              onClick={() => onChange(null)}
+              onClick={() => { if (sound) playSound(sound); onChange(null); }}
               style={{
                 border: 'none', background: 'transparent', cursor: 'pointer', padding: '2px 0',
                 fontFamily: 'var(--font-ui)', fontSize: 'var(--fs-12)',
@@ -260,7 +264,10 @@ export function IllustrationPicker({
                     title={touch ? undefined : it.name}
                     aria-label={it.name}
                     aria-pressed={selected}
-                    onClick={() => onChange && onChange(selected ? null : it.id)}
+                    onClick={() => {
+                      if (sound) playSound(sound);
+                      onChange && onChange(selected ? null : it.id);
+                    }}
                     style={{
                       display: 'grid', placeItems: 'center', height: cell, padding: 0,
                       border: 'none', cursor: 'pointer', borderRadius: 'var(--radius-sm)',
