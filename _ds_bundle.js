@@ -8,7 +8,7 @@
 // It contains the components only. The UI-kit screens load their own .jsx
 // alongside this file and assign themselves to window.
 //
-// source-hash: b834d176fc879b7c
+// source-hash: a2f0d6ddd66199db
 // Checked by scripts/check-bundle-fresh.mjs — Pages serves this file straight
 // from git, so a stale copy would publish specimens of components that no
 // longer ship.
@@ -2391,7 +2391,10 @@ var LingoToolboxDesignSystem_898611 = (() => {
         "span",
         {
           style: {
-            maxWidth: 60,
+            // 64, not 60: a 72px rail has the room, and 60 was cutting a single
+            // pixel off eleven-character labels — "Conjugation" measures 61 —
+            // which spends an ellipsis to save nothing.
+            maxWidth: 64,
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
