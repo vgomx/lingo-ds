@@ -129,7 +129,15 @@ Examples, verbatim in-house style:
 > "the long talk after a meal" — glosses are lowercase, article-free
 > "Deck saved · 12 new cards queued for tomorrow."
 
-Avoid: "Oops!", "Awesome!", "Let's get started 🚀", "Congrats!!", gamified nagging, streak guilt.
+Avoid: "Oops!", "Awesome!", "Let's get started 🚀", "Congrats!!", gamified nagging, guilt as a motivator.
+
+- **Streaks.** The streak is the one number that measures the habit rather than the collection, and it is global: one exercise anywhere in the app — a card graded, a form answered — keeps the day. That makes it worth saying out loud. Name what someone has done, mark a genuine milestone, and make the next day easy to start: a short way in, a clear "one answer is enough", a suggestion of the quickest thing available.
+
+  **Missing a day is allowed for.** Nobody practises every day, and a counter that punishes an ordinary week is measuring the wrong thing. Forgiveness can be built into the definition — a rest day the streak simply survives, needing nothing claimed — or offered afterwards as a day earned back by practising. Both are fine, and the second is better when the reader chooses it rather than being sold it.
+
+  What stays out is not the mechanic, it is the pressure. No countdown, no "don't break your streak", no urgency attached to the offer, nothing that makes the number feel owed. Repair is available the way a light is available: it is there when wanted, it does not ask. **Say what someone has done and what they can do, never what they are about to lose.**
+
+  Two consequences worth writing down. The app has no server, no accounts and no payments, so a streak can never be bought back or measured against other people — that is architecture, not virtue, and it should not be mistaken for a rule doing work. And a lapse gets no commentary: the number resets without a post-mortem, and `0 days` is never shown at all — an empty streak is a fact nobody needs.
 
 ---
 
