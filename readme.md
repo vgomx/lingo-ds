@@ -129,7 +129,13 @@ Examples, verbatim in-house style:
 > "the long talk after a meal" — glosses are lowercase, article-free
 > "Deck saved · 12 new cards queued for tomorrow."
 
-Avoid: "Oops!", "Awesome!", "Let's get started 🚀", "Congrats!!", gamified nagging, streak guilt.
+Avoid: "Oops!", "Awesome!", "Let's get started 🚀", "Congrats!!", gamified nagging, guilt as a motivator.
+
+- **Streaks.** The streak is the one number that measures the habit rather than the collection, and it is global: one exercise anywhere in the app — a card graded, a form answered — keeps the day. That makes it worth saying out loud. Name what someone has done, mark a genuine milestone, and make the next day easy to start: a short way in, a clear "one answer is enough", a suggestion of the quickest thing available.
+
+  What stays out is anything that works by fear of loss. No countdown to losing it, no "don't break your streak", no notification framed as a warning, no freezes or repairs to buy or earn — those turn the number into a currency and the day into a debt. No comparison against other people. The line is simple: **say what they have done, never what they are about to lose.**
+
+  A broken streak is not a lapse to comment on. It resets in silence, with no post-mortem and no offer to restore it, and `0 days` is never shown at all — an empty streak is a fact nobody needs.
 
 ---
 
